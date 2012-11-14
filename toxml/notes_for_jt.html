@@ -1,0 +1,10 @@
+
+in step 2, when prod are loaded from request and not mem/local, the 'selected' class is getting overridden.
+
+make sure the step 2 product are containers. hide anything that doesn't have dimensions set.
+
+homepage in breadcrumb causes js error.
+
+need to store cookie for cart ID too. required cuz localstorage may not be available and then the cart gets lost between visits. blech.
+
+check rendering engine IMG and make sure height/width are working. may have to pass these in via data-bind.

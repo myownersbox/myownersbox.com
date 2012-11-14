@@ -1,0 +1,6 @@
+/* disable display of draggable 'helpers' in the left column of the configurator */
+#drawerCategories .draggable	{display:none;}
+
+
+#configStep3Head span	{display:none;}
+#configStep3Head  b:after	{content:" touch drawer then touch available spot"; font-weight:normal;}

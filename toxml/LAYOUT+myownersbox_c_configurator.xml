@@ -1,0 +1,332 @@
+<TEMPLATE>
+
+<ELEMENT TYPE="CONFIG" TITLE="Category: Configurator" FORMAT="LAYOUT" EXPORT="0">
+<SUMMARY><![CDATA[Contains a builder for assembling a storage container and placement of appopriate # of bins]]></SUMMARY>
+</ELEMENT>
+
+
+<ELEMENT ID="VAR_RELEASE" HELPER="release # =  YYYYMMDDHHMMSS when deployed." SUB="MVC_RELEASE" DEFAULT="20120206072400" TYPE="HIDDEN"></ELEMENT>
+<ELEMENT TYPE="READONLY"  ID="VAR_LAYOUT_URL" LOAD="URL::LAYOUT_URL" RAW="1" SUB="LAYOUT_URL"></ELEMENT>
+<ELEMENT TYPE="READONLY"  ID="VAR_GRAPHICS_URL" LOAD="URL::GRAPHICS_URL" RAW="1" SUB="GRAPHICS_URL"></ELEMENT>
+
+
+
+<ELEMENT ID="CRN654EEWE" SUB="SDOMAIN" TYPE="READONLY" LOAD="FLOW::SDOMAIN" RAW="1"></ELEMENT>
+<ELEMENT ID="CQPOIJP" SUB="SESSION_ID" TYPE="READONLY" LOAD="CART::ID" RAW="1"></ELEMENT>
+<ELEMENT ID="CQPOIJQ" SUB="STORENAME" TYPE="READONLY" LOAD="FLOW::USERNAME" RAW="1"></ELEMENT>
+
+
+<ELEMENT TYPE="DECAL" ID="FACEBOOK_LIKE_BUTTONDETAIL" DECALID="facebook_like_buttoncount_fbml" SUB="PAGE_FACEBOOK_LIKE"></ELEMENT>
+
+
+<ELEMENT TYPE="HIDDEN" OUTPUTSKIP="32769" OUTPUTFILTER="PG=*checkout" HELPER="cSupporting JS files. skipped in UI and checkout to avoid conflicts."><DEFAULT><![CDATA[
+
+
+<!-- mvc files -->
+
+<script type="text/javascript" src="%MAGIC_URL%jquery/config.js?MVC=%MVC_RELEASE%"></script>
+
+
+<script type="text/javascript" src="%GRAPHICS_URL%/jslib/zmvc/201205/model.js"></script>
+<script type="text/javascript" src="%GRAPHICS_URL%/jslib/zmvc/201205/controller.js"></script>
+<script type="text/javascript" src="%GRAPHICS_URL%/jslib/zmvc/201205/json2.js"></script>
+
+
+
+
+<script type="text/javascript">
+/*
+
+
+
+####################################################         READ    ME        ################################
+
+This file is owned by JT.
+If you edit it, you better have a good reason.
+If you edit it and don't version it you will invoke my wrath.
+
+*/
+
+
+
+// !!! full path required for extension filename when viewing on a server. relative path works fine for local.
+
+var myExtensions = [
+	{"namespace":"myownersbox_configurator","filename":"%LAYOUT_URL%/myownersbox_configurator-20120216.js","callback":"initConfigurator"},
+	{"namespace":"store_navcats","filename":"%GRAPHICS_URL%/jslib/zmvc/201205/extensions/store_navcats.js"},
+	{"namespace":"store_prodlist","filename":"%GRAPHICS_URL%/jslib/zmvc/201205/extensions/store_prodlist.js"},
+	{"namespace":"store_product","filename":"%GRAPHICS_URL%/jslib/zmvc/201205/extensions/store_product.js"}
+
+	];
+
+$(function() {
+	myControl = new zController({
+		"username":"%STORENAME%",
+		"sdomain":"%SDOMAIN%",
+		"jqurl":"%MAGIC_URL%jquery/",
+		"sessionId" : "%SESSION_ID%",
+		"secureURL" : "%SECURE_URL%",
+		"release":"%MVC_RELEASE%"
+		},myExtensions);  //instantiate controller. handles all logic and communication between model and view.
+	});
+
+</script>
+
+
+
+
+]]></DEFAULT></ELEMENT>
+
+
+<ELEMENT TYPE="HIDDEN" OUTPUTSKIP="32768" ID="CUSTOMIZER_TEMPLATES" HELPER="Skipped in UI because there is no editable content.">
+<DEFAULT><![CDATA[
+
+
+
+
+
+
+
+
+
+
+<!-- used for any 'global' errors, such as incompatible system settings, high level errors and also for request/response errors. -->
+<div id='globalMessaging' class='displayNone'></div>
+
+
+
+
+
+<div id='configuratorContainer'>
+
+	<div id='configuratorLeftColumn' class='noListStyle noPadOrMargin'>
+		<h3 class='gradient'><b>Step 1:</b> Choose Storage Container Style</h3>
+		<ul class="cssDDMenu" id='storageContainerCatContainer'>
+			<li><a href="#" id='storageCatPrompt'>Storage Drawer Styles:</a>
+			<ul id='storageContainerCategories'></ul>
+			</li>
+		</ul>
+
+
+		<h3 class='gradient'><b>Step 2:</b> Choose Storage Container Size</h3>
+		<ul id='storageContainerProdlist'></ul>
+			
+		
+		<h3 class='gradient'><b>Step 3:</b> Choose Storage Drawers &amp; Placement</h3>
+		<ul id='drawerCategories' class='loadingBG displayNone'></ul>
+	</div><!-- /configuratorLeftColumn -->
+	
+	<div id='configuratorMiddleColumn'>
+		<div id='previewContainer' class='displayNone'>
+			<div id='bgImageContainer' class='bgImageContainer_3x3'></div>
+			<div id='selectedDrawerContainer' class='selectedDrawerContainer_3x3'>
+<ul>
+	<li id='drawerLoc_1'><span class='number'>1</span></li>
+	<li id='drawerLoc_2'><span class='number'>2</span></li>
+	<li id='drawerLoc_3'><span class='number'>3</span></li>
+	<li id='drawerLoc_4'><span class='number'>4</span></li>
+	<li id='drawerLoc_5'><span class='number'>5</span></li>
+	<li id='drawerLoc_6'><span class='number'>6</span></li>
+	<li id='drawerLoc_7'><span class='number'>7</span></li>
+	<li id='drawerLoc_8'><span class='number'>8</span></li>
+	<li id='drawerLoc_9'><span class='number'>9</span></li>
+</ul>			
+			</div>
+		</div>
+	
+	<div id='recentlyRemovedContainer'>
+		<div class='positionIt'>
+		
+		
+<div id="recentlyRemovedProdlistContainer">
+	<div id="recentlyRemovedProdlistNav"></div>
+	<div id='carouselPreviousBtn' class='carouselPreviousBtn carouselBtn displayNone'><a id="prev" href="#" title='back'><img src='%PROJECT_URL%/mbo_arrow_lft-9x15.png' width='9' height='15' alt='back' /></a></div>
+	<div id='carouselNextBtn' class='carouselNextBtn carouselBtn displayNone'><a id="next" href="#" title='next'><img src='%PROJECT_URL%/mbo_arrow_rt-9x15.png' width='9' height='15' alt='next' /></a></div>
+	<ul id="recentlyRemovedProdlist" class="carousel">		
+		
+	</ul>
+</div>
+
+
+		</div>
+	</div>
+
+	</div><!-- /configuratorMiddleColumn -->
+	
+	<div id='configuratorRightColumn'>
+		<div id='rightColDrawerContainer' class='displayNone'>
+<h3>Selected Drawers</h3>
+<h4>Click drawer below to move</h4>
+<ul id='selectedDrawersList'>
+	<li id='selectedDrawerLoc_1' class='empty'></li>
+	<li id='selectedDrawerLoc_2' class='empty'></li>
+	<li id='selectedDrawerLoc_3' class='empty'></li>
+	
+	<li id='selectedDrawerLoc_4' class='empty'></li>
+	<li id='selectedDrawerLoc_5' class='empty'></li>
+	<li id='selectedDrawerLoc_6' class='empty'></li>
+	
+	<li id='selectedDrawerLoc_7' class='empty'></li>
+	<li id='selectedDrawerLoc_8' class='empty'></li>
+	<li id='selectedDrawerLoc_9' class='empty'></li>
+</ul>
+
+<div class='center'>
+<button onClick='myControl.ext.myownersbox_configurator.util.addItAllToTheCart(); return false;'  id='addToCartBtn'>
+add to cart
+</button>
+</div>
+
+		</div>
+
+
+<div id='socialBookmarklets'>
+	<span><a href='#' onClick='myControl.ext.myownersbox_configurator.util.openForPrinting();'>print</a></span>
+	<span>taf</span>
+	<span><a href='#' onClick="window.open('http://twitter.com/home?status='+myControl.ext.myownersbox_configurator.util.makeURL(),'twitter');">Tweet</a></span>
+	<span>%PAGE_FACEBOOK_LIKE%</span>
+</div>
+
+	</div><!-- /configuratorRightColumn -->
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class='displayNone' id='templates'>
+
+
+
+<!--
+The template for the category list in step 1. (the list of storage container categories)
+-->
+<ul>
+<li id='mobStorageChooser' class='mobStorageChooser ztable_row'  onClick="myControl.ext.myownersbox_configurator.util.containerCatSelected($(this).attr('data-catsafeid'));">
+	<a href='#' class='prodName' data-bind='var: category(pretty); format:text;'></a>
+</li>
+</ul>
+
+
+<!--
+The template for the product list in step  2. (the product list of storage containers)
+a class of 'selected' gets added onClick.
+-->
+<ul>
+<li id='mobStorageContainerProductSpec' class='storageContainerProdlistItem' onClick="myControl.ext.myownersbox_configurator.util.containerSizeSelected($(this).attr('data-pid'));">
+	<span></span>
+	<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL;' />
+</li>
+</ul>
+
+
+<!--
+The template used for the categories loaded in step 3.
+when clicked, they load a product list of drawers.
+-->
+<ul>
+<li id='mobDrawerChooser' class='mobDrawerChooser' >
+	<div class='ztable_row pointer' onClick="myControl.ext.myownersbox_configurator.util.drawerCatSelected($(this).parent().attr('data-catsafeid'));">
+		<span class='arrow'></span>
+		<img class='catThumb' data-bind='var: category(%meta.CAT_THUMB); format:imageURL;  bgcolor:tttttt;'  />
+		<div class='catName' data-bind='var: category(pretty); format:text;'></div>
+	</div>
+	<ul class='prodlist displayNone' data-bind='var: category(id); format:assignAttribute; attribute:id; pretext:mobDrawerChooser_;' ></ul>
+</li>
+</ul>
+
+
+
+
+<!--
+The template used for the product loaded in step 3 after a drawer category is selected. (used for each drawer).
+When these are clicked, they open the location chooser that assigns the draw to spot 1-9 in the preview panel.
+-->
+<ul>
+<li id='mobDrawerProductSpec' class='prodlistLineItem'>
+	<div class='floatRight magGlassIcon' onClick='myControl.ext.store_product.util.showPicsInModal({"pid":$(this).parent().attr("data-pid")});'></div>
+	<div class='ztable_row pointer' onClick="myControl.ext.myownersbox_configurator.util.drawerClicked($(this).parent().attr('data-pid'),$(this).parent().attr('id'))">
+		<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL; bgcolor:tttttt;' />
+		<div class='prodName' data-bind='var: product(user:prod_organization); format:text; defaultVar: product(zoovy:prod_name);'></div>
+	</div>
+</li>
+</ul>
+
+
+<ul>
+<li id='mobRecentViewedProductSpec' class='prodlistLineItem recentlySelectedLineItem'>
+	<div class='floatLeft ztable_row' onClick="myControl.ext.myownersbox_configurator.util.drawerClicked($(this).parent().attr('data-pid'),$(this).parent().attr('id'))">
+		<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL;' />
+		<div class='prodName' data-bind='var: product(user:prod_organization); format:text; defaultVar: product(zoovy:prod_name);'></div>
+		<div class='addLink'>+Add</div>
+	</div>
+</li>
+</ul>
+
+
+
+
+</div>
+
+
+
+
+<div id='drawerLocationChooser' class='drawerLocationChooser'>
+	<div id='drawerChooserText'>
+		<button onClick='myControl.ext.myownersbox_configurator.util.hideChooser();'>X</button>
+		<p>Please choose a position for this drawer.</p>
+		<p><span class='zwarn'>Tip:</span> You can replace your currently selected drawers</p>
+	</div>
+	
+	<ul id='drawerLocationChooserListContainer' class='drawerLocationChooserListContainer_3x3'>
+		<li id='chooserDrawerLoc_1'></li>
+		<li id='chooserDrawerLoc_2'></li>
+		<li id='chooserDrawerLoc_3'></li>
+		
+		<li id='chooserDrawerLoc_4'></li>
+		<li id='chooserDrawerLoc_5'></li>
+		<li id='chooserDrawerLoc_6'></li>
+		
+		<li id='chooserDrawerLoc_7'></li>
+		<li id='chooserDrawerLoc_8'></li>
+		<li id='chooserDrawerLoc_9'></li>
+	</ul>
+	<button id='drawerChooserAddToAllBtn'>Add to all</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+<div  ID='utilityButtonsForTroubleShooting' class='displayNone'>
+	<button onClick='myControl.ext.myownersbox_configurator.util.popFromURI(); myControl.model.dispatchThis();'>popFromURI</button>
+	<button onClick='myControl.ext.myownersbox_configurator.util.makeURL();'>makeURL</button>
+	<button onClick="console.dir(myControl.q);">q to console</button>
+	<button onClick="console.dir(myControl.data);">myControl.data</button>
+	<button onClick='localStorage.clear()'>Nuke local storage</button>
+</div>
+
+ -->
+
+]]></DEFAULT></ELEMENT>
+
+
+
+
+
+</TEMPLATE>
