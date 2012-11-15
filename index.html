@@ -57,9 +57,10 @@ if(document.location.protocol != 'file:')	{
 
 <link rel="stylesheet" href="_mobstyles_print.css" type="text/css" media="print" />
 
-
-
-<script type="text/javascript" src="jquery/config.js"></script>
+<!-- TODO: use this line for production -->
+<!-- <script type="text/javascript" src="jquery/config.js"></script> -->
+<!-- TODO: use this line for development -->
+<script type="text/javascript" src="http://www.myownersbox.com/jquery/config.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
 
@@ -135,7 +136,7 @@ $(function() {
 	$.support.cors = true;  //cross site scripting for non cors sites. will b needed for IE10. IE8 & 9 don't support xss well.
 	myControl = new zController({
 
-		"release":"20121115122752" //increment this with each change. should solve caching issues.
+		"release":"20121115143407" //increment this with each change. should solve caching issues.
 		},myExtensions);  //instantiate controller. handles all logic and communication between model and view.
 		
 	//instantiate wiki parser.
