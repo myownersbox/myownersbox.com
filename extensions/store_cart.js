@@ -37,53 +37,53 @@ var store_cart = function() {
 
 	calls : {
 /*
-the calls for 'cartDetail' and 'getCartContents' are similar. the main difference is:
-1. getCartContents will always make a request. cartDetail will check local first.
-2. getCartContents uses the priority dispatch q, cartDetail doesn't.
+the calls for 'cartItemsList' and 'getCartContents' are similar. the main difference is:
+1. getCartContents will always make a request. cartItemsList will check local first.
+2. getCartContents uses the priority dispatch q, cartItemsList doesn't.
 
-use cartDetail if a user is just viewing the cart.
+use cartItemsList if a user is just viewing the cart.
 use getCartContents if they're modifying the cart (changing quantities, setting shipping, selecting a zip, etc)
 
 formerly showCart
 */
-		cartDetail : {
+		cartItemsList : {
 			init : function(tagObj)	{
-//				app.u.dump('BEGIN app.ext.store_cart.calls.cartDetail.init');
+//				myControl.util.dump('BEGIN myControl.ext.store_cart.calls.cartItemsList.init');
 				var r = 0;
 
 //if datapointer is fixed (set within call) it needs to be added prior to executing handleCallback (which will likely need datapointer to be set).
 				tagObj = $.isEmptyObject(tagObj) ? {} : tagObj;
-				tagObj.datapointer = "cartDetail";
+				tagObj.datapointer = "cartItemsList";
 					
-				if(app.model.fetchData('cartDetail') == false)	{
-					app.u.dump(" -> cartDetail is not local. go get her Ray!");
+				if(myControl.model.fetchData('cartItemsList') == false)	{
+					myControl.util.dump(" -> cartItemsList is not local. go get her Ray!");
 					r = 1;
 					this.dispatch(tagObj);
 					}
 				else	{
-//					app.u.dump(' -> data is local');
-					app.u.handleCallback(tagObj);
+//					myControl.util.dump(' -> data is local');
+					myControl.util.handleCallback(tagObj);
 					}
 				return r;
 				},
 			dispatch : function(tagObj)	{
-//				app.u.dump('BEGIN app.ext.store_cart.calls.cartDetail.dispatch');
-				app.model.addDispatchToQ({"_cmd":"cartDetail","_zjsid":app.sessionId,"_tag": tagObj});
+//				myControl.util.dump('BEGIN myControl.ext.store_cart.calls.cartItemsList.dispatch');
+				myControl.model.addDispatchToQ({"_cmd":"cartItemsList","_zjsid":myControl.sessionId,"_tag": tagObj});
 				}
 			},
 
 		getCartContents : {
 			init : function(tagObj,Q)	{
-//				app.u.dump('BEGIN app.ext.store_cart.calls.getCartContents. callback = '+callback)
+//				myControl.util.dump('BEGIN myControl.ext.store_cart.calls.getCartContents. callback = '+callback)
 				tagObj = $.isEmptyObject(tagObj) ? {} : tagObj;
 				Q = Q ? Q : 'immutable'; //allow for muted request, but default to immutable. it's a priority request.
-				tagObj.datapointer = "cartDetail";
+				tagObj.datapointer = "cartItemsList";
 				this.dispatch(tagObj,Q);
 				return 1;
 				},
 			dispatch : function(tagObj,Q)	{
-//				app.u.dump(' -> adding to PDQ. callback = '+callback)
-				app.model.addDispatchToQ({"_cmd":"cartDetail","_zjsid":app.sessionId,"_tag": tagObj},Q);
+//				myControl.util.dump(' -> adding to PDQ. callback = '+callback)
+				myControl.model.addDispatchToQ({"_cmd":"cartItemsList","_zjsid":myControl.sessionId,"_tag": tagObj},Q);
 				}
 			},//getCartContents
 
@@ -91,11 +91,11 @@ formerly showCart
 // formerly updateCartQty
 		cartItemUpdate : {
 			init : function(stid,qty,tagObj)	{
-				app.u.dump('BEGIN app.ext.store_cart.calls.cartItemUpdate.');
+				myControl.util.dump('BEGIN myControl.ext.store_cart.calls.cartItemUpdate.');
 				tagObj = $.isEmptyObject(tagObj) ? {} : tagObj;
 				var r = 0;
 				if(!stid || isNaN(qty))	{
-					app.u.dump(" -> cartItemUpdate requires both a stid ("+stid+") and a quantity as a number("+qty+")");
+					myControl.util.dump(" -> cartItemUpdate requires both a stid ("+stid+") and a quantity as a number("+qty+")");
 					}
 				else	{
 					r = 1;
@@ -104,9 +104,9 @@ formerly showCart
 				return r;
 				},
 			dispatch : function(stid,qty,tagObj)	{
-//				app.u.dump(' -> adding to PDQ. callback = '+callback)
-				app.model.addDispatchToQ({"_cmd":"updateCart","stid":stid,"quantity":qty,"_zjsid":app.sessionId,"_tag": tagObj},'immutable');
-				app.calls.cartSet.init({'payment-pt':null}); //nuke paypal token anytime the cart is updated.
+//				myControl.util.dump(' -> adding to PDQ. callback = '+callback)
+				myControl.model.addDispatchToQ({"_cmd":"updateCart","stid":stid,"quantity":qty,"_zjsid":myControl.sessionId,"_tag": tagObj},'immutable');
+				myControl.calls.cartSet.init({'payment-pt':null}); //nuke paypal token anytime the cart is updated.
 				}
 			 },
 // formerly getShippingRates
@@ -117,20 +117,20 @@ formerly showCart
 				tagObj = $.isEmptyObject(tagObj) ? {} : tagObj; //makesure tagObj is an object so that datapointer can be added w/o causing a JS error
 				tagObj.datapointer = "cartShippingMethods";
 				
-				if(app.model.fetchData('cartShippingMethods') == false)	{
-					app.u.dump(" -> cartShippingMethods is not local. go get her Ray!");
+				if(myControl.model.fetchData('cartShippingMethods') == false)	{
+					myControl.util.dump(" -> cartShippingMethods is not local. go get her Ray!");
 					r = 1;
 					Q = Q ? Q : 'immutable'; //allow for muted request, but default to immutable. it's a priority request.
 					this.dispatch(tagObj,Q);
 					}
 				else	{
-//					app.u.dump(' -> data is local');
-					app.u.handleCallback(tagObj);
+//					myControl.util.dump(' -> data is local');
+					myControl.util.handleCallback(tagObj);
 					}
 				return r;
 				},
 			dispatch : function(tagObj,Q)	{
-				app.model.addDispatchToQ({"_cmd":"cartShippingMethods","_tag": tagObj},Q);
+				myControl.model.addDispatchToQ({"_cmd":"cartShippingMethods","_tag": tagObj},Q);
 				}
 			}, //cartShippingMethods
 
@@ -144,7 +144,7 @@ formerly showCart
 				return 1;
 				},
 			dispatch : function(tagObj)	{
-				app.model.addDispatchToQ({"_cmd":"cartShippingMethods","update":"1","trace":"1","_tag": tagObj},'immutable');
+				myControl.model.addDispatchToQ({"_cmd":"cartShippingMethods","update":"1","trace":"1","_tag": tagObj},'immutable');
 				}
 			}, //cartShippingMethodsWithUpdate
 
@@ -155,7 +155,7 @@ formerly showCart
 				return 1; 
 				},
 			dispatch : function(giftcard,tagObj)	{
-				app.model.addDispatchToQ({"_cmd":"cartGiftcardAdd","giftcard":giftcard,"_tag" : tagObj},'immutable');	
+				myControl.model.addDispatchToQ({"_cmd":"cartGiftcardAdd","giftcard":giftcard,"_tag" : tagObj},'immutable');	
 				}			
 			}, //cartGiftcardAdd
 //formerly addCouponToCart
@@ -165,7 +165,7 @@ formerly showCart
 				return 1; 
 				},
 			dispatch : function(coupon,tagObj)	{
-				app.model.addDispatchToQ({"_cmd":"cartCouponAdd","coupon":coupon,"_tag" : tagObj},'immutable');	
+				myControl.model.addDispatchToQ({"_cmd":"cartCouponAdd","coupon":coupon,"_tag" : tagObj},'immutable');	
 				}			
 			}, //cartCouponAdd
 
@@ -177,10 +177,10 @@ formerly showCart
 				},
 			dispatch : function()	{
 				var tagObj = {'callback':'',"datapointer":"cartAmazonPaymentURL","extension":"store_cart"}
-				app.model.addDispatchToQ({
+				myControl.model.addDispatchToQ({
 "_cmd":"cartAmazonPaymentURL",
 "shipping":1,
-"CancelUrl":zGlobals.appSettings.https_app_url+"cart.cgis?sessionid="+app.sessionId,
+"CancelUrl":zGlobals.appSettings.https_app_url+"cart.cgis?sessionid="+myControl.sessionId,
 "ReturnUrl":zGlobals.appSettings.https_app_url,
 "YourAccountUrl": zGlobals.appSettings.https_app_url+"customer/orders/",
 '_tag':tagObj},'immutable');
@@ -204,20 +204,24 @@ formerly showCart
 //dependencies for other extensions should be listed in vars.dependencies as ['store_prodlist','store_navcats'] and so forth.
 		init : {
 			onSuccess : function()	{
-//				app.u.dump('BEGIN app.ext.simple_sample.init.onSuccess ');
+//				myControl.util.dump('BEGIN myControl.ext.simple_sample.init.onSuccess ');
 				var r = true; //return false if extension won't load for some reason (account config, dependencies, etc).
 				return r;
 				},
 			onError : function()	{
 //errors will get reported for this callback as part of the extensions loading.  This is here for extra error handling purposes.
 //you may or may not need it.
-				app.u.dump('BEGIN app.ext.simple_sample.callbacks.init.onError');
+				myControl.util.dump('BEGIN myControl.ext.simple_sample.callbacks.init.onError');
 				}
 			}, //init
 		displayCart :  {
 			onSuccess : function(tagObj)	{
-//				app.u.dump('BEGIN app.ext.store_cart.callbacks.displayCart.onSuccess');
-				app.renderFunctions.translateTemplate(app.data.cartDetail,tagObj.parentID);
+//				myControl.util.dump('BEGIN myControl.ext.store_cart.callbacks.displayCart.onSuccess');
+				myControl.renderFunctions.translateTemplate(myControl.data.cartItemsList.cart,tagObj.parentID);
+				},
+			onError : function(d)	{
+				myControl.util.dump('BEGIN myControl.ext.store_cart.callbacks.displayCart.onError');
+				$('#modalCart').append(myControl.util.getResponseErrors(d)).toggle(true);
 				}
 			},
 
@@ -225,11 +229,14 @@ formerly showCart
 
 		updateCartLineItem :  {
 			onSuccess : function(tagObj)	{
-				app.u.dump('BEGIN app.ext.store_cart.callbacks.updateCartLineItem.onSuccess');
-				var stid = app.ext.store_cart.u.getStuffIndexBySTID($('#'+tagObj.parentID).attr('data-stid'));
-				app.u.dump(" -> stid: "+stid);
-				app.u.dump(" -> tagObj.parentID: "+tagObj.parentID);
-				app.renderFunctions.translateTemplate(app.data.cartDetail['@ITEMS'][stid],tagObj.parentID);
+				myControl.util.dump('BEGIN myControl.ext.store_cart.callbacks.updateCartLineItem.onSuccess');
+				var stid = myControl.ext.store_cart.util.getStuffIndexBySTID($('#'+tagObj.parentID).attr('data-stid'));
+				myControl.util.dump(" -> stid: "+stid);
+				myControl.util.dump(" -> tagObj.parentID: "+tagObj.parentID);
+				myControl.renderFunctions.translateTemplate(myControl.data.cartItemsList.cart.stuff[stid],tagObj.parentID);
+				},
+			onError : function(responseData,uuid)	{
+				myControl.util.handleErrors(responseData,uuid)
 				}
 			}
 		}, //callbacks
@@ -249,10 +256,10 @@ formerly showCart
 		renderFormats : {
 			
 			cartItemQty : function($tag,data)	{
-//				app.u.dump("BEGIN store_cart.renderFormats.cartItemQty");
-//				app.u.dump(data);
+//				myControl.util.dump("BEGIN store_cart.renderFormats.cartItemQty");
+//				myControl.util.dump(data);
 				var stid = $tag.closest('[data-stid]').attr('data-stid'); //get the stid off the parent container.
-//				app.u.dump(stid);
+//				myControl.util.dump(stid);
 				$tag.val(data.value).attr('data-stid',stid);
 				},
 				
@@ -264,8 +271,8 @@ formerly showCart
 $tag.attr({'data-stid':data.value}).val(0); //val is used for the updateCartQty
 //the click event handles all the requests needed, including updating the totals panel and removing the stid from the dom.
 $tag.click(function(){
-	app.ext.store_cart.u.updateCartQty($tag);
-	app.model.dispatchThis('immutable');
+	myControl.ext.store_cart.util.updateCartQty($tag);
+	myControl.model.dispatchThis('immutable');
 	});
 					}
 				},
@@ -273,22 +280,22 @@ $tag.click(function(){
 			orderBalance : function($tag,data)	{
 				var o = '';
 				var amount = data.value;
-//				app.u.dump('BEGIN app.renderFunctions.format.orderBalance()');
-//				app.u.dump('amount * 1 ='+amount * 1 );
+//				myControl.util.dump('BEGIN myControl.renderFunctions.format.orderBalance()');
+//				myControl.util.dump('amount * 1 ='+amount * 1 );
 //if the total is less than 0, just show 0 instead of a negative amount. zero is handled here too, just to avoid a formatMoney call.
 //if the first character is a dash, it's a negative amount.  JS didn't like amount *1 (returned NAN)
 				if(amount * 1 <= 0){
-//					app.u.dump(' -> '+amount+' <= zero ');
+//					myControl.util.dump(' -> '+amount+' <= zero ');
 					o += data.bindData.currencySign ? data.bindData.currencySign : '$';
 					o += '0.00';
 					}
 				else	{
-//					app.u.dump(' -> '+amount+' > zero ');
-					o += app.u.formatMoney(amount,data.bindData.currencySign,'',data.bindData.hideZero);
+//					myControl.util.dump(' -> '+amount+' > zero ');
+					o += myControl.util.formatMoney(amount,data.bindData.currencySign,'',data.bindData.hideZero);
 					}
 		
 				$tag.text(o);  //update DOM.
-//				app.u.dump('END app.renderFunctions.format.orderBalance()');
+//				myControl.util.dump('END myControl.renderFunctions.format.orderBalance()');
 				}, //orderBalance
 
 
@@ -296,17 +303,17 @@ $tag.click(function(){
 //is used in cart summary total during checkout.
 			shipInfoById : function($tag,data)	{
 				var o = '';
-//				app.u.dump('BEGIN app.renderFormats.shipInfo. (formats shipping for minicart)');
-//				app.u.dump(data);
-				var L = app.data.cartShippingMethods['@methods'].length;
+//				myControl.util.dump('BEGIN myControl.renderFormats.shipInfo. (formats shipping for minicart)');
+//				myControl.util.dump(data);
+				var L = myControl.data.cartShippingMethods['@methods'].length;
 				for(var i = 0; i < L; i += 1)	{
-//					app.u.dump(' -> method '+i+' = '+app.data.cartShippingMethods['@methods'][i].id);
-					if(app.data.cartShippingMethods['@methods'][i].id == data.value)	{
-						var pretty = app.u.isSet(app.data.cartShippingMethods['@methods'][i]['pretty']) ? app.data.cartShippingMethods['@methods'][i]['pretty'] : app.data.cartShippingMethods['@methods'][i]['name'];  //sometimes pretty isn't set. also, ie didn't like .pretty, but worked fine once ['pretty'] was used.
+//					myControl.util.dump(' -> method '+i+' = '+myControl.data.cartShippingMethods['@methods'][i].id);
+					if(myControl.data.cartShippingMethods['@methods'][i].id == data.value)	{
+						var pretty = myControl.util.isSet(myControl.data.cartShippingMethods['@methods'][i]['pretty']) ? myControl.data.cartShippingMethods['@methods'][i]['pretty'] : myControl.data.cartShippingMethods['@methods'][i]['name'];  //sometimes pretty isn't set. also, ie didn't like .pretty, but worked fine once ['pretty'] was used.
 						o = "<span class='orderShipMethod'>"+pretty+": <\/span>";
 //only show amount if not blank.
-						if(app.data.cartShippingMethods['@methods'][i].amount)	{
-							o += "<span class='orderShipAmount'>"+app.u.formatMoney(app.data.cartShippingMethods['@methods'][i].amount,' $',2,false)+"<\/span>";
+						if(myControl.data.cartShippingMethods['@methods'][i].amount)	{
+							o += "<span class='orderShipAmount'>"+myControl.util.formatMoney(myControl.data.cartShippingMethods['@methods'][i].amount,' $',2,false)+"<\/span>";
 							}
 						break; //once we hit a match, no need to continue. at this time, only one ship method/price is available.
 						}
@@ -316,28 +323,35 @@ $tag.click(function(){
 
 
 			shipMethodsAsRadioButtons : function($tag,data)	{
-				app.u.dump('BEGIN store_cart.renderFormat.shipMethodsAsRadioButtons');
+//				myControl.util.dump('BEGIN myControl.ext.convertSessionToOrder.formats.shipMethodsAsRadioButtons');
 				var o = '';
-				var shipName,id,isSelectedMethod,safeid;  // id is actual ship id. safeid is id without any special characters or spaces. isSelectedMethod is set to true if id matches cart shipping id selected.;
+				var shipName;
 				var L = data.value.length;
-				for(var i = 0; i < L; i += 1)	{
-					id = data.value[i].id; //shortcut of this shipping methods ID.
-					isSelectedMethod = (id == app.data.cartDetail['want'].shipping_id) ? true : false; //is this iteration for the method selected.
-					safeid = app.u.makeSafeHTMLId(data.value[i].id);
-					app.u.dump(" -> id: "+id+" and isSelected: "+isSelectedMethod);
 
-//app.u.dump(' -> id = '+id+' and want/shipping_id = '+app.data.cartDetail['want/shipping_id']);
+
+				var id,isSelectedMethod,safeid;  // id is actual ship id. safeid is id without any special characters or spaces. isSelectedMethod is set to true if id matches cart shipping id selected.
+				for(var i = 0; i < L; i += 1)	{
+					isSelectedMethod = false;
+					safeid = myControl.util.makeSafeHTMLId(data.value[i].id);
+					id = data.value[i].id;
+
+//whether or not this iteration is for the selected method should only be determined once, but is used on a couple occasions, so save to a var.
+					if(id == myControl.data.cartItemsList.cart['ship.selected_id'])	{
+						isSelectedMethod = true;
+						}
+
+//myControl.util.dump(' -> id = '+id+' and ship.selected_id = '+myControl.data.cartItemsList.cart['ship.selected_id']);
 					
-					shipName = app.u.isSet(data.value[i].pretty) ? data.value[i].pretty : data.value[i].name
+					shipName = myControl.util.isSet(data.value[i].pretty) ? data.value[i].pretty : data.value[i].name
 					
 					o += "<li class='shipcon "
 					if(isSelectedMethod)
 						o+= ' selected ';
 					o += "shipcon_"+safeid; 
-					o += "'><label><input type='radio' name='want/shipping_id' value='"+id+"' onClick='app.ext.store_cart.u.shipMethodSelected(this.value); app.model.dispatchThis(\"immutable\"); '";
+					o += "'><input type='radio' name='ship.selected_id' id='ship-selected_id_"+safeid+"' value='"+id+"' onClick='myControl.ext.store_cart.util.shipMethodSelected(this.value,\""+safeid+"\"); myControl.model.dispatchThis(\"immutable\"); '";
 					if(isSelectedMethod)
 						o += " checked='checked' "
-					o += "/>"+shipName+": <span >"+app.u.formatMoney(data.value[i].amount,'$','',false)+"<\/span><\/label><\/li>";
+					o += "/><label for='ship-selected_id_"+safeid+"'>"+shipName+": <span >"+myControl.util.formatMoney(data.value[i].amount,'$','',false)+"<\/span><\/label><\/li>";
 					}
 				$tag.html(o);
 				} //shipMethodsAsRadioButtons
@@ -349,50 +363,58 @@ $tag.click(function(){
 
 
 
-////////////////////////////////////   UTIL [u]   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+////////////////////////////////////   UTIL    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
 
 
 
-		u : {
+		util : {
 
 			
 /*
-This will open the cart in a modal. If an update is needed, that must be performed outside this function.
-assumes that cart is in memory before it's loaded.
-either templateID needs to be set OR showloading must be true. TemplateID will translate the template. showLoading will (you guessed it) show the loading class.
- so you can execute showCartInModal with showLoading set to true, then dispatch a request for a cart and translate the parent ID in the callback.
- can't think of a reason not to use the default parentID, but just in case, it can be set.
+Guess what this does?  Yep, shows the cart in a modal. shocking, no?
+In this case, the id is hard coded because we only want one instantation of the cart at a time.
+It also allows us to nuke it during checkout, if need be (ensure no duplicate id's)
+
+//put the loadingBG class into the template, not onto the div created here (jqueryUI classes will override it).
 */
-			showCartInModal : function(P)	{
-//				app.u.dump("BEGIN store_cart.u.showCartInModal");
-				if(typeof P == 'object' && (P.templateID || P.showLoading === true)){
-					var $modal = $('#modalCart');
+			showCartInModal : function(templateID,tagObj)	{
+//				myControl.util.dump("BEGIN store_cart.util.showCartInModal");
+				if(typeof tagObj == 'object'){}
+				else	{
+					tagObj = {"callback":"displayCart","extension":"store_cart"}
+					}
+				tagObj.parentID = "modalCartContents"
+				tagObj.templateID = templateID
+				var $parent = $('#modalCart');
 //the modal opens as quick as possible so users know something is happening.
 //open if it's been opened before so old data is not displayed. placeholder content (including a loading graphic, if set) will be populated pretty quick.
-//the cart messaging is OUTSIDE the template. That way if the template is re-rendered, existing messaging is not lost.
-					if($modal.length == 0)	{
-						$modal = $("<div><div id='cartMessaging' class='appMessaging'><\/div><div id='modalCartContents'><\/div><\/div>").attr({"id":"modalCart","title":"Your Shopping Cart"}).appendTo('body');
-						$modal.dialog({modal: true,width:'80%',height:$(window).height() - 200});  //browser doesn't like percentage for height
-						}
-					else	{
-						$('#modalCartContents',$modal).empty(); //empty to remove any previous content.
-						$('.appMessaging',$modal).empty(); //errors are cleared because if the modal is closed before the default error animation occurs, errors become persistent.
-						$modal.dialog('open');
-						}
-					if(P.showLoading === true)	{
-						$('#modalCartContents',$modal).append("<div class='loadingBG' \/>"); //have to add child because the modal classes already have bg assigned
-						}
-					else	{
-						$modal.append(app.renderFunctions.transmogrify('modalCartContents',P.templateID,app.data['cartDetail']));
-						}
+				if($parent.length == 0)	{
+					$parent = $("<div \/>").attr({"id":"modalCart","title":"Your Shopping Cart"}).appendTo('body');
+					$parent.dialog({modal: true,width:'80%',height:$(window).height() - 100});  //browser doesn't like percentage for height
 					}
 				else	{
-					app.u.throwGMessage("ERROR! no templateID passed into showCartInModal. P follows: ");
-					app.u.dump(P);
+//empty the existing cart and add a loadingBG so that the user sees something is happening.
+					$parent.empty().dialog('open');
 					}
 
+//populate the modal with the template (which includes 'loadingBG'.
+				$parent.append(myControl.renderFunctions.createTemplateInstance(templateID,"modalCartContents"));
+
+//if the shipping methods haven't been retrieved yet, get a new cart too.
+//its done this way because if the cart callback is executed prior to the shipMethods one, then an error will occur in the cart display cuz shipmethods aren't present.
+				if(myControl.ext.store_cart.calls.cartShippingMethods.init({},'immutable'))	{
+					myControl.calls.refreshCart.init(tagObj,'immutable');
+					}
+				else	{
+//if we get to this point, ship methods are already in memory/local. the cartItemsList call below will check memory/local before making a request.
+					myControl.ext.store_cart.calls.cartItemsList.init(tagObj,'immutable');
+					}
+//				myControl.util.dump(" -> GOT THIS FAR");
+
+				myControl.model.dispatchThis('immutable');
+//show modal, even though pretty much empty. Allows for something to happen right away so user knows the app is working on it.
 				
 				}, //showCartInModal
 
@@ -400,7 +422,7 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 //no 'loadingbg' is needed on button because entire panel goes to loading onsubmit.
 //panel is reloaded in case the submission of a gift card changes the payment options available.
 			handleGiftcardSubmit : function(v,parentID)	{
-				app.ext.store_cart.calls.cartGiftcardAdd.init(v,{"parentID":parentID,"message":"Giftcard Added!","callback":"showMessaging"});
+				myControl.ext.store_cart.calls.cartGiftcardAdd.init(v,{"parentID":parentID,"message":"Giftcard Added!","callback":"showMessaging"});
 				this.updateCartSummary();
 				if(parentID)
 					$('#'+parentID+' .zMessage').empty().remove(); //get rid of any existing messsaging.
@@ -410,24 +432,27 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 
 //run when a shipping method is selected. updates cart/session and adds a class to the radio/label
 //the dispatch occurs where/when this function is executed, NOT as part of the function itself.
-			shipMethodSelected : function(shipID)	{
-				app.calls.cartSet.init({'want/shipping_id':shipID});
-				app.ext.store_cart.calls.cartShippingMethodsWithUpdate.init(); //updates shiping rates AND updates cart (though doesn't request cart).
+			shipMethodSelected : function(shipID,safeID)	{
+//				myControl.util.dump('BEGIN myControl.ext.convertSessionToOrder.utilities.');	
+//				myControl.util.dump('value = '+shipID);	
+				myControl.calls.cartSet.init({'ship.selected_id':shipID});
+				myControl.ext.store_cart.calls.cartShippingMethodsWithUpdate.init(); //updates shiping rates AND updates cart (though doesn't request cart).
 				this.updateCartSummary();
+//				myControl.util.dump('END myControl.checkoutFunctions.ShipMethod. shipID = '+shipID);			
 				}, //updateShipMethod
 
 
 //executed when a coupon is submitted. handles ajax call for coupon and also updates cart.
 			handleCouponSubmit : function(v,parentID)	{
-				app.ext.store_cart.calls.cartCouponAdd.init(v,{"parentID":parentID,"message":"Coupon Added!","callback":"showMessaging"}); 
+				myControl.ext.store_cart.calls.cartCouponAdd.init(v,{"parentID":parentID,"message":"Coupon Added!","callback":"showMessaging"}); 
 				this.updateCartSummary();
 				if(parentID)
 					$('#'+parentID+' .zMessage').empty().remove(); //get rid of any existing messsaging.
 				}, //handleCouponSubmit
 
 			updateCartSummary : function()	{
-				$('#modalCartContents').replaceWith(app.renderFunctions.createTemplateInstance('cartTemplate','modalCartContents'));
-				app.calls.refreshCart.init({'callback':'translateTemplate','parentID':'modalCartContents'},'immutable');
+				$('#cartTemplateCostSummary').empty().addClass('loadingBG');
+				myControl.calls.refreshCart.init({'callback':'translateTemplate','parentID':'modalCartContents'},'immutable');
 //don't set this up with a getShipping because we don't always need it.  Add it to parent functions when needed.
 				},
 /*
@@ -437,21 +462,23 @@ Parameters expected are:
 	templateID = the name of the template to use.
 */
 			showStuff : function(P)	{
-//				app.u.dump("BEGIN store_cart.u.showStuff (parentid = "+P.parentID+")");
+//				myControl.util.dump("BEGIN store_cart.util.showStuff (parentid = "+P.parentID+")");
 				if(!P.parentID || !P.templateID)	{
-					app.u.dump(" -> parentID ("+P.parentID+") and/or TemplateID ("+P.templateID+") blank. both are required.");
+					myControl.util.dump(" -> parentID ("+P.parentID+") and/or TemplateID ("+P.templateID+") blank. both are required.");
 					}
 				else	{
 					var $parent = $('#'+P.parentID);
-					var L = app.data.cartDetail['@ITEMS'].length;
+					var L = myControl.data.cartItemsList.cart.stuff.length;
 					var stid; //stid for item in loop.
-//					app.u.dump(" -> items in stuff = "+L);
+//					myControl.util.dump(" -> items in stuff = "+L);
 					
 					for(var i = 0; i < L; i += 1)	{
-						stid = app.data.cartDetail['@ITEMS'][i].stid;
-//						app.u.dump(" -> STID: "+stid);
-						$parent.append(app.renderFunctions.transmogrify({'id':'cartViewer_'+stid,'stid':stid},P.templateID,app.data.cartDetail['@ITEMS'][i]));
-//						app.u.dump(" -> stid["+i+"] = "+stid);
+						stid = myControl.data.cartItemsList.cart.stuff[i].stid;
+//						myControl.util.dump(" -> STID: "+stid);
+						$parent.append(myControl.renderFunctions.transmogrify({'id':'cartViewer_'+stid,'stid':stid},P.templateID,myControl.data.cartItemsList.cart.stuff[i]));
+//						myControl.util.dump(" -> stid["+i+"] = "+stid);
+//						$parent.append(myControl.renderFunctions.createTemplateInstance(P.templateID,{"id":"cartViewer_"+stid,"stid":stid}));
+//						myControl.renderFunctions.translateTemplate(myControl.data.cartItemsList.cart.stuff[i],"cartViewer_"+stid);
 //make any inputs for coupons disabled.
 						if(stid[0] == '%')	{$parent.find(':input').attr({'disabled':'disabled'})}
 							
@@ -462,10 +489,10 @@ Parameters expected are:
 //useful if you need to reference something in the cart and all you have is the stid.
 //returns the index so that you can point to it.
 			getStuffIndexBySTID : function(stid)	{
-				var L = app.data.cartDetail['@ITEMS'].length;
+				var L = myControl.data.cartItemsList.cart.stuff.length;
 				var r = false;
 				for(var i = 0; i < L; i += 1)	{
-					if(app.data.cartDetail['@ITEMS'][i].stid == stid)	{
+					if(myControl.data.cartItemsList.cart.stuff[i].stid == stid)	{
 						r = i;
 						break; //once we have a match, kill the loop.
 						}
@@ -487,31 +514,31 @@ allows us to check and make sure no request is currently in progress.
 				
 				if(stid && qty && !$input.hasClass('disabled'))	{
 					$input.attr('disabled','disabled').addClass('disabled').addClass('loadingBG');
-					app.u.dump('got stid: '+stid);
+					myControl.util.dump('got stid: '+stid);
 //some defaulting. a bare minimum callback needs to occur. if there's a business case for doing absolutely nothing
 //then create a callback that does nothing. IMHO, you should always let the user know the item was modified.
 //you can do something more elaborate as well, just by passing a different callback.
 					tagObj = $.isEmptyObject(tagObj) ? {} : tagObj;
 					tagObj.callback = tagObj.callback ? tagObj.callback : 'updateCartLineItem';
 					tagObj.extension = tagObj.extension ? tagObj.extension : 'store_cart';
-					tagObj.parentID = 'cartViewer_'+app.u.makeSafeHTMLId(stid);
+					tagObj.parentID = 'cartViewer_'+myControl.util.makeSafeHTMLId(stid);
 /*
 the request for quantity change needs to go first so that the request for the cart reflects the changes.
 the dom update for the lineitem needs to happen last so that the cart changes are reflected, so a ping is used.
 */
-					app.ext.store_cart.calls.cartItemUpdate.init(stid,qty);
+					myControl.ext.store_cart.calls.cartItemUpdate.init(stid,qty);
 					this.updateCartSummary();
 //lineitem template only gets updated if qty > 1 (less than 1 would be a 'remove').
 					if(qty >= 1)	{
-						app.calls.ping.init(tagObj,'immutable');
+						myControl.calls.ping.init(tagObj,'immutable');
 						}
 					else	{
-						$('#cartViewer_'+app.u.makeSafeHTMLId(stid)).empty().remove();
+						$('#cartViewer_'+myControl.util.makeSafeHTMLId(stid)).empty().remove();
 						}
-					app.model.dispatchThis('immutable');
+					myControl.model.dispatchThis('immutable');
 					}
 				else	{
-					app.u.dump(" -> a stid ["+stid+"] and a quantity ["+qty+"] are required to do an update cart.");
+					myControl.util.dump(" -> a stid ["+stid+"] and a quantity ["+qty+"] are required to do an update cart.");
 					}
 				},
 
@@ -523,28 +550,28 @@ so if an accessory showed up on four items in the cart, it'd be higher in the li
 */
 
 			getCSVOfAccessories : function()	{
-//				app.u.dump("BEGIN store_cart.u.getCSVOfAccessories");
+//				myControl.util.dump("BEGIN store_cart.util.getCSVOfAccessories");
 				var csvArray = new Array(); //what is returned.
 				var proda; //product accessories for the item in focus.
 				var prodArray = new Array();
 				var i,j,L,M; //used in the two loops below. yes, i know loops inside of loops are bad, but these are small datasets we're dealing with.
-				M = app.data.cartDetail['@ITEMS'].length;
-//				app.u.dump(" -> items in cart = "+M);
+				M = myControl.data.cartItemsList.cart['stuff'].length;
+//				myControl.util.dump(" -> items in cart = "+M);
 				for(j = 0; j < M; j += 1)	{
-					if(proda = app.data.cartDetail['@ITEMS'][j]['full_product']['zoovy:accessory_products'])	{
-//						app.u.dump(" -> item has accessories: "+proda);
+					if(proda = myControl.data.cartItemsList.cart['stuff'][j]['full_product']['zoovy:accessory_products'])	{
+//						myControl.util.dump(" -> item has accessories: "+proda);
 						prodArray = proda.split(',');
 						L = prodArray.length
-//						app.u.dump(" -> item has "+L+" accessories");
+//						myControl.util.dump(" -> item has "+L+" accessories");
 						for(var i = 0; i < L; i += 1)	{
 							csvArray.push(prodArray[i])
 							}
 						prodArray = []; //empty to avoid errors.
 						}
 					}
-//				app.u.dump(csvArray);
+//				myControl.util.dump(csvArray);
 				csvArray = $.grep(csvArray,function(n){return(n);}); //remove blanks
-				return app.u.removeDuplicatesFromArray(csvArray);
+				return myControl.util.removeDuplicatesFromArray(csvArray);
 				} //getCSVOfAccessories
 			
 			} //util

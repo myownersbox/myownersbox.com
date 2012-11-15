@@ -1,19 +1,13 @@
-body,html	{font-size:100%;}
-
 #appTemplates {display:none;} /* container for all templates. should be hidden */
 
-#appPreView	{width:550px; margin:0 auto;}
 
 
 /*
 loading class. add class to your templates if you want a loading graphic to appear while data is requested. add only to the parent element. 
 loadingBG classname is removed once template is rendered.
-note - wait should only be used in cases where the entire template is being reloaded. the class is NOT automatically removed ever.
-note - background- are use instead of background in case element this is applied to has a bgcolor and it's !important. (like a modal parent)
 */
-.loadingBG	{background-image:url(loading.gif) !important; background-repeat: no-repeat !important; background-position: center center; min-height:100px !important; min-width:100px;}
-li.loadingBG, .wait	{background:url(wait.gif) no-repeat top center !important; min-height:20px !important; min-width:20px;}
-span.wait	{display:inline-block;}
+.loadingBG	{background:url(qs_loading.gif) no-repeat center center; min-height:28px;}
+
 
 /******* global styles - added for cross-browser uniformity or usability ******/
 
@@ -42,20 +36,8 @@ input:focus {
 
 button:focus	{outline:none;}
 button.ui-button	{padding:2px 12px !important;} /* jqueryui ui-button default class doesn't handle padding for 'button' elements. */
-.zform_number	{width:50px;}
-
-/*
-classes used on menus that are toggled on/off. wrap offMenu around the default buttons and onMenu around buttons that get turned on.
-for example, in /customer/myaccount, a 'change' button is displayed (wrapped in offMenu) for each address. onClick, 'onMenu' is toggled on, revealing save and cancel
-and offMenu is toggle off, hiding the change button.
-*/
-.onMenu	{display:none;}
-.offMenu	{}
-
 
 .bindByAnchor	{} /* here just to give a little aid to wysiwyg editors. no styles should be applied. used w/ bindNav feature */
-
-
 
 
 /* some general classes used for styling templates. feel free to use these. It's not recommended you delete or rename them */
@@ -101,49 +83,26 @@ and offMenu is toggle off, hiding the change button.
     visibility: hidden;
 	}
 	
-/* added to a piece of text once it becomed editable */
-.editable	{} /* put this on any editable field. */
-.editEnabled	{border:1px solid #ffcc00; min-width:25px; min-height:22px; width:200px; display:inline-block; padding:2px; margin-bottom:2px;} /* added to any editable field once editor is enabled. */
-.edited		{border:1px solid #390;} /* added if a field is changed */
-
-
-
-.marginLeft	{margin-left:12px;}
-.marginRight	{margin-right:12px;}
-.marginTop	{margin-top:12px;}
-.marginBottom	{margin-bottom:12px;}
-.stdMargin	{margin:12px;}
-
 
 
 
 /****** APP specific styles ******/
 
 
-/* messaging css. some error css is defined in the jqueryui styles */
-.appMessage	{margin-bottom:3px; text-align:left;}
-.appMessage .ui-icon	{float:left; margin:4px 5px;}
-.appMessage {padding:5px;} /* add padding to children, not parent, that way we can empty the parent and no space is reserved */
+/* error handling css. some error css is defined in the jqueryui styles */
+
+#globalMessaging .ui-icon	{float:left; margin:auto 5px;}
+#globalMessaging .appMessage {padding:5px;} /* add padding to children, not parent, that way we can empty the parent and no space is reserved */
 .appMessage ul	{margin-left:12px; font-size:.9em;}
-.appMessage ul li	{margin:0; padding:0;}
-
-.ui-state-success, .ui-state-statusupdate	{border:1px solid #aecdae; background:#dff6df; color:#333333;}
-.ui-state-warning	{border:1px solid #f58d48; background:#ffdfc9; color:#333333;}
-
 
 /* used in order history and faq (possibly other places) in a format similar to an accordian, but more than one panel can be open. */
 .appAccordianesque .ui-accordion-header {padding:3px 24px;}
 
+/* pages like search results, company and/or customer have a side column of links which can be placed/styled w/ this class */
+.sideline	{float:right; width:200px; margin:0 0 24px 24px;}
+.sideline li a	{padding:3px 0; text-decoration:none;}
 
-
-/* pages like search results, company and/or customer are in a two column format. by default, a narrow right w/ nav and the main column w/ content. */
-
-.mainColumn	{width:75%;}
-.sideline	{float:right; width:20%; margin:0 0 24px 0px;}
-.sideline a	{padding:5px 0; text-decoration:none; display:block;} /* recommend at least 5px vert padding for mobile/pad */
-
-
-
+.marginBottom	{margin-bottom:12px;} /* a generic margin for between stacked elements or sections */
 
 /***************************************************
 
@@ -157,11 +116,9 @@ and override using classes or id's as needed.
 .noPadOrMargin	{padding:0; margin:0;}
 .fluidList li	{float:left; margin:12px; padding:0; display:inline-block;}
 
-.quickView	{position:absolute; top:5px; right:5px; z-index:1001;} /* jqui modal has zindex 1002 */
-
 /* over rides - height and width ensure each row is the same height. percentages could be used for width */
-.productList li	{width:150px; height:250px; position:relative;}
-.lineItemProdlist li	{position:relative; display:block; padding:12px 0; width:100% !important; height:auto !important; border-bottom:1px dotted #efefef;} /* single column product list - used in cart, checkout, etc. productList class is also defined in these cases. */
+.productList li	{width:150px; height:250px;}
+.lineItemProdlist li	{display:block; padding:12px 0; width:100% !important; height:auto !important; border-bottom:1px dotted #efefef;} /* single column product list - used in cart, checkout, etc. productList class is also defined in these cases. */
 
 .lineItemProdlist .prodThumb	{margin-right:12px;}
 
@@ -181,60 +138,42 @@ and override using classes or id's as needed.
 .mpControls	{padding:2px 6px;}
 
 
-
-
-/* used for the picture slider mouse over effect in some product lists */
-
-.slideMe	{position:absolute; top:0px;}
-.slideMe, .slideMe li	{list-style:none; margin:0; padding:0;}
-.slideMe li	{float:left; margin-right:2px; border:0;}
-
-
-
-
-
 /***************************************************
 
-PRODUCT DETAIL PAGE (productTemplate)
+PRODUCT DETAIL PAGE
 
 ***************************************************/
 
-.prodViewerContainer	{width:100%;}
+#prodViewerTable	{width:100%;}
 
 .breadAndAddThisContainer	{margin-bottom:8px; padding-bottom:8px; border-bottom:1px dotted #b6b6b6;}
 
 /* primary image and thumbnails */
 .imageContainer	{width:10%; padding-right:24px;}
-.prodViewerContainer .prodThumbs div	{float:left; margin:12px 12px 0 0;}
+#prodViewerTable .prodThumbs div	{float:left; margin:12px 12px 0 0;}
 
 
 .prodSummaryContainer	{width:90%;}
 
 
-.tabbedProductContent .prodReviewsTab	{display:block;} /* reviews tab always shows up */
+#tabbedProductContent #prodReviewsTab	{display:block;} /* reviews tab always shows up */
 
 /*
 the child list and loading graphic should only show up IF the product is a parent.
 so the displayNone class is used, then a .grpType_PARENT class is added if the item is a parent.
 */
 .grpType_PARENT	{display:block; margin-bottom:12px;}
-#prodlistChildren li	{width:75px; height:120px; overflow:hidden; margin-left:0;}
 
-.prodViewerAddToCartForm	{margin-bottom:24px;}
-.prodViewerAddToCartForm fieldset	{margin:0 0 12px 0; padding:0;}
-.prodViewerAddToCartForm label:after	{content:":"; padding-right:12px;}
 
-.CRMButtonMenu	{margin:0; padding:0; margin-bottom:12px;}
+#prodViewerAddToCartForm	{padding-bottom:12px;} /* add some margin after add to cart */
 
-.pogType_attribs	{display:none;} /* don't show finder attributes */
 
 /****** REVIEW GFX - used for review summary and in list of reviews on product detail page ******/
 
 .reviewSummaryContainer	.numReviews	{line-height:21px; display:inline-block; height:21px; float:left; margin-left:4px; padding-right:6px;}
 .reviewSummaryContainer	.numReviews:after	{content:": "}
-
-.reviewSprite	{background: url(qs_reviews_stars-124x324.png) no-repeat; width:124px; height:22px; display:none;} /* display none hides the reviews for the 'zero' reviews graphic */
-.review_1, .review_2, .review_3, .review_4, .review_5, .review_6, .review_7, .review_8, .review_9, .review_10	{display:inline-block;} /* show 1/2 - 10 stars */
+.reviewSprite	{background: url(qs_reviews_stars-124x324.png) no-repeat; width:124px; height:22px; display:inline-block;}
+.review_0 	{background-position:0 0;}
 .review_1 	{background-position:0 -29px;}
 .review_2	{background-position:0 -61px;}
 .review_3	{background-position:0 -91px;}
@@ -243,27 +182,26 @@ so the displayNone class is used, then a .grpType_PARENT class is added if the i
 .review_6	{background-position:0 -181px;}
 .review_7	{background-position:0 -211px;}
 .review_8	{background-position:0 -241px;}
-.review_9	{background-position:0 -271px;}
-.review_10	{background-position:0 -302px;}
+.review_9	{background-position:0 -270px;}
+.review_10	{background-position:0 -301px;}
 
-.prodlist .review_0	{display:none;} /* hide the stars for items with no reviews */
+
 
 
 /****** REVIEW LIST - on product detail page, used for product reviews. ******/
-#prodViewerReviews	{margin:0; padding:0;} /* parent ul containing all reviews, each review as an li */
-.reviewLineItem {margin:0 0 12px 0; padding:0 0 12px 0; display:block; clear:both; border-bottom:1px #cccccc dotted;} /* on the li of an individual review */
-.prodReviewInfo	{float:left; display:block; width:165px; list-style:none; margin:0 12px 0px 0; font-weight:normal; padding:0;} /* on the ul of the list containing the name, location, date, etc */
-.prodReviewInfo li	{display:block; clear:both;} /* applies to li for location, name, date, etc */
-.prodReviewTemplate li p	{font-weight:normal; margin:0; padding:0;}
+.reviewLineItem {padding-bottom:12px; display:block; clear:both;}
+.prodReviewInfo	{float:left; display:block; width:150px; list-style:none; margin:0 12px 12px 0; font-weight:normal;}
+.prodReviewInfo li	{display:block; clear:both;}
+.prodReviewTemplate li p	{font-weight:normal;}
 
-.reviewLineItem blockquote	{margin:0 0 0 185px; padding:0;}
+
 
 
 /****** WRITE REVIEW MODAL ******/
 #reviewFrm label	{display:block; text-align:right; float:left; width:150px;}
 #reviewsMessage		{width:250px; height:250px;}
-#reviewFrm input, #reviewFrm textarea, #reviewFrm select	{margin-bottom:5px;}
-#reviewFrm .ui-button	{float:right;}
+
+
 
 /***************************************************
 
@@ -273,12 +211,12 @@ BREADCRUMB
 ***************************************************/
 
 
-.breadcrumb	{margin-bottom:12px;}
-.breadcrumb li	{padding:0; margin:0; cursor:pointer; padding-right:10px;}
-.breadcrumb li:after	{content:" \00BB "; padding-left:10px; font-size:10px; font-weight:bold; color:#999999;}
-.breadcrumb li:last-child:after	{content:"";}
+#breadcrumb	{margin-bottom:12px;}
+#breadcrumb li	{padding:0; margin:0; cursor:pointer; padding-right:10px;}
+#breadcrumb li:after	{content:" > "; padding-left:10px; font-size:10px; font-weight:bold; color:#999999;}
+#breadcrumb li:last-child:after	{content:"";}
 
-.breadcrumb li:last-child a	{color:#666666; text-decoration:none; font-weight:bold; cursor:text;}
+#breadcrumb li:last-child a	{color:#666666; text-decoration:none; font-weight:bold; cursor:text;}
 
 
 
@@ -314,27 +252,15 @@ CUSTOMER PAGES
 /****** NEWSLETTER SUBSCRIBE/ACCOUNT CREATE ******/
 #subscribeFormContainer .userInfo div	{margin-bottom:6px;}
 #subscribeFormContainer li	{list-style:none;}
-#subscribeFormContainer .userInfo label, #changePasswordForm label	{width:120px; display:inline-block; margin-right:10px;}
+#subscribeFormContainer .userInfo label	{width:100px; display:inline-block; margin-right:10px;}
 .subscriberLists label	{width:300px;}
 
 
 /****** ORDER HISTORY AND INVOICE ******/
 
+#ordersArticle	{margin-right:250px;} /* w/out the margin, the sections lay over the sideline */
 #ordersArticle .ui-accordion-content	{padding:.4em} /* reduce padding here to make a little extra room */
 #ordersArticle .orderContentsTable	{width:100%}
-
-
-#orderInvoiceSoloPage table	{width:700px;}
-.orderContentsProdlistContainer	{width:500px;}
-.orderContentsProdlistContainer .prodThumbContainer	{float:left; margin:0 5px 5px 0;}
-
-
-/****** MY ACCOUNT ******/
-
-#buyerAddresses	{margin-bottom:12px;}
-#buyerAddresses h2	{margin:12px 0; clear:both;}
-#buyerAddresses address	{margin:0 0px 12px 0; float:left; width:90%; display:block; padding:5px;}
-
 
 
 /***************************************************
@@ -343,8 +269,13 @@ SEARCH RESULTS PAGE
 
 ***************************************************/
 
-#searchNav a	{padding:2px 6px;}
-#recentSearchesList	{border-top:0;}
+#resultsProdlist {
+	float: left;
+	width: 760px;
+	}
+
+
+
 
 
 
@@ -413,12 +344,16 @@ CHECKOUT
 
 #zCheckoutContainer h2	{font-size:1em; margin:0; padding:0;}
 
-#paybySupplemental_CREDIT .ui-icon-help	{display:inline-block; margin-left:6px;}
 
-#modalProcessCheckout .loadingBG	{width:100px; height:200px;}
 
-#returnFromThirdParty	{padding:5px;}
-#returnFromThirdParty .ui-icon	{margin-right: .3em;}
+/*
+don't set background: because the bgcolor is set by another class and this is just for adding the image.
+*/
+.loadingButtonBg	{background-image:url(qs_loading_white-16x16.gif); background-repeat: no-repeat; background-position: 2px center;}
+
+
+
+
 
 
 
@@ -490,7 +425,7 @@ CHECKOUT
 
 #zCheckoutFrm address	{display:block; float:left; margin:12px; border:1px solid #cccccc; padding:10px; font-style:normal; text-align:left;} /* use a white border (if not colored) so elements don't shift when 'selected' class is added. */
 
-#zCheckoutFrm .paybySupplemental, #shipAddressUL li, #billAddressUL li	{margin-bottom:6px;}
+#zCheckoutFrm fieldset li	{margin-bottom:12px;}
 
 /* the entry after the comma below handles 'supplemental' labels (under radio buttons, like in payment) */
 #zCheckoutFrm fieldset li label, #zCheckoutFrm fieldset li.paycon ul label	{text-align:right; padding-right:12px; display:inline-block;}
@@ -520,12 +455,6 @@ CHECKOUT
 .paybySupplemental .zform_select {margin-right:12px;}
 
 
-
-/* for order confirmation page of checkout */
-
-#invoiceContainer .balanceDue	{display:none;} /* in checkout, the cart object is used to display invoice, not an actual invoice. hide balance due, it's reported elsewhere */
-#invoiceContainer .writeReview	{display:none;}
-
 .facebookSendLineItem	{float:left; margin:3px;}
 .facebookSendLineItem img	{height:65px; width:56px;}
 
@@ -542,7 +471,7 @@ ul.zwarn li	{margin-left:15px;}
 
 /* -----------------> POST-CHECKOUT MARKETING PAGE  <----------------- */
 
-.checkoutSuccess	{padding:20px 0;} /* don't change this to margin. will F up sites */
+.checkoutSuccess	{padding:20px 0;}
 
 
 .ocmThirdParty	{ line-height:200%; width:300px;}
@@ -587,11 +516,13 @@ ul.zwarn li	{margin-left:15px;}
 
 
 .ddUlMenu li ul {
+	background:#efefef;
 	left: -999em;
 	margin: 14px 0px 0 -20px; /* top margin should = tier 1 line-height - 1px...ish */
 	position: absolute;
 	width: 160px;
 	z-index: 9999;
+	border:1px solid #cccccc;
 	}
 
 .ddUlMenu li:hover ul {

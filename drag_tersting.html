@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="jquery-ui-1.8.20.custom.min.js"></script>
+    <script type="text/javascript">
+ 
+
+$(function() {
+        var dropped = false;
+        $(".draggable").removeClass('displayNone').draggable({ 
+            addClasses: false,
+            revert: 'invalid',
+			zIndex: 999,
+            containment: '#configuratorContainer',
+			helper : 'clone',
+			appendTo: '#configuratorContainer',
+            start: function(event, ui) {
+				dropped = false;
+				ui.helper.find('.dragThumb').show();
+				ui.helper.find('.dragIcon').hide();
+				},
+            stop: function(event, ui) {
+				if (dropped==true) {$(this).remove();}
+				else {$(this).removeClass("hide");}
+				}
+			});
+        $("#tf_dropBox").droppable({
+            accept: '.draggable',
+            hoverClass: 'tf_dropBox_hover',
+            activeClass: 'tf_dropBox_active',
+            drop: function(event, ui) {
+                dropped = true;
+                $.ui.ddmanager.current.cancelHelperRemoval = true;
+                ui.helper.appendTo(this);
+            }
+        });
+	});
+    </script>
+    <style>
+        div#configuratorContainer { display:block; width:800px; height:400px; margin:auto; padding:10px; background:#F00; position:relative; }
+        div#tf_div_tagsReturn { display:block; width:150px; height:150px; float:left; overflow:auto; background:#000; position:absolute; top:0; left:0; }
+        div#tf_div_tagsDrop { display:block; width:200px; height:100%; float:right; background:#0F0; }
+        div#tf_dropBox { display:block; width:100%; height:250px; background:#F0F; }
+        .draggable { display:block; width:55px; height:55px; margin:1px; float:left; cursor:pointer; background:#0FF; z-index:99; }
+        .draggable.hide { display:none; }
+        div#tf_dropBox.tf_dropBox_hover { background:#FFF !important; }
+        div#tf_dropBox.tf_dropBox_active { background:#333; }
+		.displayNone	{display:none;}
+    </style>
+</head>
+<body>
+    <div id="configuratorContainer">
+        <div id="tf_div_tagsReturn">
+		<ul>
+            <li class="draggable">
+			<span class="displayNone dragThumb"><img width="128" height="128" data-bind="var: product(zoovy:prod_image7); format:imageURL; bgcolor:tttttt;" class="prodThumb" src="http://static.zoovy.com/img/myownersbox/W128-H128-Btttttt/product_images_front_rev2/diamondbacks_drawers_silostraight"></span>
+			</li>
+            <li class="draggable"></li>
+            <li class="draggable"></li>
+            <li class="draggable"></li>
+            <li class="draggable"></li>
+            <li class="draggable"></li>
+            <li class="draggable"></li>
+            <li class="draggable"></li>
+            <li class="draggable"></li>
+            <li class="draggable"></li>
+            <li class="draggable"></li>
+		</ul>
+        </div>
+        <div id="tf_div_tagsDrop">
+            <div id="tf_dropBox"></div>
+        </div>
+    </div>
+    <div id="tagFun_div_helper">
+    <!-- this is where the helper gets appended for temporary use -->
+    </div>
+</body>
+</html>

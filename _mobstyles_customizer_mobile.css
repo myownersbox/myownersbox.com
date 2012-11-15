@@ -1,0 +1,5 @@
+
+#configStep3Head span	{display:none;}
+#configStep3Head  b:after	{content:" Touch Team Name and Touch Location"; font-weight:normal;}
+
+#drawerCategories .dragIconContainer {display:none;} /* keep drag icon hidden */

@@ -31,79 +31,6 @@ a callback was also added which just executes this call, so that checkout COULD 
 */
 	calls : {
 
-//formerly getCustomerAddresses
-		buyerAddressList : {
-			init : function(callback)	{
-				this.dispatch(callback);
-				return 1;
-				},
-			dispatch : function(callback)	{
-				app.model.addDispatchToQ({"_cmd":"buyerAddressList","_tag": {"datapointer":"buyerAddressList","callback":callback,"extension":"convertSessionToOrder"}},'immutable');
-				}
-			}, //buyerAddressList	
-
-
-		buyerWalletList : {
-			init : function(tagObj,Q)	{
-//always get fresh copy.
-				this.dispatch(tagObj,Q);
-				return 1;
-				},
-			dispatch : function(tagObj,Q)	{
-				if(!Q)	{Q = 'mutable'}
-				if(typeof tagObj != 'object')	{tagObj = {}}
-				tagObj.datapointer = "buyerWalletList";
-				app.model.addDispatchToQ({"_cmd":"buyerWalletList","_tag": tagObj},Q);
-				}			
-			},
-//each time the cart changes, so does the google checkout url.
-		cartGoogleCheckoutURL : {
-			init : function()	{
-				this.dispatch();
-				return 1;
-				},
-			dispatch : function()	{
-				app.model.addDispatchToQ({
-					"_cmd":"cartGoogleCheckoutURL",
-					"analyticsdata":"", //must be set, even if blank.
-					"edit_cart_url" : zGlobals.appSettings.https_app_url+"#cart?show=cart&sessionId="+app.sessionId,
-					"continue_shopping_url" : zGlobals.appSettings.https_app_url+"?sessionId="+app.sessionId,
-					'_tag':{'callback':'proceedToGoogleCheckout','extension':'store_checkout','datapointer':'cartGoogleCheckoutURL'}
-					},'immutable');
-				}
-			}, //cartGoogleCheckoutURL	
-			
-			
-//cmdObj - see http://www.zoovy.com/webdoc/?VERB=DOC&DOCID=51609 for details.
-		cartPaymentQ : 	{
-			init : function(cmdObj,tagObj)	{
-//make sure id is set for inserts.
-				if(cmdObj.cmd == 'insert' && !cmdObj.ID)	{cmdObj.ID = "201210"+app.u.guidGenerator().substring(0,8)}
-				cmdObj['_cmd'] = "cartPaymentQ";
-				cmdObj['_tag'] = tagObj;
-				this.dispatch(cmdObj);
-				return 1;
-				},
-			dispatch : function(cmdObj)	{
-				app.model.addDispatchToQ(cmdObj,'immutable');
-				}
-			}, //cartPaymentQ
-
-		cartPaypalSetExpressCheckout : {
-			init : function()	{
-				var getBuyerAddress = 0;
-				if(app.ext.store_checkout.u.taxShouldGetRecalculated())
-					getBuyerAddress = 1;
-				this.dispatch(getBuyerAddress);
-				return 1;
-				},
-			dispatch : function(getBuyerAddress)	{
-				var tagObj = {'callback':'handleCartPaypalSetECResponse',"datapointer":"cartPaypalSetExpressCheckout","extension":"convertSessionToOrder"}
-				app.model.addDispatchToQ({"_cmd":"cartPaypalSetExpressCheckout","cancelURL":zGlobals.appSettings.https_app_url+"#cart?show=cart&sessionId="+app.sessionId,"returnURL":zGlobals.appSettings.https_app_url+"#checkout?show=checkout&sessionId="+app.sessionId,"getBuyerAddress":getBuyerAddress,'_tag':tagObj},'immutable');
-				}
-			}, //cartPaypalSetExpressCheckout	
-
-
 //update will modify the cart. only run this when actually selecting a shipping method (like during checkout). heavier call.
 		cartShippingMethodsWithUpdate : {
 			init : function(callback)	{
@@ -112,10 +39,69 @@ a callback was also added which just executes this call, so that checkout COULD 
 				},
 			dispatch : function(callback)	{
 //,"trace":"1"
-				app.model.addDispatchToQ({"_cmd":"cartShippingMethods","update":"1","_tag": {"datapointer":"cartShippingMethods","callback":callback,"extension":"convertSessionToOrder"}},'immutable');
+				myControl.model.addDispatchToQ({"_cmd":"cartShippingMethods","update":"1","_tag": {"datapointer":"cartShippingMethods","callback":callback,"extension":"convertSessionToOrder"}},'immutable');
 				}
 			}, //cartShippingMethodsWithUpdate
 
+
+//each time the cart changes, so does the google checkout url.
+		cartGoogleCheckoutURL : {
+			init : function()	{
+				this.dispatch();
+				return 1;
+				},
+			dispatch : function()	{
+				myControl.model.addDispatchToQ({
+					"_cmd":"cartGoogleCheckoutURL",
+					"analyticsdata":"", //must be set, even if blank.
+					"edit_cart_url" : zGlobals.appSettings.https_app_url+"#cart?show=cart&sessionId="+myControl.sessionId,
+					"continue_shopping_url" : zGlobals.appSettings.https_app_url+"?sessionId="+myControl.sessionId,
+					'_tag':{'callback':'proceedToGoogleCheckout','extension':'convertSessionToOrder','datapointer':'cartGoogleCheckoutURL'}
+					},'immutable');
+				}
+			}, //cartGoogleCheckoutURL	
+
+		cartPaypalSetExpressCheckout : {
+			init : function()	{
+				var getBuyerAddress = 0;
+				if(myControl.ext.store_checkout.util.taxShouldGetRecalculated())
+					getBuyerAddress = 1;
+				this.dispatch(getBuyerAddress);
+				return 1;
+				},
+			dispatch : function(getBuyerAddress)	{
+				var tagObj = {'callback':'handleCartPaypalSetECResponse',"datapointer":"cartPaypalSetExpressCheckout","extension":"convertSessionToOrder"}
+				myControl.model.addDispatchToQ({"_cmd":"cartPaypalSetExpressCheckout","cancelURL":zGlobals.appSettings.https_app_url+"#cart?show=cart&sessionId="+myControl.sessionId,"returnURL":zGlobals.appSettings.https_app_url+"#checkout?show=checkout&sessionId="+myControl.sessionId,"getBuyerAddress":getBuyerAddress,'_tag':tagObj},'immutable');
+				}
+			}, //cartPaypalSetExpressCheckout	
+
+
+// obj.token and obj.payerid are required.
+//this gets executed after a user is returned to checkout from paypal
+		cartPaypalGetExpressCheckoutDetails : {
+			init : function(obj)	{
+//				myControl.util.dump("BEGIN store_checkout.calls.cartPaypalGetExpressCheckoutDetails.init");
+//				myControl.util.dump(obj);
+				this.dispatch(obj);
+				return 1;
+				},
+			dispatch : function(obj)	{
+				var tagObj = {"datapointer":"cartPaypalGetExpressCheckoutDetails","extension":"convertSessionToOrder","callback":"handleCartPaypalGetECDetails"};
+				myControl.model.addDispatchToQ({"_cmd":"cartPaypalGetExpressCheckoutDetails","token":obj.token,"payerid":obj.payerid,"_tag":tagObj},'immutable');
+				}
+			}, //cartPaypalGetExpressCheckoutDetails	
+
+
+//formerly getCustomerAddresses
+		buyerAddressList : {
+			init : function(callback)	{
+				this.dispatch(callback);
+				return 1;
+				},
+			dispatch : function(callback)	{
+				myControl.model.addDispatchToQ({"_cmd":"buyerAddressList","_tag": {"datapointer":"buyerAddressList","callback":callback,"extension":"convertSessionToOrder"}},'immutable');
+				}
+			}, //buyerAddressList	
 
 //formerly getCheckoutDestinations
 		appCheckoutDestinations : {
@@ -124,7 +110,7 @@ a callback was also added which just executes this call, so that checkout COULD 
 				return 1;
 				},
 			dispatch : function(callback)	{
-				app.model.addDispatchToQ({"_cmd":"appCheckoutDestinations","_tag": {"datapointer":"appCheckoutDestinations","callback":callback,"extension":"convertSessionToOrder"}},'immutable');
+				myControl.model.addDispatchToQ({"_cmd":"appCheckoutDestinations","_tag": {"datapointer":"appCheckoutDestinations","callback":callback,"extension":"convertSessionToOrder"}},'immutable');
 				}
 			}, //appCheckoutDestinations
 
@@ -140,40 +126,40 @@ a callback was also added which just executes this call, so that checkout COULD 
 				var total; //send blank (NOT ZERO) by default.
 				var country = $('#data-bill_country').val();
 
-				app.model.fetchData('cartDetail'); //will make sure cart is loaded from localStorage (if present) if not in memory.
-				if(!$.isEmptyObject(app.data.cartDetail))	{
-					total = app.data.cartDetail['sum/balance_due_total'];
+				myControl.model.fetchData('cartItemsList'); //will make sure cart is loaded from localStorage (if present) if not in memory.
+				if(!$.isEmptyObject(myControl.data.cartItemsList))	{
+					total = myControl.data.cartItemsList.cart['data.balance_due'];
 					}
 				if(country != "US")	{
 					// country is defaulted to the form value. If that value is NOT "US", then use it (a country has been selected).
 					// if the value is US, then it may be the default setting and the request should w/ country as cart/session value
 					// (country may have been set elsewhere) though the form 'should' default correctly, we don't rely on that.
 					}
-				else if(!$.isEmptyObject(app.data.cartDetail) && app.data.cartDetail['bill/countrycode'])	{
-					country = app.data.cartDetail['bill/countrycode']; //use the cart, NOT the form. the form defaults to US. Better to send blank.
+				else if(!$.isEmptyObject(myControl.data.cartItemsList) && myControl.data.cartItemsList['data.bill_country'])	{
+					country = myControl.data.cartItemsList['data.bill_country']; //use the cart, NOT the form. the form defaults to US. Better to send blank.
 					}
 
-				app.model.addDispatchToQ({"_cmd":"appPaymentMethods","_tag": {"datapointer":"appPaymentMethods","callback":callback,"extension":"convertSessionToOrder"},"country":country,"ordertotal":total},'immutable');
+				myControl.model.addDispatchToQ({"_cmd":"appPaymentMethods","_tag": {"datapointer":"appPaymentMethods","callback":callback,"extension":"convertSessionToOrder"},"country":country,"ordertotal":total},'immutable');
 				}
 			}, //appPaymentMethods	
 
 //formerly addGiftcardToCart
 		cartGiftcardAdd : {
-			init : function(giftcard,tagObj)	{
-				this.dispatch(giftcard,tagObj);
+			init : function(giftcard,callback)	{
+				this.dispatch(giftcard,callback);
 				},
-			dispatch : function(giftcard,tagObj)	{
-				app.model.addDispatchToQ({"_cmd":"cartGiftcardAdd","giftcard":giftcard,"_tag" : tagObj},'immutable');	
+			dispatch : function(giftcard,callback)	{
+				myControl.model.addDispatchToQ({"_cmd":"cartGiftcardAdd","giftcard":giftcard,"_tag" : {"callback":callback,"extension":"convertSessionToOrder"}},'immutable');	
 				}			
 			}, //cartGiftcardAdd
 			
 //formerly addCouponToCart
 		cartCouponAdd : {
-			init : function(coupon,tagObj)	{
-				this.dispatch(coupon,tagObj);
+			init : function(coupon,callback)	{
+				this.dispatch(coupon,callback);
 				},
-			dispatch : function(coupon,tagObj)	{
-				app.model.addDispatchToQ({"_cmd":"cartCouponAdd","coupon":coupon,"_tag" : tagObj},'immutable');	
+			dispatch : function(coupon,callback)	{
+				myControl.model.addDispatchToQ({"_cmd":"cartCouponAdd","coupon":coupon,"_tag" : {"callback":callback,"extension":"convertSessionToOrder"}},'immutable');	
 				}			
 			}, //cartCouponAdd
 
@@ -194,19 +180,19 @@ a callback was also added which just executes this call, so that checkout COULD 
 				var payObj = {};
 
 _gaq.push(['_trackEvent','Checkout','App Event','Attempting to create order']);
-//validation has already occured to make sure all the fields are populated and CC# passed checksum.
-				
-
 // initially, was serializing the payment panel only.  Issues here with safari.
 // cc info is saved in memory so that if payment panel is reloaded, cc# is available. so that reference is used for cc and cv.
-
+				payObj['payment.cc'] = $('#payment-cc').val();
+				payObj['payment.cv'] = $('#payment-cv').val();
+				payObj['payment.yy'] = $('#payment-yy').val();
+				payObj['payment.mm'] = $('#payment-mm').val();
 				payObj['_cmd'] = 'cartOrderCreate';
 				payObj['_tag'] = {"callback":callback,"extension":"convertSessionToOrder","datapointer":"cartOrderCreate"}
 				
-//				app.u.dump("PayObj to follow:");
-//				app.u.dump(payObj);
+//				myControl.util.dump("PayObj to follow:");
+//				myControl.util.dump(payObj);
 
-				app.model.addDispatchToQ(payObj,'immutable');
+				myControl.model.addDispatchToQ(payObj,'immutable');
 				}
 			},//cartOrderCreate
 
@@ -220,7 +206,7 @@ _gaq.push(['_trackEvent','Checkout','App Event','Attempting to create order']);
 				return 1;
 				},
 			dispatch : function(callback)	{
-				app.model.addDispatchToQ({"_cmd":"cartItemsInventoryVerify","_tag": {"datapointer":"cartItemsInventoryVerify","callback":callback,"extension":"convertSessionToOrder"}},'immutable');
+				myControl.model.addDispatchToQ({"_cmd":"cartItemsInventoryVerify","_tag": {"datapointer":"cartItemsInventoryVerify","callback":callback,"extension":"convertSessionToOrder"}},'immutable');
 				}
 			} //cartItemsInventoryVerify		
 
@@ -253,39 +239,134 @@ _gaq.push(['_trackEvent','Checkout','App Event','Attempting to create order']);
 				return r;
 				},
 			onError : function()	{
-				app.u.dump('BEGIN app.ext.convertSessionToOrder.callbacks.init.error');
+				myControl.util.dump('BEGIN myControl.ext.convertSessionToOrder.callbacks.init.error');
 				//This would be reached if a templates was not defined in the view.
-				$('#'+app.ext.convertSessionToOrder.vars.containerID).removeClass('loadingBG');
+				$('#'+myControl.ext.convertSessionToOrder.vars.containerID).removeClass('loadingBG');
 				}
 			}, //init
 
 		proceedToGoogleCheckout : {
 			onSuccess : function(tagObj)	{
-				app.u.dump('BEGIN store_checkout.callbacks.proceedToGoogleCheckout.onSuccess');
-//code for tracking the google wallet payment in GA as a conversion.
+				myControl.util.dump('BEGIN convertSessionToOrder[passive].callbacks.proceedToGoogleCheckout.onSuccess');
 				_gaq.push(function() {
 					var pageTracker = _gaq._getAsyncTracker();
 					setUrchinInputCode(pageTracker);
 					});
-//getUrchinFieldValue is defined in the ga_post.js file. It's included as part of the google analytics plugin.
-				document.location= app.data[tagObj.datapointer].URL +"&analyticsdata="+getUrchinFieldValue();
+//				alert(myControl.data[tagObj.datapointer].URL+"?analyticsdata="+getUrchinFieldValue());
+				document.location= myControl.data[tagObj.datapointer].URL+"&analyticsdata="+getUrchinFieldValue();
 				},
 			onError : function(responseData,uuid)	{
 				$('#chkoutPlaceOrderBtn').removeAttr('disabled').removeClass('ui-state-disabled'); // re-enable checkout button on checkout page.
-				app.u.throwMessage(responseData,uuid);
+				myControl.util.handleErrors(responseData,uuid);
 				}
 			},
 
 		handleCartPaypalSetECResponse : {
 			onSuccess : function(tagObj)	{
-				app.u.dump('BEGIN store_checkout.callbacks.handleCartPaypalSetECResponse.onSuccess');
-				window.location = app.data[tagObj.datapointer].URL
+				myControl.util.dump('BEGIN convertSessionToOrder[nice].callbacks.handleCartPaypalSetECResponse.onSuccess');
+				window.location = myControl.data[tagObj.datapointer].URL
 				},
 			onError : function(responseData,uuid)	{
 				$('#chkoutPlaceOrderBtn').removeAttr('disabled').removeClass('ui-state-disabled'); // re-enable checkout button on cart page.
-				app.u.throwMessage(responseData,uuid);
+				myControl.util.handleErrors(responseData,uuid);
+				}
+			},
+
+//mostly used for the error handling.
+		handleCartPaypalGetECDetails : {
+			onSuccess : function(tagObj)	{
+//				myControl.util.dump('BEGIN convertSessionToOrder[nice].callbacks.handleCartPaypalGetECDetails.onSuccess');
+//do NOT execute handlePaypalFormManipulation here. It's run in panel view.
+				},
+			onError : function(responseData,uuid)	{
+				myControl.util.handleErrors(responseData,uuid);
+//nuke vars so user MUST go thru paypal again or choose another method.
+//nuke local copy right away too so that any cart logic executed prior to dispatch completing is up to date.
+				myControl.data.cartItemsList.cart['payment-pt'] = null;
+				myControl.data.cartItemsList.cart['payment-pi'] = null;
+				myControl.calls.cartSet.init({'payment-pt':null,'payment-pi':null}); 
+				myControl.calls.refreshCart.init({},'immutable');
+				myControl.model.dispatchThis('immutable');
+//### for expediency. this is a set timeout. Need to get this into the proper sequence. needed a quick fix for a production bug tho
+				setTimeout("$('#paybySupplemental_PAYPALEC').empty().addClass('ui-state-highlight').append(\"It appears something went wrong with PayPal. Please <a href='#' onClick='myControl.ext.convertSessionToOrder.utilities.handleChangeFromPayPalEC();'>Click Here</a> to choose an alternate payment method.\")",2000);
+				}
+			},		
+
+
+//executing this will not only return which items have had an inventory update (in a pretty format) but also create the dispatches
+// to update the cart and then to actually update it as well.
+// the individual cart update posts (there may be multiple) go without the callback. If callback is added, a ping to execute it is run.
+// !!! is this necessary? Doesn't the inventory check actually modify the cart? look in to this.
+		handleInventoryUpdate : {
+
+				onSuccess : function(tagObj)	{
+
+//					myControl.util.dump('BEGIN myControl.ext.convertSessionToOrder.callbacks.handleInventoryUpdate.onSuccess');
+					var r = false; //if false is returned, then no inventory update occured.
+	//				var L = myControl.model.countProperties(myControl.data[tagObj.datapointer]);
+					if(!$.isEmptyObject(myControl.data[tagObj.datapointer]) && !$.isEmptyObject(myControl.data[tagObj.datapointer]['%changes']))	{
+						myControl.util.dump(' -> adjustments are present');
+						r = "<div id='inventoryErrors'>It appears that some inventory adjustments needed to be made:<ul>";
+						for(var key in myControl.data[tagObj.datapointer]['%changes']) {
+							r += "<li>sku: "+key+" was set to "+myControl.data[tagObj.datapointer]['%changes'][key]+" due to availability<\/li>";
+							myControl.ext.convertSessionToOrder.calls.cartItemUpdate.init({"stid":key,"quantity":myControl.data[tagObj.datapointer]['%changes'][key]});
+							}
+						r += "<\/ul><\/div>";
+						
+						
+						$('#globalMessaging').toggle(true).append(myControl.util.formatMessage({'message':r,'uiIcon':'alert'}));
+
+						}
+
+
+_gaq.push(['_trackEvent','Checkout','App Event','Cart updated - inventory adjusted to reflect availability']);
+
+					return r;
+					
+					},
+				onError : function(d)	{
+					myControl.util.dump('BEGIN myControl.ext.convertSessionToOrder.callbacks.handleInventoryUpdate.onError - ERROR!');
+					myControl.ext.convertSessionToOrder.panelContent.paymentOptions();
+//global errors are emptied when 'complete order' is pushed, so do not empty in the responses or any other errors will be lost.
+					$('#globalMessaging').append(myControl.util.getResponseErrors(d)).toggle(true);
+					}
+				},	//handleInventoryUpdate
+
+/*
+this gets executed after the server side validating is run.
+success would mean the checkout has successfully validated.
+error would mean something was not complete. 
+ -> In theory, we shouldn't get errors often because the client side validation should handle most, if not all, errors.
+*/
+		finishedValidatingCheckout : {
+			onSuccess : function(tagObj)	{
+				myControl.util.dump('BEGIN myControl.ext.convertSessionToOrder.callbacks.finishedValidatingCheckout.onSuccess');
+//if paypal is selected but a valid token doesn't exist, route to paypal.
+				if($("#chkout-payby_PAYPALEC").is(':checked') && !myControl.data.cartItemsList.cart['payment-pt'])	{
+					myControl.ext.store_checkout.calls.cartPaypalSetExpressCheckout.init();
+					}
+				else	{
+					myControl.ext.store_checkout.calls.cartOrderCreate.init("checkoutSuccess");
+					}
+				myControl.model.dispatchThis('immutable');
+
+
+_gaq.push(['_trackEvent','Checkout','App Event','Server side validation passed']);
+
+
+				},
+			onError : function(responseData,uuid)	{
+				$('#chkoutPlaceOrderBtn').removeAttr('disabled').removeClass('ui-state-disabled loadingButtonBg'); //make place order button appear and be clickable.
+				responseData['_rtag'] = $.isEmptyObject(responseData['_rtag']) ? {} : responseData['_rtag'];
+				responseData['_rtag'].targetID = 'chkoutSummaryErrors';
+				myControl.ext.store_checkout.util.showServerErrors(responseData,uuid);
+				
+_gaq.push(['_trackEvent','Checkout','App Event','Server side validation failed']);
+
+
 				}
 			}
+
 		}, //callbacks
 
 		
@@ -297,20 +378,20 @@ P.orderID
 P.sessionID (this would be the sessionID associated w/ the order, not the newly generated session/cart id - reset immediately after checkout )
 P.datapointer - pointer to cartOrderCreate
 
-note - the order object is available at app.data['order|'+P.orderID]
+note - the order object is available at myControl.data['order|'+P.orderID]
 */
 		checkoutCompletes : [],
 
 
-////////////////////////////////////   						util [u]			    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+////////////////////////////////////   						utilities			    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
-		u : {
+		util : {
 //when a country is selected, the required attribute must be added or dropped from state/province.
 //this is important because the browser itself will indicate which fields are required.
 //some countries do not have state/province, so for international it is automatically not required.
 			countryChange : function(type,country)	{
-//				app.u.dump('BEGIN convertSessionToOrder.uities.countryChange. type: '+type+' and country: '+country)
+//				myControl.util.dump('BEGIN convertSessionToOrder.utilities.countryChange. type: '+type+' and country: '+country)
 				if(country == 'US')	{
 					$('#data-'+type+'_state').attr('required','required');
 					}
@@ -319,47 +400,12 @@ note - the order object is available at app.data['order|'+P.orderID]
 					}
 				}, //countryChange
 
-//NOTE TO SELF:
-//use if/elseif for payments with special handling (cc, po, etc) and then the else should handle all the other payment types.
-//that way if a new payment type is added, it's handled (as long as there's no extra inputs).
-			buildPaymentQ : function()	{
-//				app.u.dump("BEGIN store_checkout.u.buildPaymentQ");
-				var payby = $('input:radio[name="want/payby"]:checked').val()
-				app.u.dump(" -> payby: "+payby);
-				if(payby.indexOf('WALLET') == 0)	{
-					app.ext.store_checkout.calls.cartPaymentQ.init($.extend({'cmd':'insert'},app.ext.store_checkout.u.getWalletByID(payby)));
-//					app.u.dump(app.ext.store_checkout.u.getWalletByID (payby));
-					}
-				else if(payby == 'CREDIT')	{
-					app.ext.store_checkout.calls.cartPaymentQ.init({"cmd":"insert","TN":"CREDIT","cc":$('#payment-cc').val(),"cv":$('#payment-cv').val(),"yy":$('#payment-yy').val(),"mm":$('#payment-mm').val()});
-					}				
-				else if(payby == 'PO')	{
-					app.ext.store_checkout.calls.cartPaymentQ.init({"cmd":"insert","TN":"PO","po":$('#payment-po').val()});
-					}				
-				else if(payby == 'ECHECK')	{
-					app.ext.store_checkout.calls.cartPaymentQ.init({
-"cmd":"insert",
-"TN":"ECHECK",
-"ea":$('#paymentea').val(),
-"er":$('#paymenter').val(),
-"en":$('#paymenten').val(),
-"eb":$('#paymenteb').val(),
-"es":$('#paymentes').val(),
-"ei":$('#paymentei').val()
-						});
-					}
-				else	{
-					app.ext.store_checkout.calls.cartPaymentQ.init({"cmd":"insert","TN":payby });
-					}
-				},
-
-
 //pass in either 'bill' or 'ship' to determine if any predefined addresses for that type exist.
 //buyerAddressList data should already have been retrieved by the time this is executed.
 			buyerHasPredefinedAddresses : function(TYPE)	{
 				var r; //What is returned. TFU.  U = unknown (no TYPE)
 				if(TYPE)	{
-					if(app.data.buyerAddressList && !$.isEmptyObject(app.data.buyerAddressList['@'+TYPE]))	{r = true}
+					if(myControl.data.buyerAddressList && !$.isEmptyObject(myControl.data.buyerAddressList['@'+TYPE]))	{r = true}
 					else	{r = false}
 					}
 				return r;
@@ -369,42 +415,42 @@ note - the order object is available at app.data['order|'+P.orderID]
 //appends addresses to a fieldset based on TYPE (bill or ship)
 
 			addressListOptions : function(TYPE)	{
-//				app.u.dump("BEGIN store_checkout.u.addressListOptions ("+TYPE+")");
+				myControl.util.dump("BEGIN sharedCheckoutUtilities.addressListOptions ("+TYPE+")");
 
 				var r = "";  //used for what is returned
 				if(TYPE && this.buyerHasPredefinedAddresses(TYPE))	{
 
-var $a; //a paticular address, set once within the loop. shorter that app.data... each reference
+var $a; //a paticular address, set once within the loop. shorter that myControl.data... each reference
 var selAddress = false; //selected address. if one has already been selected, it's used. otherwise, _is_default is set as value.
-var lctype = TYPE.toLowerCase();
+			
 //if an address has already been selected, highlight it.  if not, use default.
-if(app.data.cartDetail && app.data.cartDetail[lctype] && app.data.cartDetail[lctype].shortcut)	{
-	selAddress = app.data.cartDetail[lctype].shortcut;								
+if(myControl.util.isSet(myControl.data.cartItemsList.cart['data.selected_'+TYPE.toLowerCase()+'_id']))	{
+	selAddress = myControl.data.cartItemsList.cart['data.selected_'+TYPE.toLowerCase()+'_id'];								
 	}
 else	{
-	selAddress = app.ext.store_checkout.u.determinePreferredAddress(TYPE);
+	selAddress = myControl.ext.store_checkout.util.determinePreferredAddress(TYPE);
 	}
 
-var L = app.data.buyerAddressList['@'+lctype].length;
-//app.u.dump(" -> # addresses: "+L);
-//app.u.dump(" -> selectedAddressID = "+selAddress);
+var L = myControl.data.buyerAddressList['@'+TYPE].length;
+//myControl.util.dump(" -> # addresses: "+L);
+//myControl.util.dump(" -> selectedAddressID = "+selAddress);
 
 for(var i = 0; i < L; i += 1)	{
-	a = app.data.buyerAddressList['@'+lctype][i];
-//	app.u.dump(" -> ID = "+a['_id']);
+	a = myControl.data.buyerAddressList['@'+TYPE][i];
+//	myControl.util.dump(" -> ID = "+a['_id']);
 	r += "<address class='pointer ui-state-default ";
 //if an address has already been selected, add appropriate class.
 	if(selAddress == a['_id'])	{
-//		app.u.dump(" -> MATCH!");
+//		myControl.util.dump(" -> MATCH!");
 		r += ' ui-state-active';
 		}
 //if no predefined address is selected, add approriate class to account default address
 	else if(a['_is_default'] == 1 && selAddress == false)	{
 		r += ' ui-state-active ';
-//		app.u.dump(" -> no address selected. using default. ");
+//		myControl.util.dump(" -> no address selected. using default. ");
 		}
 							
-	r += "' data-addressClass='"+TYPE+"' data-addressId='"+a['_id']+"' onClick='app.ext.store_checkout.u.selectPredefinedAddress(this);' id='"+TYPE+"_address_"+a['_id']+"'>";
+	r += "' data-addressClass='"+TYPE+"' data-addressId='"+a['_id']+"' onClick='myControl.ext.store_checkout.util.selectPredefinedAddress(this);' id='"+TYPE+"_address_"+a['_id']+"'>";
 	r +=a[TYPE+'_firstname']+" "+a[TYPE+'_lastname']+"<br \/>";
 	r +=a[TYPE+'_address1']+"<br \/>";
 	if(a[TYPE+'_address2'])	{r +=a[TYPE+'_address2']+"<br \/>"}
@@ -412,11 +458,11 @@ for(var i = 0; i < L; i += 1)	{
 //state, zip and country may not be populated. check so 'undef' isn't written to screen.
 	if(a[TYPE+'_state']) {r += " "+a[TYPE+'_state']+", "}
 	if(a[TYPE+'_zip'])	{r +=a[TYPE+'_zip']}
-	if(app.u.isSet(a[TYPE+'_country']))	{r += "<br \/>"+a[TYPE+'_country']}
+	if(myControl.util.isSet(a[TYPE+'_country']))	{r += "<br \/>"+a[TYPE+'_country']}
 	r += "<\/address>";
 	}
 var parentID = (TYPE == 'ship') ? 'chkoutShipAddressFieldset' : 'chkoutBillAddressFieldset';
-r += "<address class='pointer' onClick='$(\"#"+TYPE+"AddressUL\").toggle(true); app.ext.store_checkout.u.removeClassFromChildAddresses(\""+parentID+"\");'>Enter new address or edit selected address<\/address>";
+r += "<address class='pointer' onClick='$(\"#"+TYPE+"AddressUL\").toggle(true); myControl.ext.store_checkout.util.removeClassFromChildAddresses(\""+parentID+"\");'>Enter new address or edit selected address<\/address>";
 					
 					}
 				else	{
@@ -430,18 +476,19 @@ r += "<address class='pointer' onClick='$(\"#"+TYPE+"AddressUL\").toggle(true); 
 
 //will get the items from a cart and return them as links. used for social marketing.
 			cartContentsAsLinks : function(datapointer)	{
-//				app.u.dump('BEGIN convertSessionToOrder.uities.cartContentsAsLinks.');
-//				app.u.dump(' -> datapointer = '+datapointer);
+//				myControl.util.dump('BEGIN convertSessionToOrder.utilities.cartContentsAsLinks.');
+//				myControl.util.dump(' -> datapointer = '+datapointer);
 				var r = "";
-				var L = app.model.countProperties(app.data.cartDetail['@ITEMS']);
-//				app.u.dump(' -> # items in cart: '+L);
+				var L = myControl.model.countProperties(myControl.data[datapointer].cart.stuff);
+//				myControl.util.dump(' -> # items in cart: '+L);
 				for(var i = 0; i < L; i += 1)	{
+//					myControl.util.dump(' -> sku = '+myControl.data[datapointer].cart.stuff[i].sku);
 //skip coupons.
-					if(app.data[datapointer]['@ITEMS'][i].sku[0] != '%')	{
-						r += "http://"+app.vars.sdomain+"/product/"+app.data[datapointer]['@ITEMS'][i].sku+"/\n";
+					if(myControl.data[datapointer].cart.stuff[i].sku[0] != '%')	{
+						r += "http://"+myControl.vars.sdomain+"/product/"+myControl.data[datapointer].cart.stuff[i].sku+"/\n";
 						}
 					}
-//				app.u.dump('links = '+r);
+//				myControl.util.dump('links = '+r);
 				return r;
 				}, //cartContentsAsLinks
 
@@ -456,9 +503,9 @@ r += "<address class='pointer' onClick='$(\"#"+TYPE+"AddressUL\").toggle(true); 
 			
 //if checkout succeded but payment failed (cash, cc fail, PO, etc) then this function gets executed.
 			checkoutSuccessPaymentFailure : function(paycode,payby)	{
-				app.u.dump('BEGIN store_checkout.u.checkoutSuccessPaymentFailure');
-				app.u.dump(' -> paycode = '+paycode);
-				app.u.dump(' -> payby = '+payby);
+				myControl.util.dump('BEGIN store_checkout.util.checkoutSuccessPaymentFailure');
+				myControl.util.dump(' -> paycode = '+paycode);
+				myControl.util.dump(' -> payby = '+payby);
 				var r;
 
 /*
@@ -495,25 +542,58 @@ _gaq.push(['_trackEvent','Checkout','App Event','Payment failure']);
 			showServerErrors : function(responseData,uuid)	{
 				if(responseData['@issues'])	{
 					var L = responseData['@issues'].length;
-	//				app.u.dump('BEGIN store_checkout.u.showServerErrors. there are '+L+' errors');
+	//				myControl.util.dump('BEGIN store_checkout.util.showServerErrors. there are '+L+' errors');
 					var $errorDiv = responseData['_rtag'].targetID ? $('#'+responseData['_rtag'].targetID) : $('#chkoutSummaryErrors')
 					$errorDiv.empty();
 					if($errorDiv.length == 0)
-						$errorDiv = $("<p \/>").attr("id","chkoutSummaryErrors").prependTo($('#zCheckoutFrm'));
+						$errorDiv = $("<p \/>").attr("id","chkoutSummaryErrors").addClass("zwarn displayNone").prependTo($('#zCheckoutFrm'));
 					var o = "<ul>"; //responseData['_msg_1_txt']+
 					
 					for(var i = 0; i < L; i += 1)	{
 						o += "<li>"+responseData['@issues'][i][3]+"<\/li>";
 						}
 					o += "<\/ul>";
-					$errorDiv.append(app.u.formatMessage({"message":o,"uiClass":"error","uiIcon":"alert"})).toggle(true);
+					$errorDiv.append(myControl.util.formatMessage({"message":o,"uiClass":"error","uiIcon":"alert"})).toggle(true);
 					}
 				else	{
-					app.u.throwMessage(responseData);
+					myControl.util.handleErrors(responseData,uuid)
 					}
 				}, //showServerErrors
 
 
+
+//pretty straightforward. If a cid is set, the session has been authenticated.
+//if the cid is in the cart/local but not the control, set it. most likely this was a cart passed to us where the user had already logged in or (local) is returning to the checkout page.
+//if no cid but email, they are a guest.
+//if logged in via facebook, they are a thirdPartyGuest.
+//this could easily become smarter to take into account the timestamp of when the session was authenticated.
+			
+			determineAuthentication : function(){
+				var r = 'none';
+//was running in to an issue where cid was in local, but user hadn't logged in to this session yet, so now both cid and username are used.
+				if(myControl.data.appBuyerLogin && myControl.data.appBuyerLogin.cid)	{r = 'authenticated'}
+				else if(myControl.vars.cid && myControl.util.getUsernameFromCart())	{r = 'authenticated'}
+				else if(myControl.model.fetchData('cartItemsList') && myControl.util.isSet(myControl.data.cartItemsList.cart.cid))	{
+					r = 'authenticated';
+					myControl.vars.cid = myControl.data.cartItemsList.cart.cid;
+					}
+//need to run third party checks prior to default 'guest' check because data.bill_email will get set for third parties
+//and all third parties would get 'guest'
+				else if(typeof FB != 'undefined' && !jQuery.isEmptyObject(FB) && FB['_userStatus'] == 'connected')	{
+					r = 'thirdPartyGuest';
+//					myControl.thirdParty.fb.saveUserDataToSession();
+					}
+				else if(myControl.model.fetchData('cartItemsList') && myControl.data.cartItemsList.cart['data.bill_email'])	{
+					r = 'guest';
+					}
+				else	{
+					//catch.
+					}
+//				myControl.util.dump('myControl.sharedCheckoutUtilities.determineAuthentication run. authstate = '+r); 
+
+				return r;
+				},
+			
 	
 
 /*
@@ -522,24 +602,24 @@ sometimes it isn't. sometimes, apparently, it's set more than once.
 this function closely mirrors core logic.
 */
 			determinePreferredAddress : function(TYPE)	{
-//				app.u.dump("BEGIN store_checkout.u.determinePreferredAddress  ("+TYPE+")");
+//				myControl.util.dump("BEGIN sharedCheckoutUtilities.determinePreferredAddress  ("+TYPE+")");
 				var r = false; //what is returned
 				if(!TYPE){ r = false}
 				else	{
-					var L = app.data.buyerAddressList['@'+TYPE].length;
+					var L = myControl.data.buyerAddressList['@'+TYPE].length;
 //look to see if a default is set. if so, take the first one.
 					for(var i = 0; i < L; i += 1)	{
-						if(app.data.buyerAddressList['@'+TYPE][i]['_is_default'] == 1)	{
-							r = app.data.buyerAddressList['@'+TYPE][i]['_id'];
+						if(myControl.data.buyerAddressList['@'+TYPE][i]['_is_default'] == 1)	{
+							r = myControl.data.buyerAddressList['@'+TYPE][i]['_id'];
 							break; //no sense continuing the loop.
 							}
 						}
 //if no default is set, use the first address.
 					if(r == false)	{
-						r =app.data.buyerAddressList['@'+TYPE][0]['_id']
+						r =myControl.data.buyerAddressList['@'+TYPE][0]['_id']
 						}
 					}
-//				app.u.dump("address id = "+r);
+//				myControl.util.dump("address id = "+r);
 				
 				return r;
 				},
@@ -553,29 +633,29 @@ this function closely mirrors core logic.
 //executes call which updates form fields.
 //x = element object (this)
 			selectPredefinedAddress : function(addressObject)	{
-//				app.u.dump("BEGIN app.ext.convertSessionToOrder.u.selectPredefinedAddress");
+//				myControl.util.dump("BEGIN myControl.ext.convertSessionToOrder.util.selectPredefinedAddress");
 				var $x = $(addressObject);
 				var addressClass = $x.attr('data-addressClass'); //ship or bill
 
 				$("#"+addressClass+"AddressUL").toggle(false); //turns off display of new address form
 				
-				app.ext.convertSessionToOrder.u.removeClassFromChildAddresses($x.parent().attr('id'));
+				myControl.ext.convertSessionToOrder.util.removeClassFromChildAddresses($x.parent().attr('id'));
 				$x.addClass('selected  ui-state-active ui-corner-all');
 //wtf? when attempting to pass {"data."+addressClass+"_id" : $x.attr('data-addressId')} directly into the setSession function, it barfed. creating the object then passing it in works tho. odd.
 				var idObj = {};
-				idObj[addressClass+"/shortcut"] = $x.attr('data-addressId');  //for whatever reason, using this as the key in the setsession function caused a js error. set data.bill_id/data.ship_id = DEFAULT (or whatever the address id is)
+				idObj["data.selected_"+addressClass+"_id"] = $x.attr('data-addressId');  //for whatever reason, using this as the key in the setsession function caused a js error. set data.bill_id/data.ship_id = DEFAULT (or whatever the address id is)
 				
-//				app.u.dump(" -> addressClass = "+addressClass);
-//				app.u.dump(" -> addressID = "+$x.attr('data-addressId'));
+//				myControl.util.dump(" -> addressClass = "+addressClass);
+//				myControl.util.dump(" -> addressID = "+$x.attr('data-addressId'));
 //add this to the pdq
-				app.calls.cartSet.init(idObj);
+				myControl.calls.cartSet.init(idObj);
 
 //copy the billing address from the ID into the form fields.
-				app.ext.store_checkout.u.setAddressFormFromPredefined(addressClass,$x.attr('data-addressId'));
-				$('#data-bill_email').val() == app.data.cartDetail['bill/email']; //for passive, need to make sure email is updated too.
+				myControl.ext.store_checkout.util.setAddressFormFromPredefined(addressClass,$x.attr('data-addressId'));
+				$('#data-bill_email').val() == myControl.data.cartItemsList.cart['data.bill_email']; //for passive, need to make sure email is updated too.
 //copy all the billing address fields to the shipping address fields, if appropriate.
-				if($('#want-bill_to_ship').val() == '1') {
-					app.ext.store_checkout.u.setShipAddressToBillAddress();
+				if($('#chkout-bill_to_ship').val() == '1') {
+					myControl.ext.store_checkout.util.setShipAddressToBillAddress();
 					}
 /*
 rather than going through and picking out just the address fields, send everything up.
@@ -583,24 +663,24 @@ This was done because it is:
 1. lighter
 2. one more way of collecting as much of the data as possible in case checkout is abandoned.
 */
-				app.ext.convertSessionToOrder.calls.saveCheckoutFields.init(); 
+				myControl.ext.convertSessionToOrder.calls.saveCheckoutFields.init(); 
 
 //for billing addresses, the payment panel must be updated.
 				if(addressClass == 'bill')	{
-					app.ext.convertSessionToOrder.u.handlePanel('chkoutPayOptions'); //empty panel. set to loading.
-					app.ext.store_checkout.calls.appPaymentMethods.init("updateCheckoutPayOptions");
+					myControl.ext.convertSessionToOrder.util.handlePanel('chkoutPayOptions'); //empty panel. set to loading.
+					myControl.ext.store_checkout.calls.appPaymentMethods.init("updateCheckoutPayOptions");
 					}
 //for shipping addresses, the shipping methods panel needs updating. if predefined addresses exist, no 'ship to bill' checkbox appears.
 				else if(addressClass == 'ship')	{
-					app.ext.convertSessionToOrder.u.handlePanel('chkoutShipMethods'); //empty panel. set to loading.
-					app.ext.store_checkout.calls.cartShippingMethodsWithUpdate.init("updateCheckoutShipMethods"); //update shipping methods and shipping panel
+					myControl.ext.convertSessionToOrder.util.handlePanel('chkoutShipMethods'); //empty panel. set to loading.
+					myControl.ext.store_checkout.calls.cartShippingMethodsWithUpdate.init("updateCheckoutShipMethods"); //update shipping methods and shipping panel
 					}
 				else	{
-					app.u.dump(" -> UNKNOWN class for address selection. should be bill or ship. is: "+addressClass);
+					myControl.util.dump(" -> UNKNOWN class for address selection. should be bill or ship. is: "+addressClass);
 					}
 
-				app.calls.refreshCart.init({"callback":"updateCheckoutOrderContents","extension":"convertSessionToOrder"},'immutable');  //updates cart object and reloads order contents panel.
-				app.model.dispatchThis('immutable');
+				myControl.calls.refreshCart.init({"callback":"updateCheckoutOrderContents","extension":"convertSessionToOrder"},'immutable');  //updates cart object and reloads order contents panel.
+				myControl.model.dispatchThis('immutable');
 
 _gaq.push(['_trackEvent','Checkout','User Event','Pre-defined address selected ('+addressClass+')']);
 
@@ -610,7 +690,7 @@ _gaq.push(['_trackEvent','Checkout','User Event','Pre-defined address selected (
 //sets the values of the shipping address to what is set in the billing address fields.
 //can't recycle the setAddressFormFromPredefined here because it may not be a predefined address.
 			setShipAddressToBillAddress : function()	{
-//				app.u.dump('BEGIN store_checkout.u.setShipAddressToBillAddress');
+//				myControl.util.dump('BEGIN sharedCheckoutUtilities.setShipAddressToBillAddress');
 				$('#chkoutBillAddressFieldset > ul').children().children().each(function() {
 					if($(this).is(':input')){$('#'+this.id.replace('bill_','ship_')).val(this.value)}
 					});
@@ -619,33 +699,33 @@ _gaq.push(['_trackEvent','Checkout','User Event','Pre-defined address selected (
 
 //allows for setting of 'ship' address when 'ship to bill' is clicked and a predefined address is selected.
 			setAddressFormFromPredefined : function(addressType,addressId)	{
-//				app.u.dump('BEGIN store_checkout.u.setAddressFormFromPredefined');
-//				app.u.dump(' -> address type = '+addressType);
-//				app.u.dump(' -> address id = '+addressId);
+//				myControl.util.dump('BEGIN sharedCheckoutUtilities.setAddressFormFromPredefined');
+//				myControl.util.dump(' -> address type = '+addressType);
+//				myControl.util.dump(' -> address id = '+addressId);
 				
-				var L = app.data.buyerAddressList['@'+addressType].length
-				var a;
+				var L = myControl.data.buyerAddressList['@'+addressType].length
+				var a,i;
 				var r = false;
 //looks through predefined addresses till it finds a match for the address id. sets a to address object.
-				for(var i = 0; i < L; i += 1)	{
-					if(app.data.buyerAddressList['@'+addressType][i]['_id'] == addressId){
-						a = app.data.buyerAddressList['@'+addressType][i];
+				for(i = 0; i < L; i += 1)	{
+					if(myControl.data.buyerAddressList['@'+addressType][i]['_id'] == addressId){
+						a = myControl.data.buyerAddressList['@'+addressType][i];
 						r = true;
 						break;
 						}
 					}
 				
-//				app.u.dump(' -> a = ');
-//				app.u.dump(a);
+//				myControl.util.dump(' -> a = ');
+//				myControl.util.dump(a);
 				$('#data-'+addressType+'_address1').val(a[addressType+'_address1']);
-				if(app.u.isSet(a[addressType+'_address2'])){$('#data-'+addressType+'_address2').val(a[addressType+'_address2'])};
+				if(myControl.util.isSet(a[addressType+'_address2'])){$('#data-'+addressType+'_address2').val(a[addressType+'_address2'])};
 				$('#data-'+addressType+'_city').val(a[addressType+'_city']);
 				$('#data-'+addressType+'_state').val(a[addressType+'_state']);
 				$('#data-'+addressType+'_zip').val(a[addressType+'_zip']);
 				$('#data-'+addressType+'_country').val(a[addressType+'_country'] ? a[addressType+'_country'] : "US"); //country is sometimes blank. This appears to mean it's a US company?
 				$('#data-'+addressType+'_firstname').val(a[addressType+'_firstname']);
 				$('#data-'+addressType+'_lastname').val(a[addressType+'_lastname']);
-				if(app.u.isSet(a[addressType+'_phone'])){$('#data-'+addressType+'_phone').val(a[addressType+'_phone'])};
+				if(myControl.util.isSet(a[addressType+'_phone'])){$('#data-'+addressType+'_phone').val(a[addressType+'_phone'])};
 				return r;
 				}, //setAddressFormFromPredefined
 
@@ -653,9 +733,9 @@ _gaq.push(['_trackEvent','Checkout','User Event','Pre-defined address selected (
 
 //if checkout succeded but payment failed (cash, cc fail, PO, etc) then this function gets executed.
 			checkoutSuccessPaymentFailure : function(paycode,payby)	{
-				app.u.dump('BEGIN app.ext.store_checkout.u.checkoutSuccessPaymentFailure');
-				app.u.dump(' -> paycode = '+paycode);
-				app.u.dump(' -> payby = '+payby);
+				myControl.util.dump('BEGIN myControl.ext.store_checkout.util.checkoutSuccessPaymentFailure');
+				myControl.util.dump(' -> paycode = '+paycode);
+				myControl.util.dump(' -> payby = '+payby);
 				var r;
 
 /*
@@ -687,116 +767,74 @@ _gaq.push(['_trackEvent','Checkout','App Event','Payment failure']);
 
 
 
-//This will tell if there's a paypal tender in the paymentQ. doesn't check validity or anything like that. a quick function to be used when re-rendering panels.
+//only check the cart object. If the uri is checked here, then when 'nukepaypal' is executed and checkout is re-initiated, the uri vars will trigger the paypal code.
+//plus, the token is deleted from the cart when the cart is updated, so we should check there to make sure it is/is not set.
 			thisSessionIsPayPal : function()	{
-				return (this.modifyPaymentQbyTender('PAYPALEC',null)) ? true : false;
-				},
-//Will check the payment q for a valid paypal transaction. Used when a buyer leaves checkout and returns during the checkout init process.
-//according to B, there will be only 1 paypal tender in the paymentQ.
-			aValidPaypalTenderIsPresent : function()	{
-				app.u.dump("BEGIN store_checkout.aValidPaypalTenderIsPresent");
-				return this.modifyPaymentQbyTender('PAYPALEC',function(PQI){
-					return (Math.round(+new Date(PQI.TIMESTAMP)) > +new Date()) ? true : false;
-					});
-				},
-/*
-once paypalEC has been approved by paypal, a lot of form fields lock down, but the user may decide to change
-payment methods or they may add something new to the cart. If they do, execute this function. It will remove the paypal params from the session/cart and the re-initiate checkout. Be sure to do an immutable dispatch after executing this if value returned is > 0.
-note - dispatch isn't IN the function to give more control to developer. (you may want to execute w/ a group of updates)
-*/
-			nukePayPalEC : function() {
-//				app.u.dump("BEGIN store_checkout.u.nukePayPalEC");
-				$('#returnFromThirdPartyPayment').hide(); //used to display a 'welcome back' message. should be hidden if paypal is no longer active payment.
-				app.ext.convertSessionToOrder.vars['payment-pt'] = null;
-				app.ext.convertSessionToOrder.vars['payment-pi'] = null;
-				return this.modifyPaymentQbyTender('PAYPALEC',function(PQI){
-					app.ext.store_checkout.calls.cartPaymentQ.init({'cmd':'delete','ID':PQI.ID},{'callback':'suppressErrors'}); //This kill process should be silent.
-					});
-				},
-
-//pass in a tender/TN [CASH, PAYPALEC, CREDIT] and an array of matching id's is returned.
-//used for when a paypal EC payment exists and has to be removed.
-//if someFunction is set then that function will get executed over each match.
-//the value returned gets added to an array, which is returned by this function.
-//the entire lineitem in the paymentQ is passed in to someFunction.
-			modifyPaymentQbyTender : function(tender,someFunction){
-//				app.u.dump("BEGIN store_checkout.u.modifyPaymentQbyTender");
-				var inc = 0; //what is returned if someFunction not present or returns nothing. # of items in paymentQ affected.
-				var r = new Array(); //what is returned if someFunction returns anything.
-				if(tender && app.data.cartDetail && app.data.cartDetail['@PAYMENTQ'])	{
-//					app.u.dump(" -> all vars present. tender: "+tender+" and typeof someFunction: "+typeof someFunction);
-					var L = app.data.cartDetail['@PAYMENTQ'].length;
-//					app.u.dump(" -> paymentQ.length: "+L);
-					for(var i = 0; i < L; i += 1)	{
-//						app.u.dump(" -> "+i+" TN: "+app.data.cartDetail['@PAYMENTQ'][i].TN);
-						if(app.data.cartDetail['@PAYMENTQ'][i].TN == tender)	{
-							inc += 1;
-							if(typeof someFunction == 'function')	{
-								r.push(someFunction(app.data.cartDetail['@PAYMENTQ'][i]))
-								}
-							}
-						}
-					}
-				else	{
-					app.u.dump("WARNING! getPaymentQidByTender failed because tender ["+tender+"] not set or @PAYMENTQ does not exist.");
-					}
-//				app.u.dump(" -> num tender matches: "+r);
-				return (typeof someFunction == 'function') ? r : inc;
-				},
-			
-			
-			getWalletByID : function(ID)	{
-				var r = false;
-				if(app.data.buyerWalletList && app.data.buyerWalletList['@wallets'].length)	{
-					var L = app.data.buyerWalletList['@wallets'].length;
-					for(var i = 0; i < L; i += 1)	{
-						if(ID == app.data.buyerWalletList['@wallets'][i].ID)	{
-							r = app.data.buyerWalletList['@wallets'][i];
-							break;
-							}
-						}
+//			myControl.util.dump("BEGIN convertSessionToCheckout.utilities.thisSessionIsPayPal");
+				var r = false; //what is returned.  will be set to true if paypalEC approved.
+	//if token and payerid are set in cart, then likely the user returned from paypal and then browsed more.
+				token = myControl.data.cartItemsList.cart['payment-pt'];
+				payerid = myControl.data.cartItemsList.cart['payment-pi'];
+				myControl.util.dump("paypal -> token: "+token+" and payerid: "+payerid);
+				if(token && payerid)	{
+					r = true;
 					}
 				return r;
 				},
-			
-			
+
+
+/*
+once paypalEC has been approved by paypal, a lot of form fields lock down, but the user may decide to change
+payment methods or they may add something new to the cart. If they do, execute this function. It will remove the paypal params from the session/cart and the re-initiate checkout. Be sure to do an immutable dispatch after executing this.
+note - dispatch isn't IN the function to give more control to developer. (you may want to execute w/ a group of updates)
+*/
+			nukePayPalEC : function() {
+				if(myControl.data.cartItemsList)	{
+					myControl.data.cartItemsList.cart['payment-pt'] = null;
+					myControl.data.cartItemsList.cart['payment-pi'] = null;
+					}
+				myControl.calls.cartSet.init({'payment-pt':null,'payment-pi':null,'chkout.payby':null}); //nuke vars
+				return 1;//this is the # of dispatches added to the q.
+				},
+
+
 //for tax to accurately be computed, several fields may be required.
 //this function checks to see if they're populated and, if so, returns true.
 //also used in cartPaypalSetExpressCheckout call to determine whether or not address should be requested on paypal side or not.
 			taxShouldGetRecalculated : function()	{
-//				app.u.dump("BEGIN app.ext.store_checkout.u.taxShouldGetRecalculated");
+				myControl.util.dump("BEGIN myControl.ext.store_checkout.util.taxShouldGetRecalculated");
 				var r = true;//what is returned. set to false if errors > 0
 				var errors = 0; //used to track number of fields not populated.
 				
 				if(!$('#data-bill_address1').val())	{
-//					app.u.dump(" -> address is blank");
+					myControl.util.dump(" -> address is blank");
 					errors += 1;
 					}
 				if(!$('#data-bill_city').val()){
-//					app.u.dump(" -> city is blank");
+					myControl.util.dump(" -> city is blank");
 					errors += 1;
 					}
 				if(!$('#data-bill_state').val()){
-//					app.u.dump(" -> state is blank");
+					myControl.util.dump(" -> state is blank");
 					errors += 1;
 					}
 				if(!$('#data-bill_zip').val()){
-//					app.u.dump(" -> zip is blank");
+					myControl.util.dump(" -> zip is blank");
 					errors += 1;
 					}
 				if(!$('#data-bill_country').val()){
-//					app.u.dump(" -> country is blank");
+					myControl.util.dump(" -> country is blank");
 					errors += 1;
 					}
 				if(errors > 0)	{
 					r = false;
 					}
-//				app.u.dump(" -> tax should be recalculated = "+r);
-//				app.u.dump("END app.ext.store_checkout.u.taxShouldGetRecalculated");
+//				myControl.util.dump(" -> tax should be recalculated = "+r);
+//				myControl.util.dump("END myControl.ext.store_checkout.util.taxShouldGetRecalculated");
 				return r;
 				} //taxShouldGetRecalculated
 
-			}, //util
+			}, //utilities
 
 
 
@@ -815,16 +853,16 @@ note - dispatch isn't IN the function to give more control to developer. (you ma
 //value is set to ISO and sent to API that way. however, cart object returned is in 'pretty'.
 //so a check occurs to set selectedCountry to the selected ISO value so it can be 'selected'
 			countriesAsOptions : function($tag,data)	{
-//				app.u.dump("BEGIN app.ext.convertSessionToOrder.renderFormats.countriesAsOptions");
-//				app.u.dump(" -> Country: "+data.value);
+//				myControl.util.dump("BEGIN myControl.ext.convertSessionToOrder.renderFormats.countriesAsOptions");
+//				myControl.util.dump(" -> Country: "+data.value);
 				var r = '';
-				var L = app.data.appCheckoutDestinations['@destinations'].length;
-//				app.u.dump(" -> number of countries = "+L);
+				var L = myControl.data.appCheckoutDestinations['@destinations'].length;
+//				myControl.util.dump(" -> number of countries = "+L);
 				for(var i = 0; i < L; i += 1)	{
-					r += "<option value='"+app.data.appCheckoutDestinations['@destinations'][i].ISO+"' ";
-					if(data.value == app.data.appCheckoutDestinations['@destinations'][i].Z)
+					r += "<option value='"+myControl.data.appCheckoutDestinations['@destinations'][i].ISO+"' ";
+					if(data.value == myControl.data.appCheckoutDestinations['@destinations'][i].Z)
 						r += " selected='selected' ";
-					r += ">"+app.data.appCheckoutDestinations['@destinations'][i].Z+"</option>";
+					r += ">"+myControl.data.appCheckoutDestinations['@destinations'][i].Z+"</option>";
 					}
 				
 				$tag.html(r);
@@ -832,10 +870,10 @@ note - dispatch isn't IN the function to give more control to developer. (you ma
 				
 				
 			secureLink : function($tag,data)	{
-//				app.u.dump('BEGIN app.ext.convertSessionToOrder.renderFormats.secureLink');
-//				app.u.dump(" -> data.windowName = '"+data.windowName+"'");
+//				myControl.util.dump('BEGIN myControl.ext.convertSessionToOrder.renderFormats.secureLink');
+//				myControl.util.dump(" -> data.windowName = '"+data.windowName+"'");
 //if data.windowName is set, the link will open a new tab/window. otherwise, it just changes the page/tab in focus.
-				if(app.u.isSet(data.windowName))
+				if(myControl.util.isSet(data.windowName))
 					$tag.click(function(){window.open(zGlobals.appSettings.https_app_url+$.trim(data.value)),data.windowName});
 				else
 					$tag.click(function(){window.location = zGlobals.appSettings.https_app_url+$.trim(data.value)});
@@ -843,8 +881,8 @@ note - dispatch isn't IN the function to give more control to developer. (you ma
 
 
 			orderStatusLink : function($tag,data)	{
-//				app.u.dump('BEGIN app.ext.convertSessionToOrder.renderFormats.orderStatusLink');
-				var orderSessionID = app.data['order|'+data.value].cart.id;
+//				myControl.util.dump('BEGIN myControl.ext.convertSessionToOrder.renderFormats.orderStatusLink');
+				var orderSessionID = myControl.data['order|'+data.value].cart.id;
 //				https://ssl.zoovy.com/s=sporks.zoovy.com/customer/order/status?cartid=SESSION&orderid=data.value
 				$tag.click(function(){window.location = zGlobals.appSettings.https_app_url+"customer/order/status?cartid="+orderSessionID+"&orderid="+data.value,'orderStatus'});
 				
@@ -854,17 +892,17 @@ note - dispatch isn't IN the function to give more control to developer. (you ma
 //is used in cart summary total during checkout.
 			shipInfoById : function($tag,data)	{
 				var o = '';
-//				app.u.dump('BEGIN app.renderFormats.shipInfo. (formats shipping for minicart)');
-//				app.u.dump(data);
-				var L = app.data.cartShippingMethods['@methods'].length;
+//				myControl.util.dump('BEGIN myControl.renderFormats.shipInfo. (formats shipping for minicart)');
+//				myControl.util.dump(data);
+				var L = myControl.data.cartShippingMethods['@methods'].length;
 				for(var i = 0; i < L; i += 1)	{
-//					app.u.dump(' -> method '+i+' = '+app.data.cartShippingMethods['@methods'][i].id);
-					if(app.data.cartShippingMethods['@methods'][i].id == data.value)	{
-						var pretty = app.u.isSet(app.data.cartShippingMethods['@methods'][i]['pretty']) ? app.data.cartShippingMethods['@methods'][i]['pretty'] : app.data.cartShippingMethods['@methods'][i]['name'];  //sometimes pretty isn't set. also, ie didn't like .pretty, but worked fine once ['pretty'] was used.
+//					myControl.util.dump(' -> method '+i+' = '+myControl.data.cartShippingMethods['@methods'][i].id);
+					if(myControl.data.cartShippingMethods['@methods'][i].id == data.value)	{
+						var pretty = myControl.util.isSet(myControl.data.cartShippingMethods['@methods'][i]['pretty']) ? myControl.data.cartShippingMethods['@methods'][i]['pretty'] : myControl.data.cartShippingMethods['@methods'][i]['name'];  //sometimes pretty isn't set. also, ie didn't like .pretty, but worked fine once ['pretty'] was used.
 						o = "<span class='orderShipMethod'>"+pretty+": <\/span>";
 //only show amount if not blank.
-						if(app.data.cartShippingMethods['@methods'][i].amount)	{
-							o += "<span class='orderShipAmount'>"+app.u.formatMoney(app.data.cartShippingMethods['@methods'][i].amount,' $',2,false)+"<\/span>";
+						if(myControl.data.cartShippingMethods['@methods'][i].amount)	{
+							o += "<span class='orderShipAmount'>"+myControl.util.formatMoney(myControl.data.cartShippingMethods['@methods'][i].amount,' $',2,false)+"<\/span>";
 							}
 						break; //once we hit a match, no need to continue. at this time, only one ship method/price is available.
 						}
@@ -873,60 +911,58 @@ note - dispatch isn't IN the function to give more control to developer. (you ma
 				}, //shipInfoById
 
 			shipMethodsAsOptions : function($tag,data)	{
-//				app.u.dump('BEGIN app.ext.convertSessionToOrder.formats.shipMethodsAsOptions');
+//				myControl.util.dump('BEGIN myControl.ext.convertSessionToOrder.formats.shipMethodsAsOptions');
 				var o = '';
 				var L = data.value.length;
 
 				var id,isSelectedMethod,safeid,shipName;  // id is actual ship id. safeid is id without any special characters or spaces. isSelectedMethod is set to true if id matches cart shipping id selected.
 				for(var i = 0; i < L; i += 1)	{
 					isSelectedMethod = false;
-					safeid = app.u.makeSafeHTMLId(data.value[i].id);
+					safeid = myControl.util.makeSafeHTMLId(data.value[i].id);
 					id = data.value[i].id;
 
 //whether or not this iteration is for the selected method should only be determined once, but is used on a couple occasions, so save to a var.
-					if(id == app.data.cartDetail['want/shipping_id'])	{
+					if(id == myControl.data.cartItemsList.cart['ship.selected_id'])	{
 						isSelectedMethod = true;
 						}
 
-//app.u.dump(' -> id = '+id+' and want/shipping_id = '+app.data.cartDetail['want/shipping_id']);
+//myControl.util.dump(' -> id = '+id+' and ship.selected_id = '+myControl.data.cartItemsList.cart['ship.selected_id']);
 					
-					shipName = app.u.isSet(data.value[i].pretty) ? data.value[i].pretty : data.value[i].name
+					shipName = myControl.util.isSet(data.value[i].pretty) ? data.value[i].pretty : data.value[i].name
 					
 					o += "<option "
 					if(isSelectedMethod)
 						o+= " selected='selected' ";
-					o += " value = '"+id+"' id='ship-selected_id_"+safeid+"' >"+shipName+" - "+app.u.formatMoney(data.value[i].amount,'$','',false)+"<\/option>";
+					o += " value = '"+id+"' id='ship-selected_id_"+safeid+"' >"+shipName+" - "+myControl.util.formatMoney(data.value[i].amount,'$','',false)+"<\/option>";
 					}
 				$tag.html(o);
 				},
 
 
-			walletName2Icon : function($tag,data)	{
-				$tag.addClass('paycon_'+data.value.substring(0,4).toLowerCase());
-				},
+
 
 //for displaying order balance in checkout order totals.
 //changes value to 0 for negative amounts. Yes, this can happen.			
 			orderBalance : function($tag,data)	{
 				var o = '';
 				var amount = data.value;
-//				app.u.dump('BEGIN app.renderFunctions.format.orderBalance()');
-//				app.u.dump('amount * 1 ='+amount * 1 );
+//				myControl.util.dump('BEGIN myControl.renderFunctions.format.orderBalance()');
+//				myControl.util.dump('amount * 1 ='+amount * 1 );
 //if the total is less than 0, just show 0 instead of a negative amount. zero is handled here too, just to avoid a formatMoney call.
 //if the first character is a dash, it's a negative amount.  JS didn't like amount *1 (returned NAN)
 				
 				if(amount * 1 <= 0){
-//					app.u.dump(' -> '+amount+' <= zero ');
+//					myControl.util.dump(' -> '+amount+' <= zero ');
 					o += data.bindData.currencySign ? data.bindData.currencySign : '$';
 					o += '0.00';
 					}
 				else	{
-//					app.u.dump(' -> '+amount+' > zero ');
-					o += app.u.formatMoney(amount,data.bindData.currencySign,'',data.bindData.hideZero);
+//					myControl.util.dump(' -> '+amount+' > zero ');
+					o += myControl.util.formatMoney(amount,data.bindData.currencySign,'',data.bindData.hideZero);
 					}
 				
 				$tag.text(o);  //update DOM.
-//				app.u.dump('END app.renderFunctions.format.orderBalance()');
+//				myControl.util.dump('END myControl.renderFunctions.format.orderBalance()');
 				} //orderBalance
 			} //renderFormats
 		
