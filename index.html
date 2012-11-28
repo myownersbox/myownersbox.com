@@ -136,7 +136,7 @@ $(function() {
 	$.support.cors = true;  //cross site scripting for non cors sites. will b needed for IE10. IE8 & 9 don't support xss well.
 	myControl = new zController({
 
-		"release":"20121128123317" //increment this with each change. should solve caching issues.
+		"release":"20121128141127" //increment this with each change. should solve caching issues.
 		},myExtensions);  //instantiate controller. handles all logic and communication between model and view.
 		
 	//instantiate wiki parser.
@@ -2010,11 +2010,11 @@ END CONFIGURATOR TEMPLATES
 </map>
 
 <map name="homeMenu">
-	<area shape="rect" coords="250,30,690,70" href="#customizer" alt="customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;">
-	<area shape="rect" coords="230,80,350,110" href="#top" alt="customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;">
-	<area shape="rect" coords="370,80,480,110" href="#top" alt="storeits" onClick="showContent('',{'pageType':'category','navcat':'.drawers'}); return false;">
-	<area shape="rect" coords="490,80,590,110" href="#top" alt="cubeits" onClick="showContent('',{'pageType':'category','navcat':'.the-cube-organizers'}); return false;">
-	<area shape="rect" coords="620,80,720,110" href="#top" alt="stackits" onClick="showContent('',{'pageType':'category','navcat':'.stackits'}); return false;">
+	<area shape="rect" coords="250,55,690,90" href="#customizer" alt="customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;">
+	<area shape="rect" coords="240,95,345,120" href="#top" alt="customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;">
+	<area shape="rect" coords="380,95,475,120" href="#top" alt="storeits" onClick="showContent('',{'pageType':'category','navcat':'.drawers'}); return false;">
+	<area shape="rect" coords="500,95,585,120" href="#top" alt="cubeits" onClick="showContent('',{'pageType':'category','navcat':'.the-cube-organizers'}); return false;">
+	<area shape="rect" coords="620,95,720,120" href="#top" alt="stackits" onClick="showContent('',{'pageType':'category','navcat':'.stackits'}); return false;">
 </map>
 
 
