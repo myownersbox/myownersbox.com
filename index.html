@@ -136,7 +136,7 @@ $(function() {
 	$.support.cors = true;  //cross site scripting for non cors sites. will b needed for IE10. IE8 & 9 don't support xss well.
 	myControl = new zController({
 
-		"release":"20121115143407" //increment this with each change. should solve caching issues.
+		"release":"20121127173959" //increment this with each change. should solve caching issues.
 		},myExtensions);  //instantiate controller. handles all logic and communication between model and view.
 		
 	//instantiate wiki parser.
@@ -317,19 +317,23 @@ executed onComplete because in onInit the cat page content still loads below it.
 <div id='mastHead' class='noPrint'>
 	<div class='pointer' onClick="showContent('category',{'navcat':'.'});" id='logo'><img src='images/blank.gif' width='210' height='155' alt='MyOwnersBox' class='logo' /></div>
 	<div class='mlbLogo'><img src='images/mob_mlblogo-60x30.png' width='60' height='30' alt='mlb' /></div>
-	<div class='topBanner pointer' onClick="$('#promotionDescription').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescription').dialog('open');"><img src='images/mbo_top2-970x60.png' width='970' height="60" alt='' /></div>
+	<!-- TODO: may need to put the 15% Off dialog on the category template -->
+	<!-- <div class='topBanner pointer' onClick="$('#promotionDescription15POff').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescription15POff').dialog('open');"><img src='images/mbo_top2-970x60.png' width='970' height="60" alt='' /></div> -->
+	<div class='topBanner pointer' onClick="$('#promotionDescriptionFreeShipping').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescriptionFreeShipping').dialog('open');"><img src='images/mbo_top2-970x60.png' width='970' height="60" alt='' /></div>
 
 <!--
 headerBanner and headerCategories are both hidden by default. showPage handles which is displayed.
 both are hidden to avoid popping
 -->
 	<div class='customizeBanner displayNone' id='headerBanner'>
-	<a href='#' onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;">
-	<img src='images/mob_customizebanner8-945x122.png' width="945" height="122" alt="" />	</a>	</div>
+		<!-- <a href='#' onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;">
+		<img src='images/mob_customizebanner8-945x122.png' width="945" height="122" alt="homepage menu" />	</a>	-->
+		<img src='images/mob_customizebanner8-945x122.png' width="945" height="122" alt="homepage menu" usemap="#homeMenu" />
+	</div>
 
 
 	<div class='topCats displayNone' id='headerCategories'>
-	<img src='images/mob_menu2-639x27.png' width="639" height="27" alt="" usemap="#catMap" />	</div>
+	<img src='images/mob_menu3-639x27.png' width="639" height="27" alt="" usemap="#catMap" />	</div>
 
 
 	<div class='decalLeft'>
@@ -1993,24 +1997,32 @@ END CONFIGURATOR TEMPLATES
 
 
 <map name="homeMap">
-	<area shape="rect" coords="0,131,310,421" href="#storageDrawers" onClick="showContent('',{'pageType':'category','navcat':'.drawers'}); return false;" alt='storage drawers' />
-	<area shape="rect" coords="318,142,636,420" href="#storageOrganizers" onClick="showContent('',{'pageType':'category','navcat':'.the-cube-organizers'}); return false;" alt='storage organizers' />
-	<area shape="rect" coords="647,135,949,419" href="#" onClick="showContent('',{'pageType':'category','navcat':'.stackits'}); return false;" alt='stackits' />
+	<area shape="rect" coords="18,23,300,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.drawers'}); return false;" alt='storeits' />
+	<area shape="rect" coords="360,23,605,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.the-cube-organizers'}); return false;" alt='cubeits' />
+	<area shape="rect" coords="627,23,938,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.stackits'}); return false;" alt='stackits' />
 
-	<area shape="rect" coords="300,5,397,90" href="#" onClick="myControl.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'50062MLB'}); return false;" alt='2x3 storage organizer' />
-	<area shape="rect" coords="405,7,521,88" href="#" onClick="myControl.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'50092MLB'}); return false;" alt='3x3 storage organizer' />
-	<area shape="rect" coords="531,6,628,91" href="#" onClick="myControl.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'60032MLB'}); return false;" alt='3x1 storage bench' />
+	<!-- <area shape="rect" coords="300,5,397,90" href="#" onClick="myControl.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'50062MLB'}); return false;" alt='2x3 storage organizer' /> -->
+	<!-- <area shape="rect" coords="405,7,521,88" href="#" onClick="myControl.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'50092MLB'}); return false;" alt='3x3 storage organizer' /> -->
+	<!-- <area shape="rect" coords="531,6,628,91" href="#" onClick="myControl.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'60032MLB'}); return false;" alt='3x1 storage bench' /> -->
 
-	<area shape="rect" coords="2,2,287,89" href="#customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;" alt='customizer'>
-	<area shape="rect" coords="646,1,949,100" href="#customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;" alt='customizer'>
+	<!-- <area shape="rect" coords="2,2,287,89" href="#customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;" alt='customizer'> -->
+	<!-- <area shape="rect" coords="646,1,949,100" href="#customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;" alt='customizer'> -->
+</map>
+
+<map name="homeMenu">
+	<area shape="rect" coords="250,30,690,70" href="#customizer" alt="customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;">
+	<area shape="rect" coords="230,80,350,110" href="#top" alt="customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;">
+	<area shape="rect" coords="370,80,480,110" href="#top" alt="storeits" onClick="showContent('',{'pageType':'category','navcat':'.drawers'}); return false;">
+	<area shape="rect" coords="490,80,590,110" href="#top" alt="cubeits" onClick="showContent('',{'pageType':'category','navcat':'.the-cube-organizers'}); return false;">
+	<area shape="rect" coords="620,80,720,110" href="#top" alt="stackits" onClick="showContent('',{'pageType':'category','navcat':'.stackits'}); return false;">
 </map>
 
 
 <map name="catMap">
-	<area shape="rect" coords="1,1,147,33" href="#" onClick="showContent('category',{'navcat':'.customizer'}); return false;" />
-	<area shape="rect" coords="163,1,311,33" href="#" onClick="showContent('category',{'navcat':'.drawers'}); return false;">
-	<area shape="rect" coords="337,1,496,33" href="#" onClick="showContent('category',{'navcat':'.the-cube-organizers'}); return false;">
-	<area shape="rect" coords="525,1,640,33" href="#" onClick="showContent('category',{'navcat':'.stackits'}); return false;">
+	<area shape="rect" coords="0,0,150,27" href="#" onClick="showContent('category',{'navcat':'.customizer'}); return false;" />
+	<area shape="rect" coords="180,0,320,27" href="#" onClick="showContent('category',{'navcat':'.drawers'}); return false;">
+	<area shape="rect" coords="340,0,470,27" href="#" onClick="showContent('category',{'navcat':'.the-cube-organizers'}); return false;">
+	<area shape="rect" coords="500,0,639,27" href="#" onClick="showContent('category',{'navcat':'.stackits'}); return false;">
 </map>
 
 
@@ -2075,12 +2087,20 @@ END CONFIGURATOR TEMPLATES
 
 
 
-<div id='promotionDescription' class='displayNone' title="Take 15% Off">
+<div id='promotionDescription15POff' class='displayNone' title="Take 15% Off">
 <h2>Fill every bin on a cube organizer and save 15% on your entire order!</h2>
 <p>
 Buy 3 drawers with our 3x1 cube organizer/bench and save.<br />
 Buy 6 drawers with our 2x3 cube organizer and save.<br />
 Buy 9 drawers with our 3x3 cube organizer and save.
+</p>
+</div>
+
+<!-- QUE: What text goes in free shipping dialog -->
+<div id='promotionDescriptionFreeShipping' class='displayNone' title="Free Shipping">
+<h2>Free shipping!</h2>
+<p>
+Free shipping text
 </p>
 </div>
 
