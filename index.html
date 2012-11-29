@@ -1,4 +1,7 @@
 <!DOCTYPE HTML>
+
+<!-- TODO: get customizer to load/work -->
+<!-- TODO: get social links to load/work -->
 <html>
 <head>
 <meta charset="utf-8">
@@ -17,8 +20,6 @@
 <meta name="google-site-verification" content="il1sb0sKQjBzf2LdUGhPly7dfDkyYcRkXz7N6RKE4vg" />
 
 <base href='' /><!-- leave blank so it works for a local file -->
-
-
 
 <script type="text/javascript">
 var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPLOYMENT!
@@ -73,7 +74,7 @@ css files should be included before any .js file to ensure they are downloaded i
 <!-- 
 aimediagroup
 -->
-<!-- TODO: not sure if needed
+ <!-- TODO: not sure if needed -->
 <script src="https://tracking.aimediagroup.com/aitrk_secure.js" type="text/javascript"></script>
 <script type='text/javascript'>
 if(document.location.protocol != 'file:')	{
@@ -81,10 +82,10 @@ if(document.location.protocol != 'file:')	{
 	_startSecureTrack("CPoJSIF9lCdsHt94ji");
 	}
 </script>
--->
+
 
 <!-- GA -->
-<!-- TODO: not sure if needed
+<!-- TODO: not sure if needed -->
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -98,13 +99,12 @@ if(document.location.protocol != 'file:')	{
   })();
 
 </script>
--->
 
 <!-- BUG: social links now showing -->
 
 <script>
 	var upfront = document.createElement('SCRIPT'); upfront.type = "text/javascript"; upfront.async = true;
-	upfront.src = myControl.vars.protocol + "//upfront.thefind.com/scripts/main/utils-init-ajaxlib/upfront-badgeinit.js";
+	upfront.src = app.vars.protocol + "//upfront.thefind.com/scripts/main/utils-init-ajaxlib/upfront-badgeinit.js";
 	upfront.text = "thefind.upfront.init('tf_upfront_badge', 'de77aba787937ef95ecd57bebdb05d3c')";
 	document.getElementsByTagName('HEAD')[0].appendChild(upfront);
 
@@ -122,12 +122,12 @@ if(document.location.protocol != 'file:')	{
 	  var js, fjs = d.getElementsByTagName(s)[0];
 	  if (d.getElementById(id)) return;
 	  js = d.createElement(s); js.id = id;
-	  js.src = myControl.vars.protocol+"//connect.facebook.net/en_US/all.js#xfbml=1";
+	  js.src = app.vars.protocol+"//connect.facebook.net/en_US/all.js#xfbml=1";
 	  fjs.parentNode.insertBefore(js, fjs);
 	}(document, 'script', 'facebook-jssdk'));
 	
 	//Twitter code
-	!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=myControl.vars.protocol+"//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+	!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=app.vars.protocol+"//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
 
 		
 	//addthis code
@@ -135,7 +135,7 @@ if(document.location.protocol != 'file:')	{
 	  var js, fjs = d.getElementsByTagName(s)[0];
 	  if (d.getElementById(id)) return;
 	  js = d.createElement(s); js.id = id;
-	  js.src = myControl.vars.protocol+"//s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f6223ef1dfb7836";
+	  js.src = app.vars.protocol+"//s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f6223ef1dfb7836";
 	  fjs.parentNode.insertBefore(js, fjs);
 	}(document, 'script', 'addthis'));
 
@@ -184,7 +184,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 <div id='appView' class='displayNone'>
 	<div id='topHead' class='noPrint'>
 		<div class='contentWidth clearfix no_underline'>
-			<div class='floatRight spriteBG minicart miniCartText pointer' onClick='myControl.ext.myRIA.util.showCart(); return false;'>
+			<div class='floatRight spriteBG minicart miniCartText pointer' onClick='app.ext.myRIA.util.showCart(); return false;'>
 				<span class='cartItemCount'>0</span> items
 			</div>
 			<nav class='floatRight'>
@@ -211,9 +211,9 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 		both are hidden to avoid popping
 		-->
 		<div class='customizeBanner displayNone' id='headerBanner'>
-			<!-- <a href='#' onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;">
+			<!-- <a href='#' onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;">
 			<img src='images/mob_customizebanner8-945x122.png' width="945" height="122" alt="homepage menu" />	</a>	-->
-			<img src='images/mob_customizebanner8-945x122.png' width="945" height="122" alt="homepage menu" usemap="#homeMenu" />
+			<img src='images/mob_customizebanner9-945x122.png' width="945" height="122" alt="homepage menu" usemap="#homeMenu" />
 		</div>
 
 
@@ -276,7 +276,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 			</div>
 			<div class='spriteBG newsHead floatLeft'></div>
 			<div class='floatLeft'>
-				<form action='#' id='subscribeFrm' name='subscribeFrm' onSubmit="myControl.ext.store_crm.util.handleSubscribe(this.id); return false">
+				<form action='#' id='subscribeFrm' name='subscribeFrm' onSubmit="app.ext.store_crm.util.handleSubscribe(this.id); return false">
 					<input type='email' class='twoBorder' maxlength='50' size='30' name='login' id='subscribeLogin' value='email address' onFocus="if(this.value == this.defaultValue) this.value =''" onBlur="if(this.value == '') this.value = this.defaultValue" />
 					<input type='text'  class='twoBorder' maxlength='50' size='30' name='fullname' id='subscribeFullname' value='full name' onFocus="if(this.value == this.defaultValue) this.value =''" onBlur="if(this.value == '') this.value = this.defaultValue" />
 					<input type='submit' class='spriteBG submit pointer' value='' />
@@ -317,7 +317,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 
 			<div class='vertRule'></div>
 
-			<div class='spriteBG miniCartText bigMinicart floatRight pointer' onClick='myControl.ext.myRIA.util.showCart(); return false;'>
+			<div class='spriteBG miniCartText bigMinicart floatRight pointer' onClick='app.ext.myRIA.util.showCart(); return false;'>
 				<span class='cartItemCount'>0</span> items
 			</div>	
 		</div>
@@ -362,29 +362,54 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 **
 *************************************************************************************************************
 -->
-
-
 <div id='appTemplates' class='displayNone'>
+
+	<div id='fb-root'></div>
+
+	<!-- hover/popup for template location chooser. not technically a template -->
+
+	<div id='drawerLocationChooser' class='drawerLocationChooser'>
+		<div id='drawerChooserText'>
+			<button onClick='myControl.ext.mob_customizer.util.hideChooser();'>X</button>
+			<p>Please choose a position for this drawer.</p>
+			<p><span class='zwarn'>Tip:</span> You can replace your currently selected drawers</p>
+		</div>
+		
+		<ul id='drawerLocationChooserListContainer' class='drawerLocationChooserListContainer_3x3'>
+			<li id='chooserDrawerLoc_1'></li>
+			<li id='chooserDrawerLoc_2'></li>
+			<li id='chooserDrawerLoc_3'></li>
+			
+			<li id='chooserDrawerLoc_4'></li>
+			<li id='chooserDrawerLoc_5'></li>
+			<li id='chooserDrawerLoc_6'></li>
+			
+			<li id='chooserDrawerLoc_7'></li>
+			<li id='chooserDrawerLoc_8'></li>
+			<li id='chooserDrawerLoc_9'></li>
+		</ul>
+		<button id='drawerChooserAddToAllBtn'>Add to all</button>
+	</div>
 	
 	<map name="homeMap">
 		<area shape="rect" coords="18,23,300,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.drawers'}); return false;" alt='storeits' />
 		<area shape="rect" coords="360,23,605,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.the-cube-organizers'}); return false;" alt='cubeits' />
 		<area shape="rect" coords="627,23,938,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.stackits'}); return false;" alt='stackits' />
 
-		<!-- <area shape="rect" coords="300,5,397,90" href="#" onClick="myControl.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'50062MLB'}); return false;" alt='2x3 storage organizer' /> -->
-		<!-- <area shape="rect" coords="405,7,521,88" href="#" onClick="myControl.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'50092MLB'}); return false;" alt='3x3 storage organizer' /> -->
-		<!-- <area shape="rect" coords="531,6,628,91" href="#" onClick="myControl.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'60032MLB'}); return false;" alt='3x1 storage bench' /> -->
+		<!-- <area shape="rect" coords="300,5,397,90" href="#" onClick="app.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'50062MLB'}); return false;" alt='2x3 storage organizer' /> -->
+		<!-- <area shape="rect" coords="405,7,521,88" href="#" onClick="app.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'50092MLB'}); return false;" alt='3x3 storage organizer' /> -->
+		<!-- <area shape="rect" coords="531,6,628,91" href="#" onClick="app.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'60032MLB'}); return false;" alt='3x1 storage bench' /> -->
 
-		<!-- <area shape="rect" coords="2,2,287,89" href="#customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;" alt='customizer'> -->
-		<!-- <area shape="rect" coords="646,1,949,100" href="#customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;" alt='customizer'> -->
+		<!-- <area shape="rect" coords="2,2,287,89" href="#customizer" onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;" alt='customizer'> -->
+		<!-- <area shape="rect" coords="646,1,949,100" href="#customizer" onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;" alt='customizer'> -->
 	</map>
 
 	<map name="homeMenu">
-		<area shape="rect" coords="250,30,690,70" href="#customizer" alt="customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;">
-		<area shape="rect" coords="230,80,350,110" href="#top" alt="customizer" onClick="myControl.ext.mob_customizer.actions.initConfigurator(); return false;">
-		<area shape="rect" coords="370,80,480,110" href="#top" alt="storeits" onClick="showContent('',{'pageType':'category','navcat':'.drawers'}); return false;">
-		<area shape="rect" coords="490,80,590,110" href="#top" alt="cubeits" onClick="showContent('',{'pageType':'category','navcat':'.the-cube-organizers'}); return false;">
-		<area shape="rect" coords="620,80,720,110" href="#top" alt="stackits" onClick="showContent('',{'pageType':'category','navcat':'.stackits'}); return false;">
+			<area shape="rect" coords="250,55,690,90" href="#customizer" alt="customizer" onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;">
+			<area shape="rect" coords="240,95,345,120" href="#top" alt="customizer" onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;">
+			<area shape="rect" coords="380,95,475,120" href="#top" alt="storeits" onClick="showContent('',{'pageType':'category','navcat':'.drawers'}); return false;">
+			<area shape="rect" coords="500,95,585,120" href="#top" alt="cubeits" onClick="showContent('',{'pageType':'category','navcat':'.the-cube-organizers'}); return false;">
+			<area shape="rect" coords="620,95,720,120" href="#top" alt="stackits" onClick="showContent('',{'pageType':'category','navcat':'.stackits'}); return false;">
 	</map>
 
 
@@ -411,6 +436,225 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 			Free shipping text
 		</p>
 	</div>
+	
+	<!--
+
+	########################
+
+	CONFIGURATOR TEMPLATES
+
+	########################
+
+	-->
+
+
+
+	<!--
+	The template for the category list in step 1. (the list of storage organizer categories)
+	-->
+	<ul>
+	<li id='mobStorageChooser' class='mobStorageChooser ztable_row'  onClick="app.ext.mob_customizer.util.containerCatSelected($(this).attr('data-catsafeid'));">
+		<a href='#' class='prodName' data-bind='var: category(pretty); format:text;' onClick='return false;'></a>
+	</li>
+	</ul>
+
+
+	<!--
+	The template for the product list in step  2. (the product list of storage organizers)
+	a class of 'selected' gets added onClick.
+	-->
+	<ul>
+	<li id='mobStorageContainerProductSpec' class='storageContainerProdlistItem' onClick="app.ext.mob_customizer.util.containerSizeSelected($(this).attr('data-pid'));">
+		<span></span>
+		<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL; bgcolor:tttttt;' width='75' height='75' /></li>
+	</ul>
+
+
+	<!--
+	The template used for the categories loaded in step 3.
+	when clicked, they load a product list of drawers.
+	-->
+	<ul>
+	<li id='mobDrawerChooser' class='mobDrawerChooser' >
+		
+		<div class='ztable_row pointer' onClick="app.ext.mob_customizer.util.drawerCatSelected($(this).parent().attr('data-catsafeid'));">
+			<span class='arrow'></span>
+			<img class='catThumb' data-bind='var: category(%meta.CAT_THUMB); format:imageURL;  bgcolor:tttttt;' height='35' width='35'  />
+			<div class='catName' data-bind='var: category(pretty); format:text;'></div>
+		</div>
+		<ul class='prodlist displayNone' data-bind='var: category(id); format:assignAttribute; attribute:id; valuePretext:mobDrawerChooser_; loadsTemplate:mobDrawerProductSpec;' ></ul>
+	</li>
+	</ul>
+
+
+
+
+	<!--
+	The template used for the product loaded in step 3 after a drawer category is selected. (used for each drawer).
+	When these are clicked, they open the location chooser that assigns the draw to spot 1-9 in the preview panel.
+	-->
+	<ul>
+	<li id='mobDrawerProductSpec' class='prodlistLineItem'>
+		<div class='dragIconContainer'>
+		<div class='floatRight draggable displayNone' data-bind="var: product(pid); format:assignAttribute; attribute:data-pid;">
+			<span class='dragIcon'><img src='images/mob_drag-20x33.png' width="20" height="33" alt='' /></span>
+			<span class='displayNone dragThumb'><img class='prodThumb' data-bind='var: product(zoovy:prod_image7); format:imageURL; bgcolor:tttttt;' width='128' height='128' /></span>
+		</div>
+		</div>
+		<div class='magGlassIcon pointer' onClick='app.ext.store_product.util.showPicsInModal({"pid":$(this).parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
+
+		<div class='prodAttContainer pointer' onClick="app.ext.mob_customizer.util.drawerClicked($(this).parent().attr('data-pid'),$(this).parent().attr('id'))">
+			<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL; bgcolor:tttttt;' width='70' height='55' />
+			<div class='prodName' data-bind='var: product(user:prod_organization); format:text; defaultVar: product(zoovy:prod_name);'></div>
+		</div>
+	</li>
+	</ul>
+
+
+	<ul>
+	<li id='mobRecentViewedProductSpec' class='prodlistLineItem recentlySelectedLineItem pointer'>
+		<div onClick="app.ext.mob_customizer.util.drawerClicked($(this).parent().attr('data-pid'),$(this).parent().attr('id'))">
+			<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='35' height='35' />
+			<div class='prodName' data-bind='var: product(user:prod_organization); format:text; defaultVar: product(zoovy:prod_name);'></div>
+			<div class='addLink'>+Add</div>
+		</div>
+	</li>
+	</ul>
+
+
+
+
+
+	<div id='configuratorTemplate'>
+	<div id='configuratorContainer'>
+		<div id='organizerPreviewForPrint'  class='floatRight displayNone showInPrint'>
+		<!-- <img src='images/mob_byomob-183x60.jpg' width='183' height="60" alt='' /> -->
+		</div>
+		<div id='configuratorLeftColumn' class='noListStyle noPadOrMargin'>
+		
+			<h3 class='gradient'><b>Step 1:</b> Choose storage organizer Style</h3>
+			<ul class="cssDDMenu" id='storageContainerCatContainer'>
+				<li><a href="#" id='storageCatPrompt' onClick='return false;'>Storage Drawer Styles:</a>
+				<ul id='storageContainerCategories'></ul>
+				</li>
+			</ul>
+
+
+			<h3 class='gradient'><b>Step 2:</b> Choose Storage Organizer Size</h3>
+			<ul id='storageContainerProdlist'></ul>
+				
+	<!-- pad based css is used to change the header text below. leave ID alone. leave span in place -->
+			<h3 class='gradient' id='configStep3Head'><b>Step 3:</b> <span>Click Drag Icon &amp; Drop In Location</span></h3>
+			<ul id='drawerCategories' class='loadingBG'></ul>
+		</div><!-- /configuratorLeftColumn -->
+		
+		<div id='configuratorMiddleColumn'>
+			<div id='previewContainer' class='displayNone'>
+				<div id='bgImageContainer' class='bgImageContainer_3x3'></div>
+				<div id='selectedDrawerContainer' class='selectedDrawerContainer_3x3 clearfix'>
+	<ul>
+		<li id='drawerLoc_1' class='droppable'><span class='number'>1</span></li>
+		<li id='drawerLoc_2' class='droppable'><span class='number'>2</span></li>
+		<li id='drawerLoc_3' class='droppable'><span class='number'>3</span></li>
+		<li id='drawerLoc_4' class='droppable'><span class='number'>4</span></li>
+		<li id='drawerLoc_5' class='droppable'><span class='number'>5</span></li>
+		<li id='drawerLoc_6' class='droppable'><span class='number'>6</span></li>
+		<li id='drawerLoc_7' class='droppable'><span class='number'>7</span></li>
+		<li id='drawerLoc_8' class='droppable'><span class='number'>8</span></li>
+		<li id='drawerLoc_9' class='droppable'><span class='number'>9</span></li>
+	</ul>
+				</div>
+			</div>
+		<div class='title'><img src='images/mob_conf_buildown-174x46.png' width='174' height='46' alt='Build Your Own My Owners Box' /></div>
+		<div id='recentlyRemovedContainer'>
+			<div class='positionIt'>
+			
+			
+	<div id="recentlyRemovedProdlistContainer">
+		<div id="recentlyRemovedProdlistNav"></div>
+		<div id='carouselPreviousBtn' class='carouselPreviousBtn carouselBtn displayNone'><a id="prev" href="#" title='back' onClick='return false;'><img src='images/mbo_arrow_lft-9x15.png' width='9' height='15' alt='back' /></a></div>
+		<div id='carouselNextBtn' class='carouselNextBtn carouselBtn displayNone'><a id="next" href="#" title='next' onClick='return false;'><img src='images/mbo_arrow_rt-9x15.png' width='9' height='15' alt='next' /></a></div>
+		<ul id="recentlyRemovedProdlist" class="carousel">		
+		</ul>
+	</div>
+			</div>
+		</div>
+		</div>
+		<!-- /configuratorMiddleColumn -->
+		
+		<div id='configuratorRightColumn'>
+			<div id='rightColDrawerContainer' class='displayNone'>
+	<h3>Selected Drawers</h3>
+	<h4>Click X to remove drawer</h4>
+	<ul id='selectedDrawersList'>
+		<li id='selectedDrawerLoc_1' class='empty'></li>
+		<li id='selectedDrawerLoc_2' class='empty'></li>
+		<li id='selectedDrawerLoc_3' class='empty'></li>
+		
+		<li id='selectedDrawerLoc_4' class='empty'></li>
+		<li id='selectedDrawerLoc_5' class='empty'></li>
+		<li id='selectedDrawerLoc_6' class='empty'></li>
+		
+		<li id='selectedDrawerLoc_7' class='empty'></li>
+		<li id='selectedDrawerLoc_8' class='empty'></li>
+		<li id='selectedDrawerLoc_9' class='empty'></li>
+	</ul>
+
+	<div class='center customizerTotals'>
+
+		<div id='configuratorAddToCartMessaging'></div>
+		
+		<div id='configuratorContainerTotal'></div>
+		<div id='configuratorDrawerTotal'></div>
+		<div id='configuratorTotal'></div>
+		<div id='promotion'></div>
+		
+		<button onClick='app.ext.mob_customizer.util.addItAllToTheCart(); return false;' class='spriteBG' id='configuratorAddToCartBtn'>add to cart</button>
+	</div>
+			</div>
+
+	<!-- configurator social bar, near add to cart button -->
+	<div id='configSocialBookmarklets' class='clearfix'>
+
+
+	<div class="floatLeft addthis_toolbox addthis_default_style" id='configuratorAddThis'>
+		
+		<div class='clearfix socialButtonRowMargin'>
+			<a href='#' class='spriteBG printIcon floatLeft pointer' onClick='app.ext.mob_customizer.util.openForPrinting(); return false;'>print</a>
+			<a class="addthis_button_email"></a>
+		</div>
+		<div class='clearfix socialButtonRowMargin'>
+			<a class="addthis_button_facebook"></a>
+			<a class="addthis_button_twitter"></a>
+			<a class="addthis_button_pinterest_pinit" pi:pinit:url="http://www.myownersbox.com" pi:pinit:media="http://static.zoovy.com/img/myownersbox/W300-H300-Btttttt/logos/myownersboxlogo" pi:pinit:layout="horizontal"></a>
+		</div>
+		<div class='clearfix socialButtonRowMargin'>
+			<a class="addthis_button_compact"></a>
+			<a class="addthis_counter addthis_bubble_style"></a>
+			<a class='floatLeft pointer bookmarkHref' href='#' onClick="app.ext.mob_customizer.actions.bookmarkThis(); return false;"><img src='images/mob_app_bookmark-85x25.jpg' width='85' height='25' alt='save/bookmark this page' /></a>
+		</div>
+		
+		
+		
+		</div>
+	</div>
+		</div><!-- /configuratorRightColumn -->
+	</div>
+	<div id='tagFun_div_helper'></div><!-- used to store 'helper' for drag/drop. solution for scrolly div issue. -->	
+	</div>
+
+
+
+
+
+	<!--
+
+	########################
+
+	END CONFIGURATOR TEMPLATES
+
+	########################
+	-->
 
 
 <!--
@@ -430,7 +674,7 @@ the homepageTemplate template is loaded into mainContentArea by default when the
 -->
 <div id='homepageTemplate'>
 	
-	<img src='images/mob_homemap13-951x369.jpg' width='951' height='369' border="0" usemap="#homeMap" />
+	<img src='images/mob_homemap14-951x369.jpg' width='951' height='369' border="0" usemap="#homeMap" />
 
 	<div data-bind="var: category(%page.description); format:wiki; wikiFormats:myRIA; editor: textarea;" class='homeDesc'></div>
 
@@ -459,8 +703,45 @@ each of the 'sections' are used to load another template. don't change the id.
 don't modify the 'data-templateid' unless you are changing template names and updating everywhere appropriate.
 -->
 <div id='categoryTemplate' class='loadingBG'>
+	
+	<div class='leftColumn' id='leftCol'>
+		<ul id='subcategoryListContainer' class='clearfix padMargBorderBottom' data-bind="var: category(@subcategoryDetail); format: subcategoryList; extension: myRIA; loadsTemplate: leftColRootCatsTemplate;"></ul>
+		<ul id='recentlyViewedProdListContainer' class='noListStyle clearfix'></ul>
+	</div>
+	
+	<div class='mainColumn' id='catPageContentContainer'>
+	
+		<ul id='breadcrumb' class='clearfix noPadOrMargin fluidList' data-bind='var: category(id); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul>
+		
+		<div id='' class='catPageTopContent pageHeader displayNone'>
+			
+			<div data-bind="var: category(%page.viewer_url); format:view360inModal; extension:mob_customizer;" class='page360Viewer displayNone'><img src='images/mob_360view-116x37.png' width='116' height="37" alt='click here for 360 view' border='0' /></div>
+			
+			<div class='pagePic1'><img src='images/blank.gif' width='325' height='325' data-bind="var: category(%page.picture1); format:imageURL; bgcolor:TTTTTT;" /></div>
+			<div class='pagePicL'><img src='images/blank.gif' width='344' height='157' data-bind="var: category(%page.picture5); format:imageURL; bgcolor:TTTTTT;" /></div>
 
-	<ul class='breadcrumb clearfix noPadOrMargin fluidList' data-bind='var: category(id); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul>
+			<!--
+			<h2 class='pageHeader1' data-bind='var: category(%page.header1); format:text;'></h2>
+			<div class='pageDescription1' data-bind="var: category(%page.description1); format:truncText; numCharacters:300;"></div>
+			-->
+			<div class='pagePic2'><img src='images/blank.gif' width='75' height='75' data-bind="var: category(%page.picture2); format:imageURL; bgcolor:TTTTTT;" /></div>
+			<div class='pagePic3'><img src='images/blank.gif' width='75' height='75' data-bind="var: category(%page.picture3); format:imageURL; bgcolor:TTTTTT;" /></div>
+			<div class='pagePic4'><img src='images/blank.gif' width='75' height='75' data-bind="var: category(%page.picture4); format:imageURL; bgcolor:TTTTTT;" /></div>
+			<h3 class='pageHeader2' data-bind='var: category(%page.header2); format:text;'></h3>
+		</div>
+		
+		<div data-bind='var: category(%page.header_subcats1); format:text;className:header_subcats1;'></div>
+
+		<!-- 
+		if a product list is going to have an add to cart button, variations and inventory MUST be retrieved so that validation can occur.
+		If no add to cart is present, do NOT add these (they affect load time)
+		-->
+		<ol id='productListContainer' class='prodlist clearfix' data-bind="var: category(@products); format: productList; editor: finder; extension: store_prodlist; loadsTemplate: productListTemplate; items_per_page:15;withInventory:1;withVariations:1;"></ol>
+
+		<div data-bind="var: category(%page.description); format:wiki; wikiFormats:myRIA; editor: textarea;"></div>
+	</div>
+
+	<!-- <ul class='breadcrumb clearfix noPadOrMargin fluidList' data-bind='var: category(id); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul>
 
 	<img data-bind="var: category(%page.banner1); format: banner; editor: banner; height:250; width:750; extension: myRIA;" />
 
@@ -472,9 +753,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 
 	<ul data-bind="var: category(@products); format: productList; editor: finder; extension: store_prodlist; loadsTemplate: productListTemplate; withReviews:1; items_per_page: 25;" class='listStyleNone fluidList clearfix noPadOrMargin productList'></ul>
 	
-	<p data-bind="var: category(%page.description2); format:wiki; wikiFormats:myRIA; editor: textarea;"></p>
-
-		
+	<p data-bind="var: category(%page.description2); format:wiki; wikiFormats:myRIA; editor: textarea;"></p> -->	
 </div>
 
 
@@ -510,9 +789,43 @@ Used for the product in a product list (prodlist), usually in the body of a cate
 the loadingBG class is removed (must be that classname) when the template is translated.
 remember to NOT put the button inside the 'onclick' container or two events will occur onclick.
 -->
-<li id='productListTemplate' class='loadingBG  ' onMouseOver="$('.quickView',$(this)).show();" onMouseOut="$('.quickView').hide();" >
+<li id='productListTemplate' class='loadingBG  clearfix productListItem' >
+
+	<div class='prodThumbContainer'>
+		<div class='magGlassIcon pointer' onClick='app.ext.store_product.util.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
+		<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='120' height='120' />
+		<div data-bind="var: product(user:prod_360_url); format:view360inModal; extension: mob_customizer;" class='displayNone'><img src='images/mob_360view-116x37.png' width='116' height="37" alt='click here for 360 view' border='0' /></div>
+	</div>
+
+	<div class='nameNDesc'>
+		<h6 data-bind='var: product(zoovy:prod_name); format:text;'></h6>
+
+		<div class='prodDesc' data-bind='var: product(zoovy:prod_desc); format:truncText; numCharacters:150;'></div>
+
+		<div data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' onClick="showContent('product',{'pid':$(this).attr('data-pid')})" class='pointer moreInfo'>More Information &#187;</div>
+		
+	</div>
+
+	<div class='priceEtAll'>
+		<div class='prodPrice' data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; className:price; pretext: Price: ;'></div>
+
+	<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodListAddToCartForm marginBottom clearfix' id='prodListAddToCartFrm' action='#' onSubmit="app.ext.myRIA.util.handleAddToCart(this.id,{'action':'modal'});  return false;">
 	
-	<button class='floatRight pointer quickView displayNone' onClick="quickView('product',{'templateID':'productTemplateQuickView','pid':$(this).closest('[data-pid]').attr('data-pid')});">Quickview</button>
+		<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
+		
+		<input type='submit' value='Add to Cart' data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' class='displayNone pointer floatRight spriteBG addToCartButton' />
+		
+		<fieldset data-bind='var: product(pid); format:atcQuantityInput; extension:store_product; pretext:Qty: ;' class='borderNone floatRight'></fieldset>
+	
+	</form>
+
+
+		
+		<div data-bind='var: product(pid); format:linkToConfigurator; extension:mob_customizer;' class='showInCustomizer'></div>
+		
+	</div>
+	
+	<!-- <button class='floatRight pointer quickView displayNone' onClick="quickView('product',{'templateID':'productTemplateQuickView','pid':$(this).closest('[data-pid]').attr('data-pid')});">Quickview</button>
 	
 	<div onClick="showContent('product',{'pid':$(this).attr('data-pid')})" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='pointer'>
 		<div class='prodThumbContainer' data-bind='var:product(pid); format:addPicSlider; extension:myRIA;'>
@@ -524,9 +837,9 @@ remember to NOT put the button inside the 'onclick' container or two events will
 		<h6 data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; className:price; pretext: Our Price: ;'></h6>
 		
 		
-		<span data-bind='var: product(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span>
-<!-- 	<span data-bind='var: reviews(total); format:text; pretext: from ;posttext: reviews; className:numReviews;'></span> -->
-	</div>
+		<span data-bind='var: product(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span> -->
+		<!-- 	<span data-bind='var: reviews(total); format:text; pretext: from ;posttext: reviews; className:numReviews;'></span> -->
+	<!-- </div> -->
 </li>
 
 
@@ -612,7 +925,42 @@ the loadingBG class is removed (must be that classname) when the template is tra
 remember to NOT put the button inside the 'onclick' container or two events will occur onclick.
 -->
 <li id='productListTemplateResults' class='loadingBG  ' >
-	<div onClick="showContent('product',{'pid':$(this).attr('data-pid')})" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='pointer'>
+	<div class='prodThumbContainer'>
+		<div class='magGlassIcon pointer' onClick='app.ext.store_product.util.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
+		<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='120' height='120' />
+		<div data-bind="var: product(user:prod_360_url); format:view360inModal; extension: mob_customizer;" class='displayNone'><img src='images/mob_360view-116x37.png' width='116' height="37" alt='click here for 360 view' border='0' /></div>
+	</div>
+
+	<div class='nameNDesc'>
+		<h6 data-bind='var: product(zoovy:prod_name); format:text;'></h6>
+
+		<div class='prodDesc' data-bind='var: product(zoovy:prod_desc); format:truncText; numCharacters:150;'></div>
+
+		<div data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' onClick="showContent('product',{'pid':$(this).attr('data-pid')})" class='pointer moreInfo'>More Information &#187;</div>
+		
+	</div>
+
+	<div class='priceEtAll'>
+		<div class='prodPrice' data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; className:price; pretext: Price: ;'></div>
+
+	<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodListAddToCartForm marginBottom clearfix' id='prodListAddToCartFrm' action='#' onSubmit="app.ext.myRIA.util.handleAddToCart(this.id);  return false;">
+	
+		<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
+		
+		<input type='submit' value='Add to Cart' data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' class='displayNone pointer floatRight spriteBG addToCartButton' />
+		
+		<fieldset data-bind='var: product(pid); format:atcQuantityInput; extension:store_product; pretext:Qty: ;' class='borderNone floatRight'></fieldset>
+	
+	</form>
+
+
+		
+		<div data-bind='var: product(pid); format:linkToConfigurator; extension:mob_customizer;' class='showInCustomizer'></div>
+		
+	</div>
+	
+	
+	<!-- <div onClick="showContent('product',{'pid':$(this).attr('data-pid')})" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='pointer'>
 		<div class='prodThumbContainer'>
 		<img src='blank.gif' class='prodThumb' data-bind='var: product(images); format:elasticImage1URL;bgcolor:ffffff;' width='120' height='120' />
 		</div>
@@ -620,7 +968,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 		<h5 data-bind='var: product(prod_name); format:text;'></h5>
 	
 		<h6 data-bind='var: product(base_price); format:elasticMoney; currencySign: $;  hideZero:true; className:price; pretext: Our Price: ;'></h6>
-	</div>
+	</div> -->
 </li>
 </ul>
 
@@ -654,14 +1002,134 @@ this will likely become more flexible in the future. ###
 
 
 <div id='productTemplate'>
+	
+	<table id='prodViewerTable'>
+	<tr>
+		<td class='imageContainer'>
+		<div onClick='app.ext.store_product.util.showPicsInModal({"pid":$(this).attr("data-pid")});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='pointer'>
+	<img class='prodBigImage' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='300' height='300' />
 
-<ul class='clearfix noPadOrMargin fluidList breadcrumb' data-bind='var: session(session.recentCategories.0); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul>
+
+
+	<span><img data-bind='var: product(zoovy:prod_image2); format:imageURL;' width='95' height='95' /></span>
+	<span><img data-bind='var: product(zoovy:prod_image3); format:imageURL;' width='95' height='95' /></span>
+	<span><img data-bind='var: product(zoovy:prod_image4); format:imageURL;' width='95' height='95' /></span>
+		</div>
+		</td>
+		<td class='prodSummaryContainer marginBottom no_underline'>
+		<h1 data-bind='var: product(zoovy:prod_name); format:text;'></h1>
+		<h6 class='ztable_row_small stid' data-bind='var: product(pid); format:text; className: stid; pretext: Sku: ;'></h6>
+		
+		<h2 data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; pretext:only ;'></h2>
+		
+		<section id='prodViewerReviewSummary'></section>
+
+		<div id='prodlistChildrenContainer' class='displayNone' data-bind='var: product(zoovy:grp_type); format:addClass; pretext:grpType_;'>
+			<h3>Please Choose: </h3>
+			<ul id='prodlistChildren' class='loadingBG smallProdlist'></ul>
+		</div>
+		
+
+		<section id='prodViewerReviewSummary' class='marginBottom'>
+			<span data-bind='var: reviews(average); format:addClass; className:review_;' class='reviewSprite'></span>
+			<span data-bind='var: reviews(total); format:text;posttext: from ;posttext: reviews; className:numReviews;'></span>
+		</section>	
+
+
+		<div data-bind='var: product(@inventory.inv); format:simpleInvDisplay; extension:store_product;' class='inventory'></div>
+		<div data-bind='var: product(zoovy:ship_latency); format:text;pretext:Normally ships in ;posttext: day(s);' class='latency'></div>
+		
+		<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodViewerAddToCartForm' id='prodViewerAddToCartFrm' action='#' onSubmit="app.ext.myRIA.util.handleAddToCart(this.id,{'action':'modal'});  return false;">
+		
+			<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
+			<fieldset data-bind='var: product(pid); format:atcQuantityInput; extension:store_product; pretext:Quantity: ;' class='borderNone'></fieldset>
+		
+			<input type='submit' value='Add to Cart' data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' class='displayNone addToCartButton spriteBG' />
+		</form>
+		
+		
+		<div data-bind='var:product(zoovy:qty_price);format:quantityDiscounts; extension:store_product; pretext:Quantity Discounts:;'></div>
+		
+		<div data-bind="var: product(user:prod_360_url); format:view360inModal; extension: mob_customizer;" class='displayNone'><img src='images/mob_360view-116x37.png' width='116' height="37" alt='click here for 360 view' border='0' /></div>
+
+
+
+
+		<menu data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' id='CRMButtonMenu'>
+		
+		<button class='ui-state-default ui-corner-all' onClick='app.ext.store_crm.util.showReviewFrmInModal({"pid":$(this).attr("data-pid"),"templateID":"reviewFrmTemplate"});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>Write Review</button>
+
+		<button class='ui-state-default ui-corner-all displayNone' data-bind='var:product(zoovy:prod_url_pdf);format:addLinkOnclick; extension:myRIA;'>Assembly Instructions</button>
+
+		</menu>
+
+		
+		</td>
+	</tr>
+	<tr>
+		<td colspan='2'>
+
+	<div id="tabbedProductContent">
+
+		<ul class='tabs'>
+			<li id='prodDescTab' class='displayNone' data-bind='var: product(zoovy:prod_desc); format:showIfSet;'><a href="#prodDesc" >Description</a></li>
+			<li id='prodDetailTab' class='displayNone' data-bind='var: product(zoovy:prod_detail); format:showIfSet;'><a href="#prodDetail">Specs</a></li>
+			<li id='prodFeaturesTab' class='displayNone' data-bind='var: product(zoovy:prod_features); format:showIfSet;'><a href="#prodFeatures">Features</a></li>
+			<li id='prodReviewsTab' class='displayNone'><a href="#prodReviews">Reviews</a></li>
+			<li id='prodVideoTab' class='displayNone' data-bind='var: product(youtube:videoid); format:showIfSet;'><a href="#prodVideo">Video</a></li>
+			<li id='prodAccessoriesTab' class='displayNone' data-bind='var: product(zoovy:accessory_products); format:showIfSet;'><a href="#prodlistAccessoriesContainer">Accessories</a></li>
+		</ul>
+	<!-- tab content -->
+		<div id="prodDesc" data-bind='var: product(zoovy:prod_desc); format:wiki; wikiFormats:myRIA;'></div>
+		
+		<div id="prodDetail" data-bind='var: product(zoovy:prod_detail); format:text; '></div>
+		
+		<div id="prodFeatures" data-bind='var: product(zoovy:prod_features); format:text; '></div>
+		
+		<div id="prodVideo" data-bind='var: product(youtube:videoid); format:youtubeVideo; '></div>
+		
+		<div id="prodReviews">
+			
+			<div class='clearfix alignRight'>
+				<button class='ui-button-text ui-button ui-state-default ui-corner-all' onClick='app.ext.store_crm.util.showReviewFrmInModal({"pid":$(this).attr("data-pid"),"templateID":"reviewFrmTemplate"});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>Write Review</button>
+			</div>
+			
+			<ul class='listStyleNone clearfix' id='prodViewerReviews' data-bind="var: reviews(@reviews); format:reviewList; extension:store_product; loadsTemplate:productReviewsTemplateDetail;"></ul>
+		</div>
+		
+		
+		<div id='prodlistAccessoriesContainer'>
+			<ul id='prodlistAccessories' class='listStyleNone fluidList clearfix noPadOrMargin productList' data-bind="var: product(zoovy:accessory_products); format:productList; extension:store_prodlist;loadsTemplate:productListTemplate;hide_multipage_controls:true;hide_multipage:true;"></ul>
+		</div>
+
+
+
+		
+		
+		
+	</div>
+
+		</td>
+	</tr>
+	</table>
+	<!-- must be outside table, otherwise width goes way wide -->
+	<div id='prodlistRelatedContainer'>
+		<div class='redGrit prodlistHead'>
+			<span class='hbSpriteBG relatedItemsHead'></span>
+		</div>
+		<ul id='prodlistRelated' class='listStyleNone fluidList clearfix noPadOrMargin productList' data-bind="var: product(zoovy:related_products); format:productList; extension:store_prodlist;loadsTemplate:productListTemplate;hide_multipage_controls:true;hide_multipage:true;"></ul>
+	</div>
+	
+	
+	<!-- Original -->
+<!-- <ul class='clearfix noPadOrMargin fluidList breadcrumb' data-bind='var: session(session.recentCategories.0); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul>
 
 <table class='prodViewerContainer'>
 <tr>
 	<td class='imageContainer'>
+		-->
 <!--	<img src='%PROJECT_URL%/blank.gif' id='bobWasHere' class='prodBigImage' data-bind='var: product(zoovy:prod_image1); format: magicZoomPlus; extension: magicToolBox;' width='340' height='340' /> -->
-	
+	<!--
 <div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).attr("data-pid")});' class='pointer clearfix'  data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
 
 	<div data-bind="var: product(zoovy:prod_is_tags); format:addTagSpans;" class='tagsContainer'></div>
@@ -701,8 +1169,9 @@ this will likely become more flexible in the future. ###
 	
 	<ul title='please choose' id='prodlistChildren' class='listStyleNone fluidList clearfix noPadOrMargin productList smallProdlist' data-bind="var: product(zoovy:grp_children); format:productList; extension:store_prodlist; loadsTemplate:productListTemplateChildren;hide_summary:true;"></ul>
 
-	
+	-->
 <!--	<div data-bind='var: product(@inventory.inv); format:simpleInvDisplay; extension:store_product;' class='inventory'></div> -->
+<!--
 	<div data-bind='var: product(zoovy:ship_latency); format:text;pretext:Normally ships in ;posttext: day(s);' class='latency'></div>
 	
 	
@@ -746,8 +1215,9 @@ this will likely become more flexible in the future. ###
 		<li class='prodVideoTab displayNone' data-bind='var: product(youtube:videoid); format:showIfSet;'><a href="#prodVideo" data-bind="var:product(pid);format:assignAttribute; attribute:href; valuePretext:#prodVideo_;">Video</a></li>
 		<li class='prodAccessoriesTab displayNone' data-bind='var: product(zoovy:accessory_products); format:showIfSet;'><a href="#prodlistAccessoriesContainer" data-bind="var:product(pid);format:assignAttribute; attribute:href; valuePretext:#prodAccessories_;">Accessories</a></li>
 	</ul>
-	
+	-->
 <!-- tab content. only 1 databind per element, so there's a container with a dynamically generated id (for tabs or other scripts) and child with the data. -->
+<!--
 	<div data-bind="var:product(pid);format:assignAttribute; attribute:id; valuePretext:prodDesc_;">
 		<div data-bind='var: product(zoovy:prod_desc); format:wiki; wikiFormats:myRIA;'></div>
 	</div>
@@ -778,9 +1248,11 @@ this will likely become more flexible in the future. ###
 	
 	
 	<div  data-bind="var:product(pid);format:assignAttribute; attribute:id; valuePretext:prodAccessories_;">
+	-->
 	<!--
 		<ul class='listStyleNone fluidList clearfix noPadOrMargin lineItemProdlist' data-bind="var: product(zoovy:accessory_products); format:productList; extension:store_prodlist;loadsTemplate:productListTemplateATC;hide_pagination:true;hide_summary:true; withReviews:1; withInventory:1; withVariations:1;"></ul>
 	-->
+	<!--
 	</div>
 
 
@@ -795,7 +1267,7 @@ this will likely become more flexible in the future. ###
 </table>
 <div class='prodlistRelatedContainer'>
 	<ul class='listStyleNone fluidList clearfix noPadOrMargin productList' data-bind="var: product(zoovy:related_products); format:productList; extension:store_prodlist;loadsTemplate:productListTemplate;hide_pagination:true;hide_summary:true; before:<h2>Similar Items</h2>; withReviews:1;"></ul>
-</div>
+</div> -->
 
 
 </div><!-- productTemplate -->
@@ -1674,7 +2146,27 @@ The 'data-action' attribute is used to assign an onclick.
 
 
 
-<div class='debug displayNone'>
+	<div class='debug displayNone'>
+	
+	<!-- Google Code for Remarketing tag -->
+	<!-- Remarketing tags may not be associated with personally identifiable
+	information or placed on pages related to sensitive categories. For
+	instructions on adding this tag and more information on the above requirements,
+	read the setup guide: google.com/ads/remarketingsetup -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 998684134;
+var google_conversion_label = "LnsrCPKf0QUQ5uua3AM";
+var google_custom_params = window.google_tag_params;
+var google_remarketing_only = true;
+/* ]]> */
+</script>
+<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js"></script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/998684134/?value=0&amp;label=LnsrCPKf0QUQ5uua3AM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
 
 <menu>
 	<li><a href='#' onClick="return showContent('category',{'navcat':'.'});">Homepage</a></li>
