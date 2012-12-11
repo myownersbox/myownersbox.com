@@ -68,9 +68,14 @@ css files should be included before any .js file to ensure they are downloaded i
 <!-- <script type="text/javascript" src="jquery/config.js"></script> -->
 <!-- TODO: use this line for development -->
 <!-- <script type="text/javascript" src="http://www.myownersbox.com/jquery/config.js"></script> -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script> -->
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<!-- TODO: production -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script> -->
+<!-- TODO: development -->
+<script src="jquery-1.8.2.js"></script>
 <script type="text/javascript" src="loadscript.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script> -->
 
 <!-- 
 aimediagroup
@@ -185,7 +190,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 <div id='appView' class='displayNone'>
 	<div id='topHead' class='noPrint'>
 		<div class='contentWidth clearfix no_underline'>
-			<div class='floatRight spriteBG minicart miniCartText pointer' onClick='app.ext.myRIA.util.showCart(); return false;'>
+			<div class='floatRight spriteBG minicart miniCartText pointer' onClick='app.ext.myRIA.u.showCart(); return false;'>
 				<span class='cartItemCount'>0</span> items
 			</div>
 			<nav class='floatRight'>
@@ -277,7 +282,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 			</div>
 			<div class='spriteBG newsHead floatLeft'></div>
 			<div class='floatLeft'>
-				<form action='#' id='subscribeFrm' name='subscribeFrm' onSubmit="app.ext.store_crm.util.handleSubscribe(this.id); return false">
+				<form action='#' id='subscribeFrm' name='subscribeFrm' onSubmit="app.ext.store_crm.u.handleSubscribe(this.id); return false">
 					<input type='email' class='twoBorder' maxlength='50' size='30' name='login' id='subscribeLogin' value='email address' onFocus="if(this.value == this.defaultValue) this.value =''" onBlur="if(this.value == '') this.value = this.defaultValue" />
 					<input type='text'  class='twoBorder' maxlength='50' size='30' name='fullname' id='subscribeFullname' value='full name' onFocus="if(this.value == this.defaultValue) this.value =''" onBlur="if(this.value == '') this.value = this.defaultValue" />
 					<input type='submit' class='spriteBG submit pointer' value='' />
@@ -318,7 +323,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 
 			<div class='vertRule'></div>
 
-			<div class='spriteBG miniCartText bigMinicart floatRight pointer' onClick='app.ext.myRIA.util.showCart(); return false;'>
+			<div class='spriteBG miniCartText bigMinicart floatRight pointer' onClick='app.ext.myRIA.u.showCart(); return false;'>
 				<span class='cartItemCount'>0</span> items
 			</div>	
 		</div>
@@ -371,7 +376,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 
 	<div id='drawerLocationChooser' class='drawerLocationChooser'>
 		<div id='drawerChooserText'>
-			<button onClick='myControl.ext.mob_customizer.util.hideChooser();'>X</button>
+			<button onClick='myControl.ext.mob_customizer.u.hideChooser();'>X</button>
 			<p>Please choose a position for this drawer.</p>
 			<p><span class='zwarn'>Tip:</span> You can replace your currently selected drawers</p>
 		</div>
@@ -454,7 +459,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 	The template for the category list in step 1. (the list of storage organizer categories)
 	-->
 	<ul>
-	<li id='mobStorageChooser' class='mobStorageChooser ztable_row'  onClick="app.ext.mob_customizer.util.containerCatSelected($(this).attr('data-catsafeid'));">
+	<li id='mobStorageChooser' class='mobStorageChooser ztable_row'  onClick="app.ext.mob_customizer.u.containerCatSelected($(this).attr('data-catsafeid'));">
 		<a href='#' class='prodName' data-bind='var: category(pretty); format:text;' onClick='return false;'></a>
 	</li>
 	</ul>
@@ -465,7 +470,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 	a class of 'selected' gets added onClick.
 	-->
 	<ul>
-	<li id='mobStorageContainerProductSpec' class='storageContainerProdlistItem' onClick="app.ext.mob_customizer.util.containerSizeSelected($(this).attr('data-pid'));">
+	<li id='mobStorageContainerProductSpec' class='storageContainerProdlistItem' onClick="app.ext.mob_customizer.u.containerSizeSelected($(this).attr('data-pid'));">
 		<span></span>
 		<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL; bgcolor:tttttt;' width='75' height='75' /></li>
 	</ul>
@@ -478,7 +483,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 	<ul>
 	<li id='mobDrawerChooser' class='mobDrawerChooser' >
 		
-		<div class='ztable_row pointer' onClick="app.ext.mob_customizer.util.drawerCatSelected($(this).parent().attr('data-catsafeid'));">
+		<div class='ztable_row pointer' onClick="app.ext.mob_customizer.u.drawerCatSelected($(this).parent().attr('data-catsafeid'));">
 			<span class='arrow'></span>
 			<img class='catThumb' data-bind='var: category(%meta.CAT_THUMB); format:imageURL;  bgcolor:tttttt;' height='35' width='35'  />
 			<div class='catName' data-bind='var: category(pretty); format:text;'></div>
@@ -502,9 +507,9 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 			<span class='displayNone dragThumb'><img class='prodThumb' data-bind='var: product(zoovy:prod_image7); format:imageURL; bgcolor:tttttt;' width='128' height='128' /></span>
 		</div>
 		</div>
-		<div class='magGlassIcon pointer' onClick='app.ext.store_product.util.showPicsInModal({"pid":$(this).parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
+		<div class='magGlassIcon pointer' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
 
-		<div class='prodAttContainer pointer' onClick="app.ext.mob_customizer.util.drawerClicked($(this).parent().attr('data-pid'),$(this).parent().attr('id'))">
+		<div class='prodAttContainer pointer' onClick="app.ext.mob_customizer.u.drawerClicked($(this).parent().attr('data-pid'),$(this).parent().attr('id'))">
 			<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL; bgcolor:tttttt;' width='70' height='55' />
 			<div class='prodName' data-bind='var: product(user:prod_organization); format:text; defaultVar: product(zoovy:prod_name);'></div>
 		</div>
@@ -514,7 +519,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 
 	<ul>
 	<li id='mobRecentViewedProductSpec' class='prodlistLineItem recentlySelectedLineItem pointer'>
-		<div onClick="app.ext.mob_customizer.util.drawerClicked($(this).parent().attr('data-pid'),$(this).parent().attr('id'))">
+		<div onClick="app.ext.mob_customizer.u.drawerClicked($(this).parent().attr('data-pid'),$(this).parent().attr('id'))">
 			<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='35' height='35' />
 			<div class='prodName' data-bind='var: product(user:prod_organization); format:text; defaultVar: product(zoovy:prod_name);'></div>
 			<div class='addLink'>+Add</div>
@@ -610,7 +615,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 		<div id='configuratorTotal'></div>
 		<div id='promotion'></div>
 		
-		<button onClick='app.ext.mob_customizer.util.addItAllToTheCart(); return false;' class='spriteBG' id='configuratorAddToCartBtn'>add to cart</button>
+		<button onClick='app.ext.mob_customizer.u.addItAllToTheCart(); return false;' class='spriteBG' id='configuratorAddToCartBtn'>add to cart</button>
 	</div>
 			</div>
 
@@ -621,7 +626,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 	<div class="floatLeft addthis_toolbox addthis_default_style" id='configuratorAddThis'>
 		
 		<div class='clearfix socialButtonRowMargin'>
-			<a href='#' class='spriteBG printIcon floatLeft pointer' onClick='app.ext.mob_customizer.util.openForPrinting(); return false;'>print</a>
+			<a href='#' class='spriteBG printIcon floatLeft pointer' onClick='app.ext.mob_customizer.u.openForPrinting(); return false;'>print</a>
 			<a class="addthis_button_email"></a>
 		</div>
 		<div class='clearfix socialButtonRowMargin'>
@@ -793,7 +798,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 <li id='productListTemplate' class='loadingBG  clearfix productListItem' >
 
 	<div class='prodThumbContainer'>
-		<div class='magGlassIcon pointer' onClick='app.ext.store_product.util.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
+		<div class='magGlassIcon pointer' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
 		<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='120' height='120' />
 		<div data-bind="var: product(user:prod_360_url); format:view360inModal; extension: mob_customizer;" class='displayNone'><img src='images/mob_360view-116x37.png' width='116' height="37" alt='click here for 360 view' border='0' /></div>
 	</div>
@@ -810,7 +815,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 	<div class='priceEtAll'>
 		<div class='prodPrice' data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; className:price; pretext: Price: ;'></div>
 
-	<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodListAddToCartForm marginBottom clearfix' id='prodListAddToCartFrm' action='#' onSubmit="app.ext.myRIA.util.handleAddToCart(this.id,{'action':'modal'});  return false;">
+	<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodListAddToCartForm marginBottom clearfix' id='prodListAddToCartFrm' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart(this.id,{'action':'modal'});  return false;">
 	
 		<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
 		
@@ -927,7 +932,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 -->
 <li id='productListTemplateResults' class='loadingBG  ' >
 	<div class='prodThumbContainer'>
-		<div class='magGlassIcon pointer' onClick='app.ext.store_product.util.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
+		<div class='magGlassIcon pointer' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
 		<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='120' height='120' />
 		<div data-bind="var: product(user:prod_360_url); format:view360inModal; extension: mob_customizer;" class='displayNone'><img src='images/mob_360view-116x37.png' width='116' height="37" alt='click here for 360 view' border='0' /></div>
 	</div>
@@ -944,7 +949,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 	<div class='priceEtAll'>
 		<div class='prodPrice' data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; className:price; pretext: Price: ;'></div>
 
-	<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodListAddToCartForm marginBottom clearfix' id='prodListAddToCartFrm' action='#' onSubmit="app.ext.myRIA.util.handleAddToCart(this.id);  return false;">
+	<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodListAddToCartForm marginBottom clearfix' id='prodListAddToCartFrm' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart(this.id);  return false;">
 	
 		<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
 		
@@ -1007,7 +1012,7 @@ this will likely become more flexible in the future. ###
 	<table id='prodViewerTable'>
 	<tr>
 		<td class='imageContainer'>
-		<div onClick='app.ext.store_product.util.showPicsInModal({"pid":$(this).attr("data-pid")});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='pointer'>
+		<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).attr("data-pid")});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='pointer'>
 	<img class='prodBigImage' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='300' height='300' />
 
 
@@ -1040,7 +1045,7 @@ this will likely become more flexible in the future. ###
 		<div data-bind='var: product(@inventory.inv); format:simpleInvDisplay; extension:store_product;' class='inventory'></div>
 		<div data-bind='var: product(zoovy:ship_latency); format:text;pretext:Normally ships in ;posttext: day(s);' class='latency'></div>
 		
-		<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodViewerAddToCartForm' id='prodViewerAddToCartFrm' action='#' onSubmit="app.ext.myRIA.util.handleAddToCart(this.id,{'action':'modal'});  return false;">
+		<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodViewerAddToCartForm' id='prodViewerAddToCartFrm' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart(this.id,{'action':'modal'});  return false;">
 		
 			<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
 			<fieldset data-bind='var: product(pid); format:atcQuantityInput; extension:store_product; pretext:Quantity: ;' class='borderNone'></fieldset>
@@ -1058,7 +1063,7 @@ this will likely become more flexible in the future. ###
 
 		<menu data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' id='CRMButtonMenu'>
 		
-		<button class='ui-state-default ui-corner-all' onClick='app.ext.store_crm.util.showReviewFrmInModal({"pid":$(this).attr("data-pid"),"templateID":"reviewFrmTemplate"});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>Write Review</button>
+		<button class='ui-state-default ui-corner-all' onClick='app.ext.store_crm.u.showReviewFrmInModal({"pid":$(this).attr("data-pid"),"templateID":"reviewFrmTemplate"});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>Write Review</button>
 
 		<button class='ui-state-default ui-corner-all displayNone' data-bind='var:product(zoovy:prod_url_pdf);format:addLinkOnclick; extension:myRIA;'>Assembly Instructions</button>
 
@@ -1092,7 +1097,7 @@ this will likely become more flexible in the future. ###
 		<div id="prodReviews">
 			
 			<div class='clearfix alignRight'>
-				<button class='ui-button-text ui-button ui-state-default ui-corner-all' onClick='app.ext.store_crm.util.showReviewFrmInModal({"pid":$(this).attr("data-pid"),"templateID":"reviewFrmTemplate"});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>Write Review</button>
+				<button class='ui-button-text ui-button ui-state-default ui-corner-all' onClick='app.ext.store_crm.u.showReviewFrmInModal({"pid":$(this).attr("data-pid"),"templateID":"reviewFrmTemplate"});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>Write Review</button>
 			</div>
 			
 			<ul class='listStyleNone clearfix' id='prodViewerReviews' data-bind="var: reviews(@reviews); format:reviewList; extension:store_product; loadsTemplate:productReviewsTemplateDetail;"></ul>

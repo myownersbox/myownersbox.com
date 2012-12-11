@@ -21,14 +21,14 @@
 var mob_customizer = function() {
 	var r = {
 	vars : {
-		"recentlyRemoved" : new Array(),
+		"recentlyRemoved" : [],
 		"uriParams" : "", //stores a list of K/V pairs of what is selected in the customizer. used when a shopper returns to the page.
 		"templates" : ['mobDrawerChooser','mobStorageContainerProductSpec','mobStorageChooser','mobDrawerProductSpec','mobRecentViewedProductSpec'],
 		"dependencies" : ['store_prodlist','store_navcats','store_product'], //a list of other extensions (just the namespace) that are required for this one to work.
 		"dependAttempts" : 0 //used to count how many times the dependencies have been attempted.
 		},
 
-					////////////////////////////////////   CALLS    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\		
+					////////////////////////////////////   CALLS    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
 
@@ -220,18 +220,18 @@ passed on the URI (external links to page)
 */
 		initConfigurator : function(P) {
 			// app.u.dump('BEGIN mob_customizer.actions.initConfigurator');
-//			app.u.dump(P);
+			// app.u.dump([P]);
 //This extension needs to be able to operate without the mobRIA extension.
 //so that if the configurator is loaded outside his website that ext isn't necessary.
 //init could get executed not through 'showContent', so hide the banner and show the cats.
-			// $('#headerBanner').hide(); // handled in init
-			// $('#headerCategories').show(); // handled in init
+			$('#headerBanner').hide(); // handled in init
+			$('#headerCategories').show(); // handled in init
 
 			if(app.ext.myRIA)	{
-				app.ext.myRIA.u.addPushState({'pageType':'category','navcat':'.customizer'})
+        app.ext.myRIA.u.addPushState({'pageType':'category','navcat':'.customizer'}); // QUE: addPushState? change to push?
 				}
 
-			$('#mainContentArea').empty().append(app.renderFunctions.transmogrify('configurator','configuratorTemplate',{}))
+			$('#mainContentArea').empty().append(app.renderFunctions.transmogrify('configurator','configuratorTemplate',{}));
 
 			var numRequests = 0; //will be > 0 if a request is needed.
 
@@ -282,24 +282,24 @@ passed on the URI (external links to page)
 //each of these calls returns the number of requests needed. so if numRequests is zero, no dispatch needed.
 //get the details on the open drawer category. saves an extra request. also solves a transmogrify sequencing issue if it's added 2 the Q first.
 			numRequests += app.ext.store_navcats.calls.appCategoryDetailMax.init(app.ext.mob_customizer.vars.uriParams.s3);
-
 //there's only 3 bins right now. we're inevitably going to need this data. get it now when a request is most likely happening anyway.
-			numRequests += app.ext.store_product.calls.appProductGet.init('50062MLB');
-			numRequests += app.ext.store_product.calls.appProductGet.init('50092MLB');
-			numRequests += app.ext.store_product.calls.appProductGet.init('60032MLB');
-			
-			
-			numRequests += app.ext.store_navcats.calls.appCategoryDetailMax.init('.storage-containers',{"callback":"displayStorageContainers","extension":"mob_customizer"});
-			numRequests += app.ext.store_navcats.calls.appCategoryDetailMax.init('.drawers',{"callback":"displayDrawers","extension":"mob_customizer"});
-			
-			
-			numRequests += app.ext.mob_customizer.u.popCustomerFromPresets();
+      numRequests += app.ext.store_product.calls.appProductGet.init('50062MLB');
+      numRequests += app.ext.store_product.calls.appProductGet.init('50092MLB');
+      numRequests += app.ext.store_product.calls.appProductGet.init('60032MLB');
+      
+      
+      numRequests += app.ext.store_navcats.calls.appCategoryDetailMax.init('.storage-containers',{"callback":"displayStorageContainers","extension":"mob_customizer"});
+      numRequests += app.ext.store_navcats.calls.appCategoryDetailMax.init('.drawers',{"callback":"displayDrawers","extension":"mob_customizer"});
+      
+      app.u.dump('got here');
 
-//			app.u.dump(" -> numRequests for customizer.init = "+numRequests);
-			if(numRequests > 0)	{
-				app.model.dispatchThis();  // if data above is in local, nothing will get dispatched.
-				}
-			
+      numRequests += app.ext.mob_customizer.u.popCustomerFromPresets();
+
+//      app.u.dump(" -> numRequests for customizer.init = "+numRequests);
+      if(numRequests > 0) {
+        app.model.dispatchThis();  // if data above is in local, nothing will get dispatched.
+        }
+      
 
 
 
@@ -1058,19 +1058,20 @@ if 'spots' are set, populate them everywhere they need to be populated.
 
 */
 			popCustomerFromPresets : function() {
-//				app.u.dump("BEGIN mob_customizer.u.popCustomerFromPresets");
+				// app.u.dump("BEGIN mob_customizer.u.popCustomerFromPresets");
 				var numRequests = 0; //the number of requests that will need to be made. returned.
 				var P = app.ext.mob_customizer.vars.uriParams; //shortcut.
 //				app.u.dump(P);
 //gets storage bin category detail (for step 1 so the list of product is available to pop step 2)
 //product data retrieval and population is handled in a callback.
 				if(app.u.isSet(P.s1))	{
-//					app.u.dump(" -> s1 is populated ["+P.s1+"]");
+					app.u.dump(" -> s1 is populated ["+P.s1+"]");
 					numRequests += app.ext.store_navcats.calls.appCategoryDetailMax.init(P.s1,{"callback":"containerCatSelected","extension":"mob_customizer"});
+          app.u.dump('numRequests: ' + numRequests);
 					}
 
 
-//				app.u.dump(" -> BEFORE LOOP. uriParams to follow: ");
+				// app.u.dump(" -> BEFORE LOOP. uriParams to follow: ");
 //				app.u.dump(app.ext.mob_customizer.vars.uriParams);
 
 

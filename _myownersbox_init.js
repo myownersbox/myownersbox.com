@@ -1,7 +1,7 @@
 var app = app || {vars:{},u:{}}; //make sure app exists.
 app.rq = app.rq || []; //ensure array is defined. rq = resource queue.
 
-
+// TODO: add side images to drawers - solid color
 
 
 // app.rq.push(['extension',0,'convertSessionToOrder','extensions/checkout_passive/extension.js']);
@@ -41,16 +41,16 @@ app.rq.push(['script',0,app.vars.baseURL+'controller.js']);
 
 /// hompage \\\
 app.rq.push(['templateFunction','homepageTemplate','onCompletes', function(P) {
-  $('#headerBanner').removeClass('displayNone');
+  $('#headerBanner').show();
 }]);
 
 app.rq.push(['templateFunction','homepageTemplate','onDeparts', function(P) {
-  $('#headerBanner').addClass('displayNone');
+  $('#headerBanner').hide();
 }]);
 
 /// categories \\\
 app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
-  $('#headerCategories').removeClass('displayNone');
+  $('#headerCategories').show();
 
   /*
   handles loading the customizer if the apprpriate cateory page is in focus
@@ -58,20 +58,22 @@ app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
    -> not ideal, but will do for now till some sort of category template handler is in place (for choosing template)
   */
   if(P.navcat == '.customizer') {
+    // app.u.dump([P]);
+
     $('#mainContentArea').empty(); //removes templateInstance for cat page which may already be present.
     app.model.abortQ('mutable'); //will kill existing process to stop default cat layout info from loading.
-    app.ext.mob_customizer.actions.initConfigurator(P.uriParams);
+    app.ext.mob_customizer.actions.initConfigurator(P);
   }
   
   //handle conditional display of category page content.
-  $('.catPageTopContent').removeClass('displayNone');
+  $('.catPageTopContent').show();
   // if(app.data['appPageGet|'+P.navcat] && typeof app.data['appPageGet|'+P.navcat]['%page'] == 'object' && typeof app.data['appPageGet|'+P.navcat]['%page']['picture1'])  {
     // $('#catPageTopContent').show();
   // }
 }]);
 
 app.rq.push(['templateFunction','categoryTemplate','onDeparts', function(P) {
-  $('#headerCategories').addClass('displayNone');
+  $('#headerCategories').hide();
 }]);
 
 /// checkout \\\
