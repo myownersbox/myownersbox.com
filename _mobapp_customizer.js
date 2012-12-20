@@ -304,7 +304,8 @@ passed on the URI (external links to page)
 
 
 			if(typeof addthis == 'object')	{
-				// addthis.toolbox('#configuratorAddThis'); // BUG: addthis.toolbox is not a function
+				// app.u.dump([addthis]);
+				addthis.toolbox('#configuratorAddThis'); // BUG: addthis.toolbox is not a function
 			}
 			
 			}, //initConfigurator
@@ -592,8 +593,8 @@ if(typeof addthis_share == 'object')	{
 			//executed when a drawer category is selected.
 			//hides all the other product lists and shows the one now in focus.
 			drawerCatSelected : function(catSafeID)	{
-				app.u.dump("BEGIN customizer.u.drawerCatSelected");
-				app.u.dump("safeid = "+catSafeID);
+				// app.u.dump("BEGIN customizer.u.drawerCatSelected");
+				// app.u.dump("safeid = "+catSafeID);
 				app.ext.mob_customizer.u.hideChooser(); //closes an open chooser. feels natural when using to have this happen.
 				$('#drawerCategories .prodlist').toggle(false); // hide all the other product lists.
 				$('#drawerCategories li').removeClass('selected'); //remove selected class from all list elements within drawer cat chooser.
