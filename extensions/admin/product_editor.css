@@ -9,8 +9,7 @@
 #prodLeftCol li	{margin-left:10px;}
 #prodLeftCol li a	{padding:3px 0; display:block;}
 
-.productEditorContainer	.panelContents	{border-top: none;}
-.productEditorContainer .panelHeader	{margin-top:12px; padding:3px 12px;}
-.productEditorContainer .panelHeader span	{float:left; margin-right:6px;}
+#prodEditorResultsTable tr:nth-child(odd)		{ background-color:#eee; }
+#prodEditorResultsTable tr:nth-child(even)		{ background-color:#fff; }
 
-.productEditorContainer	.panelContents fieldset	{border:none; margin:0; padding:0;}
+#panelContents_general textarea	{width:80%;} /* override brians cols='80' */

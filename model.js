@@ -58,7 +58,7 @@ Or if you have dispatches occur during your app init but are concerned they coul
 the passive q requests are never aborted.
 
 q.mutable - this is the bulk of your calls. Getting information and then doing something with it (executed from the callback). It is called mutable
-because it can be muted. aka aborted. if an immutable request is sent, it will cancel all mutable requests. Likewise, the app.model.abortQ() function
+because it can be muted by the app.model.abortQ() function
 will abort all mutable requests.  Use this when the users direction changes (they click page 1, then quickly click page 2 - you'd want to cancel the requests for 
 page 1 so their callbacks are not executed).
 
@@ -81,7 +81,7 @@ app.globalAjax.lastDispatch - keeps track of when the last dispatch occurs. Not 
 function zoovyModel() {
 	var r = {
 	
-		version : "201245",
+		version : "201248",
 	// --------------------------- GENERAL USE FUNCTIONS --------------------------- \\
 	
 	//pass in a json object and the last item id is returned.
@@ -190,7 +190,7 @@ function zoovyModel() {
 					myQ.push($.extend(true,{},app.q[QID][index])); //creates a copy so that myQ can be manipulated without impacting actual Q. allows for _tag to be removed.
 					if(puuid){app.q[QID][index]['pipeUUID'] = puuid}
 //the following are blanked out because they're not 'supported' vars. eventually, we should move this all into _tag so only one field has to be blanked.
-//					delete myQ[c]['_tag']; //blank out rtag to make requests smaller. handleResponse will check if it's set and re-add it to pass into callback.
+					delete myQ[c]['_tag']; //blank out rtag to make requests smaller. handleResponse will check if it's set and re-add it to pass into callback.
 					delete myQ[c]['status'];
 					delete myQ[c]['attempts'];
 					c += 1;
@@ -327,7 +327,6 @@ don't move this. if it goes before some other checks, it'll resed the Qinuse var
 app.globalAjax.lastDispatch = app.u.unixNow();
 app.globalAjax.overrideAttempts = 0;
 
-
 //IMPORTANT
 /*
 the delete in the success AND error callbacks removes the ajax request from the requests array. 
@@ -336,29 +335,37 @@ must be run before handleResponse so that if handleresponse executes any request
 can't be added to a 'complete' because the complete callback gets executed after the success or error callback.
 */
 
+
 	app.globalAjax.requests[QID][pipeUUID] = $.ajax({
 		type: "POST",
 		url: app.vars.jqurl,
 		context : app,
 		async: true,
 		contentType : "text/json",
+//		beforeSend: app.model.setHeader, //
 		dataType:"json",
-//DO NOT CHANGE FORMAT OF _V, especially the zmvc/modelversion/release portion. contents of passindispatchV can be edited, if need be.
-		data: JSON.stringify({"_uuid":pipeUUID,"_zjsid": app.sessionId,"_cmd":"pipeline","@cmds":Q, "_v":'zmvc:'+app.model.version+'.'+app.vars.release+';'+app.vars.passInDispatchV})
+//ok to pass admin vars on non-admin session. They'll be ignored.
+		data: JSON.stringify({"_uuid":pipeUUID,"_cartid": app.sessionId,"_cmd":"pipeline","@cmds":Q,"_clientid":app.vars._clientid,"_domain":app.vars.domain,"_userid":app.vars.userid,"_deviceid":app.vars.deviceid,"_authtoken":app.vars.authtoken,"_version":app.model.version})
 		});
 	app.globalAjax.requests[QID][pipeUUID].error(function(j, textStatus, errorThrown)	{
-		app.u.dump(' -> REQUEST FAILURE! Request returned high-level errors or did not request: textStatus = '+textStatus+' errorThrown = '+errorThrown);
-		delete app.globalAjax.requests[QID][pipeUUID];
-		app.model.handleCancellations(Q,QID);
-		setTimeout("app.model.dispatchThis('"+QID+"')",1000); //try again. a dispatch is only attempted three times before it errors out.
+		if(textStatus == 'abort')	{
+			delete app.globalAjax.requests[QID][pipeUUID];
+			for(var index in Q) {
+				app.model.changeDispatchStatusInQ(QID,Q[index]['_uuid'],'abort');
+				}
+
+			}
+		else	{
+			app.u.dump(' -> REQUEST FAILURE! Request returned high-level errors or did not request: textStatus = '+textStatus+' errorThrown = '+errorThrown);
+			delete app.globalAjax.requests[QID][pipeUUID];
+			app.model.handleCancellations(Q,QID);
+			setTimeout("app.model.dispatchThis('"+QID+"')",1000); //try again. a dispatch is only attempted three times before it errors out.
+			}
 		});
 	app.globalAjax.requests[QID][pipeUUID].success(function(d)	{
 		delete app.globalAjax.requests[QID][pipeUUID];
 		app.model.handleResponse(d);}
 		)
-
-
-
 
 				}
 
@@ -377,7 +384,7 @@ handleReQ is used in a few places. Sometimes you want to adjust the attempts (q.
 set adjustAttempts to true to increment by 1.
 */
 		handleReQ : function(Q,QID,adjustAttempts)	{
-			var uuid,callbackObj;
+			var uuid;
 			for(var index in Q) {
 				uuid = Q[index]['_uuid'];
 				app.model.changeDispatchStatusInQ(QID,uuid,'queued');
@@ -387,12 +394,12 @@ set adjustAttempts to true to increment by 1.
 //run when a request fails, most likely due to an ISE
 
 		handleCancellations : function(Q,QID)	{
-			var uuid,callbackObj;
+			var uuid;
 			for(var index in Q) {
 				uuid = Q[index]['_uuid'];
 				app.model.changeDispatchStatusInQ(QID,uuid,'cancelledDueToErrors');
 //make sure a callback is defined.
-				this.handleErrorByUUID(uuid,QID,{'errid':'ISE','persistant':true,'errmsg':'It seems something went wrong. Please continue, refresh the page, or contact the site administrator if error persists. Sorry for any inconvenience. (mvc error: most likely a request failure after multiple attempts [uuid = '+uuid+'])'})
+				this.handleErrorByUUID(uuid,QID,{'errid':'ISE','persistant':true,'errmsg':'It seems something went wrong. Please try again or contact the site administrator if error persists. Sorry for any inconvenience. (mvc error: most likely a request failure [uuid = '+uuid+'])'})
 				}
 			},
 	
@@ -406,18 +413,27 @@ set adjustAttempts to true to increment by 1.
 		if(QID && UUID && responseData)	{
 			responseData['_rtag'] = responseData['_rtag'] || this.getRequestTag(UUID); //_tag is stripped at dispatch and readded. make sure it's present.
 			if(responseData['_rtag'])	{
-				var Q = app.q[QID];			
+				var Q = app.q[QID];	
 				if(Q[UUID]['_tag'] && Q[UUID]['_tag']['callback'])	{
-	//executes the callback.onError and takes into account extension. saves entire callback object into callbackObj so that it can be easily validated and executed whether in an extension or root.
-					callbackObj = Q[UUID]['_tag']['extension'] ? app.ext[Q[UUID]['_tag']['extension']].callbacks[Q[UUID]['_tag']['callback']] : app.callbacks[Q[UUID]['_tag']['callback']];
-	//persistant is NOT defined if a callback is defined. let the callback itself make that decision.
-					if(callbackObj && typeof callbackObj.onError == 'function'){
-						callbackObj.onError(responseData,UUID)
+					var callback = Q[UUID]['_tag']['callback'];
+//callback is an anonymous function. Execute it.
+					if(typeof callback == 'function')	{
+						callback(responseData,UUID)
 						}
-//callback defined, but is not a function.
+//callback is defined in extension or controller as object (with onSuccess and maybe onError)
+					else if(typeof callback == 'string')	{
+						callback = Q[UUID]['_tag']['extension'] ? app.ext[Q[UUID]['_tag']['extension']].callbacks[Q[UUID]['_tag']['callback']] : app.callbacks[Q[UUID]['_tag']['callback']];
+						if(typeof callback.onError == 'function'){
+							callback.onError(responseData,UUID);
+							}
+						else{
+							app.u.throwMessage(responseData);
+							}
+						}
 					else	{
-						app.u.dump(" -> callback not a function");
+						//unknown type for callback.
 						app.u.throwMessage(responseData);
+						
 						}
 					}
 //_rtag defined, but no callback.
@@ -445,7 +461,7 @@ set adjustAttempts to true to increment by 1.
 	/*
 	
 	handleResponse and you...
-	some high level errors, like no zjsid or invalid json or whatever get handled in handeResponse
+	some high level errors, like no cartid or invalid json or whatever get handled in handeResponse
 	lower level (_cmd specific) get handled inside their independent response functions or in responseHasErrors(), as they're specific to the _cmd
 	
 	if no high level errors are present, execute a response function specific to the request (ex: request of addToCart executed handleResponse_addToCart).
@@ -466,7 +482,8 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 				var QID = this.whichQAmIFrom(uuid); //don't pass QID in. referenced var that could change before this block is executed.
 //				app.u.dump(" -> responseData is set. UUID: "+uuid);
 //if the error is on the parent/piped request, no qid will be set.
-				if(responseData && responseData['_rcmd'] == 'err')	{
+//if an iseerr occurs, than even in a pipelined request, errid will be returned on 'parent' and no individual responses are returned.
+				if(responseData && (responseData['_rcmd'] == 'err' || responseData.errid))	{
 					
 //QID will b set if this is a NON pipelined request.
 					if(QID)	{
@@ -529,7 +546,7 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 //the logic for the order here is the same as in the pipelined response, where it is documented.
 				else {
 					responseData['_rtag'] = responseData['_rtag'] || this.getRequestTag(responseData['_uuid']);
-					this.writeToMemoryAndLocal(responseData['@rcmds'][i])
+					this.writeToMemoryAndLocal(responseData['@rcmds'])
 					if(responseData['_rcmd'] && typeof this['handleResponse_'+responseData['_rcmd']] == 'function')	{
 	//					app.u.dump("CUSTOM handleresponse defined for "+responseData['_rcmd']);
 						this['handleResponse_'+responseData['_rcmd']](responseData)	//executes a function called handleResponse_X where X = _cmd, if it exists.
@@ -545,6 +562,15 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 					app.u.throwMessage("Uh oh! Something has gone very wrong with our app. We apologize for any inconvenience. Please try agian. If error persists, please contact the site administrator.");
 				}
 			}, //handleResponse
+
+
+//this will remove data from both local storage AND memory.
+//execute this on a field prior to a call when you want to ensure memory/local is not used (fresh data).
+//admittedly, this isn't the best way to handle this. for 2013XX we'll have something better. ###
+		destroy : function(key)	{
+			delete app.data[key];
+			localStorage.removeItem(key);
+			},
 
 
 //this will write the respose both to localStorage and into app.data
@@ -593,7 +619,6 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 		handleResponse_defaultAction : function(responseData)	{
 //			app.u.dump('BEGIN handleResponse_defaultAction');
 //			app.u.dump(responseData);
-			var callbackObj = {}; //the callback object from the controller. saved into var to reduce lookups.
 			var callback = false; //the callback name.
 			var uuid = responseData['_uuid']; //referenced enough to justify saving to a var.
 			var datapointer = null; //a callback can be set with no datapointer.
@@ -604,15 +629,15 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 
 			if(!$.isEmptyObject(responseData['_rtag']) && app.u.isSet(responseData['_rtag']['callback']))	{
 	//callback has been defined in the call/response.
-				callback = responseData['_rtag']['callback'];
+				callback = responseData['_rtag']['callback']; //shortcut
 //				app.u.dump(' -> callback: '+callback);
-				
-				if(responseData['_rtag']['extension'] && !$.isEmptyObject(app.ext[responseData['_rtag']['extension']].callbacks[callback]))	{
-					callbackObj = app.ext[responseData['_rtag']['extension']].callbacks[callback];
+				if(typeof callback == 'function'){} //do nothing to callback. will get executed later.
+				else if(responseData['_rtag']['extension'] && !$.isEmptyObject(app.ext[responseData['_rtag']['extension']].callbacks[callback]))	{
+					callback = app.ext[responseData['_rtag']['extension']].callbacks[callback];
 //					app.u.dump(' -> callback node exists in app.ext['+responseData['_rtag']['extension']+'].callbacks');
 					}
 				else if(!$.isEmptyObject(app.callbacks[callback]))	{
-					callbackObj = app.callbacks[callback];
+					callback = app.callbacks[callback];
 //					app.u.dump(' -> callback node exists in app.callbacks');
 					}
 				else	{
@@ -620,7 +645,7 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 					app.u.dump(' -> WARNING! callback defined but does not exist.');
 					}
 				}
-	
+			else	{callback = false;} //no callback defined.
 	
 //if no datapointer is set, the response data is not saved to local storage or into the app. (add to cart, ping, etc)
 //effectively, a request occured but no data manipulation is required and/or available.
@@ -641,34 +666,45 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 	//			app.u.dump(' -> no datapointer set for uuid '+uuid);
 				}
 
-			if(hasErrors)	{
-				if(callback && !$.isEmptyObject(callbackObj) && typeof callbackObj.onError == 'function'){
-//					app.u.dump('WARNING response for uuid '+uuid+' had errors. callback defined and executed.');
+//errors present and a defined action for handling those errors is defined.
+			if(hasErrors && callback)	{
+				if(typeof callback == 'function')	{
+					callback(responseData,uuid); //if an anonymous function is passed in, it handles does it's own error handling.
+					}
+				else if(typeof callback == 'object' && typeof callback.onError == 'function'){
 /*
 below, responseData['_rtag'] was passed instead of uuid, but that's already available as part of the first var passed in.
 uuid is more useful because on a high level error, rtag isn't passed back in responseData. this way uuid can be used to look up originat _tag obj.
 */
-					callbackObj.onError(responseData,uuid);
+					callback.onError(responseData,uuid);
 					}
-				else if(typeof app.u.throwMessage === 'function')	{
-					app.u.throwMessage(responseData);
+				else if(typeof callback == 'object' && typeof app.u.throwMessage === 'function')	{
+//callback defined but no error case defined. use default error handling.
+					app.u.throwMessage(responseData);					
 					}
 				else{
 					app.u.dump('ERROR response for uuid '+uuid+'. callback defined but does not exist or is not valid type. callback = '+callback+' datapointer = '+datapointer)
 					}
 				status = 'error';
 				}
+//has errors but no error handler declared. use default
+			else if(hasErrors && typeof app.u.throwMessage === 'function')	{
+				app.u.throwMessage(responseData);
+				status = 'error';
+				}
+//no errors. no callback.
 			else if(callback == false)	{
 				status = 'completed';
 	//			app.u.dump(' --> no callback set in original dispatch. dq set to completed for uuid ('+uuid+')');
 				}
+//to get here, no errors are present AND a callback is defined.
 			else	{
-	//			app.u.dump(' -> got to success portion of handle resonse. callback = '+callback);
 				status = 'completed';
-				if(!$.isEmptyObject(callbackObj) && typeof callbackObj.onSuccess != undefined){
-//initially, only datapointer was passed back.
-//then, more data was getting passed on rtag and it made more sense to pass the entire object back
-					callbackObj.onSuccess(responseData['_rtag']); //executes the onSuccess for the callback
+				if(typeof callback == 'function')	{
+					callback(responseData._rtag);
+					}
+				else if(typeof callback == 'object' && typeof callback.onSuccess == 'function')	{
+					callback.onSuccess(responseData['_rtag']); //executes the onSuccess for the callback
 					}
 				else{
 					app.u.dump(' -> successful response for uuid '+uuid+'. callback defined ('+callback+') but does not exist or is not valid type.')
@@ -678,6 +714,10 @@ uuid is more useful because on a high level error, rtag isn't passed back in res
 			return status;
 		},
 	
+//after an order is created, the 'old' cart data gets saved into an order| for quick reference. 
+		handleResponse_adminOrderCreate : function(responseData)	{
+			this.handleResponse_cartOrderCreate(responseData); //share the same actions. append as needed.
+			},
 	
 	//this function gets executed upon a successful request for a create order.
 	//saves a copy of the old cart object to order|ORDERID in both local and memory for later reference (invoice, upsells, etc).
@@ -731,21 +771,17 @@ so to ensure saving to appPageGet|.safe doesn't save over previously requested d
 			app.model.handleResponse_defaultAction(responseData);
 			}, //handleResponse_appPageGet
 
-//admin session returns a zjsid if response	
-		handleResponse_appSessionStart: function(responseData)	{
-//			app.storageFunctions.deleteCookie('zjsid'); //nuke any previous zjsid cookie
-			app.u.dump("BEGIN model.handleResponse_appSessionStart . ("+responseData['_uuid']+")");
-			app.u.dump(" -> _zjsid = "+responseData['_zjsid']);
-			if(app.u.isSet(responseData['_zjsid']))	{
-				this.handleResponse_appCartCreate(responseData); //saves session data locally and into control.
-				app.storageFunctions.writeLocal('zjsid',responseData['_zjsid']);
-//				app.storageFunctions.writeCookie('zjsid',responseData['_zjsid']); //the app doesn't use the cookie, so it doesn't leave one. any legacy code that needs cookies should handle it on their own.
-//				var date = new Date();
-//				document.cookie = "zjsid="++"; domain=.zoovy.com;path=/; expires="+date.setTime(date.getTime()+(1*24*60*60*1000));
-				}
-			else	{
-				app.model.handleResponse_defaultAction(responseData);
-				}
+
+
+
+		handleResponse_authAdminLogin: function(responseData)	{
+			app.u.dump("BEGIN model.handleResponse_authAdminLogin"); //app.u.dump(responseData);
+			app.vars.deviceid = responseData.deviceid;
+			app.vars.authtoken = responseData.authtoken;
+			app.vars.userid = responseData.userid.toLowerCase();
+			app.vars.username = responseData.username.toLowerCase();
+			app.vars.thisSessionIsAdmin = true;
+			app.model.handleResponse_defaultAction(responseData); //datapointer ommited because data already saved.
 			},
 
 		handleResponse_appCartExists : function(responseData)	{
@@ -756,7 +792,7 @@ so to ensure saving to appPageGet|.safe doesn't save over previously requested d
 			else	{
 /* nuke references to old, invalid session id. if this doesn't happen, the old session ID gets passed and will be re-issued. */				
 				app.sessionId = null;
-				app.storageFunctions.writeLocal('zjsid',null);
+				app.storageFunctions.writeLocal('cartid',null);
 				app.model.handleResponse_defaultAction(responseData); //datapointer ommited because data already saved.
 				}
 			},
@@ -775,12 +811,12 @@ so to ensure saving to appPageGet|.safe doesn't save over previously requested d
 
 //no error handling at this level. If a connection or some other critical error occured, this point would not have been reached.
 //save session id locally to maintain session id throughout user experience.	
-			app.storageFunctions.writeLocal('sessionId',responseData['_zjsid']);
-//			app.storageFunctions.writeLocal(app.vars['username']+"-cartid",responseData['_zjsid']);  
-			app.sessionId = responseData['_zjsid']; //saved to object as well for easy access.
+			app.storageFunctions.writeLocal('sessionId',responseData['_cartid']);
+//			app.storageFunctions.writeLocal(app.vars['username']+"-cartid",responseData['_cartid']);  
+			app.sessionId = responseData['_cartid']; //saved to object as well for easy access.
 			app.model.handleResponse_defaultAction(responseData); //datapointer ommited because data already saved.
-			app.u.dump("sessionID = "+responseData['_zjsid']);
-			return responseData['_zjsid'];
+			app.u.dump("sessionID = "+responseData['_cartid']);
+			return responseData['_cartid'];
 			}, //handleResponse_appCartCreate
 	
 /*
@@ -1008,11 +1044,12 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 			return s;
 			}, //fetchSessionId
 	
-	/*
-	will check to see if the datapointer is already in the app.data.
-	if not, will check to see if data is in local storage and if so, save it to app.data IF the data isn't too old.
-	will return false if datapointer isn't in app.data or local (or if it's too old).
-	*/
+/*
+Returns T or F.
+will check to see if the datapointer is already in the app.data. (returns true)
+if not, will check to see if data is in local storage and if so, save it to app.data IF the data isn't too old. (returns true)
+will return false if datapointer isn't in app.data or local (or if it's too old).
+*/
 	
 	
 		fetchData : function(datapointer)	{
@@ -1020,8 +1057,9 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 //			app.u.dump(" -> datapointer = "+datapointer);
 			var local;
 			var r = false;
+			var expires = datapointer == 'authAdminLogin' ? (60*60*24*7) : (60*60*24); //how old the data can be before we fetch new.
 	//checks to see if the request is already in 'this'.
-			if(!$.isEmptyObject(app.data[datapointer]))	{
+			if(app.data && !$.isEmptyObject(app.data[datapointer]))	{
 //				app.u.dump(' -> control already has data');
 				r = true;
 				}
@@ -1030,8 +1068,7 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 //				app.u.dump(' -> local does have data.');
 	//			app.u.dump(local);
 				if(local.ts)	{
-					if(app.u.unixNow() - local.ts > 60*60*24)	{
-//						app.u.dump(' --> data it is too old :'+(app.u.unixNow() - app.data[datapointer].ts) / (60*60)+" minutes");
+					if((app.u.unixNow() - local.ts) > expires)	{
 						r = false; // data is more than 24 hours old.
 						}
 					else	{
@@ -1040,12 +1077,15 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 						}
 					}
 				else	{
-//				app.u.dump(' -> neither the control nor local storage have this data.');
+//					app.u.dump(' -> data is local, but old.');
 	//hhhmmm... data is in local, but no ts is set. better get new data.
 					r = false;
 					}
 				}
-			
+			else	{
+//				app.u.dump(' -> data not in memory or local storage.');
+				}
+
 //set app.globalAjax.checkForLocalJSON to true and the app will look for local copies (not local storage) of the json
 			if(r === false && app.globalAjax.checkForLocalJSON)	{
 				if(app.globalAjax.localJSONFolder)	{
@@ -1180,14 +1220,14 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 	//		app.u.dump(" -> templates: "+templates);
 			var ajaxRequest = $.ajax({
 					type: "GET",
-					url: templateURL,
+					url: templateURL+"?_v="+app.vars.release,
 					async: false,
 					dataType:"html"
 					});	//this.fetchFileViaAjax(templateURL);
 			
 			ajaxRequest.error(function(d,e,f){
-				//the templates not loading is pretty much a catastrophic issue.
-				app.u.throwMessage("Uh oh! Something bad happened. If the error persists, please contact Zoovy technical support. error: could not load remote templates. (dev - see console for more details)",true);			
+				// the templates not loading is pretty much a catastrophic issue.
+				app.u.throwMessage("An error has occured.<br \/>Unable to load remote templates for extension (dev - see console for more details).<br \/>If the error persists, please contact Zoovy technical support.",true);			
 				app.u.dump("ERROR! unable to load remote templates");
 				app.u.dump("templateURL: "+templateURL);
 				app.u.dump(e);
@@ -1242,6 +1282,7 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 					errors += "<li>init not set for extension "+namespace;
 					}
 //whether init passed or failed, load the templates. That way any errors that occur as a result of missing templates are also displayed.
+//If the extension sets willfetchmyowntemplates, then no need to run template load code, the extension will handle adding it's own templates.
 //						app.u.dump(" -> templates.length = "+app.ext[namespace].vars.templates.length);
 				if(app.ext[namespace].vars && app.ext[namespace].vars.templates && !app.ext[namespace].vars.willFetchMyOwnTemplates)	{
 					errors += app.model.loadTemplates(app.ext[namespace].vars.templates);
@@ -1404,10 +1445,10 @@ This is checks for two things:
 		
 //function gets executed in addExtensions. If the extensions are loaded, it'll execute the callbacks.
 // if not, it will re-execute itself.
-		executeCallbacksWhenExtensionsAreReady : function(extObj){
+		executeCallbacksWhenExtensionsAreReady : function(extObj,attempts){
 //			app.u.dump("BEGIN model.executeCallbacksWhenExtensionsAreReady [length: "+extObj.length+"]");
 			if(this.allExtensionsHaveLoaded(extObj))	{
-				app.u.dump("extension(s) loaded. execute callbacks.");
+//				app.u.dump("extension(s) loaded. execute callbacks.");
 				var L = extObj.length;
 				for(var i = 0; i < L; i += 1) {
 //					app.u.dump(" -> i: "+i);
@@ -1420,29 +1461,43 @@ This is checks for two things:
 						}
 					} // end loop.				
 				}
-			else	{
-				setTimeout(function(){app.model.executeCallbacksWhenExtensionsAreReady(extObj)},250);
+			else if(attempts > 40)	{
+				//that is a lot of tries.
+				throwGMessage(" some extensions took at least ten seconds to load. That's no good");
 				}
+			else	{
+				setTimeout(function(){app.model.executeCallbacksWhenExtensionsAreReady(extObj,attempts)},250);
+				}
+			attempts++;
 			}, //executeCallbacksWhenExtensionsAreReady
 		
+//setHeader always gets run, but the admin headers are only added if the global admin var is true.
+// if set to true and in a non-admin mode, won't hurt anything, but is less clean.
+		setHeader : function(xhr){
+//			xhr.setRequestHeader('x-auth','sporks');
+			if(app.vars.thisSessionIsAdmin)	{
+				xhr.setRequestHeader('x-clientid',app.vars._clientid); //set by app
+				xhr.setRequestHeader('x-domain',app.vars.domain); //what domain is in focus. set by app or user
+				xhr.setRequestHeader('x-userid',app.vars.userid); //what account is in focus. provided by user/ stored locally.
+				xhr.setRequestHeader('x-deviceid',app.vars.deviceid); //the specific device making the requests. stored locally.
+				xhr.setRequestHeader('x-authtoken',app.vars.authtoken); //returned by API
+				xhr.setRequestHeader('x-version',app.model.version); //set by app
+				}
+			},
 		
 
 /*
 ADMIN/USER INTERFACE
 */		
 
-//path is a relative path (/biz/setup) for a page in the UI.
-//viewObj.targetID is required.
+//path is a relative path (/biz/setup/index.cgi) for a page in the UI.
+//viewObj.targetID is where the html gets placed.
 //viewObj.success can be a function to get executed on success.
 //viewObj.error can be a function to get executed on error.
-//data2Pass gets passed along on the request. it's optional.
+//data2Pass gets passed along on the request. it's optional. a serialized form object, for example.
 		fetchAdminResource : function(path,viewObj,data2Pass)	{
 		
-function setHeader(xhr) {
-	xhr.setRequestHeader('Foo','bar');
-	xhr.setRequestHeader('X-Auth','sporks');
-	}
-			
+		
 			var pathParts = path.split('?'); //pathParts[0] = /biz/setup and pathParts[1] = key=value&anotherkey=anothervalue (uri params);
 //make sure to pass data2pass last so that the contents of it get preference (duplicate vars will be overwritten by whats in data)
 //this is important because data is typically a form input and may have a verb or action set that is different than what's in the pathParts URI params
@@ -1464,30 +1519,22 @@ function setHeader(xhr) {
 						app.u.dump("UI request aborted. It would destroy such life in favor of its new matrix."); //most likely, this abort happened intentionally because another action was requested (a link was clicked)
 						}
 					else	{
+						$('#'+app.ext.admin.u.getTabFromPath(pathParts[0])+'Content').empty(); ///empty out loading div and any template placeholder.
 						app.u.throwGMessage("Error details = UI request failure: "+b);
-//						app.u.throwMessage("Uh Oh! Something terrible happened. We apologize for any inconvenience. If this error persists, please contact support.<br \/>Error details = UI request failure: "+b);
-//						app.u.dump(a);
 						if(typeof viewObj.error == 'function'){viewObj.error()}
 						}
 					app.ext.admin.vars.uiRequest = {} //reset request container to easily determine if another request is in progress
 					},
 				success : function(data){
-//these get done each time. technically, the breadcrumb doesn't have to be.
-//The form and anchor links must get run each time because a successful response, either to get page content or save it, returns the page content again for display.
-//so that display must have all the links and form submits modified.
-					app.ext.admin.u.uiHandleBreadcrumb(data.bc);
-					app.ext.admin.u.uiHandleNavTabs(data.tabs);
-					app.ext.admin.u.uiHandleFormRewrites(path,data,viewObj);
-					app.ext.admin.u.uiHandleLinkRewrites(path,data,viewObj);
-					app.ext.admin.u.uiHandleMessages(path,data.msgs);
-					if(typeof viewObj.success == 'function'){viewObj.success()}
+					app.ext.admin.u.uiHandleContentUpdate(path,data,viewObj)
+
 					app.ext.admin.vars.uiRequest = {} //reset request container to easily determine if another request is in progress
 					
 					//here because builder > edit outputs a bunch of JS in the html returned. this is to compensate. may be able to remove later. ###
-					window.loadElement = app.ext.admin.a.loadElement;
+//					window.loadElement = app.ext.admin.a.loadElement; -> commented out 20121114 20:07
 					
 				},
-				beforeSend: setHeader
+				beforeSend: app.model.setHeader //uses headers to pass authentication info to keep them  off the uri.
 				});
 //			app.u.dump(" admin.vars.uiRequest:"); app.u.dump(app.ext.admin.vars.uiRequest);
 			}

@@ -18,6 +18,10 @@ app.u.loadScript = function(url, callback, params){
 			script.onload = function(){callback(params)}
 			}
     	}
+//append release to the end of included files to reduce likelyhood of caching.
+	url += (url.indexOf('?') > -1 ) ? '&' : '?'; //add as initial or additional param based on whether or not any params are already present.
+	url += "_v="+app.vars.release;
+
     script.src = url;
     document.getElementsByTagName("head")[0].appendChild(script);
 	}
@@ -44,7 +48,7 @@ app.u.handleRQ = function()	{
 	var callback = function(index){
 		app.vars.rq[index][app.vars.rq[index].length - 1] = true; //last index in array is for 'is loaded'. set to false in loop below.
 		}
-	
+
 	for(var i = L; i >= 0; i--)	{
 //		app.u.dump("app.rq["+i+"][0]: "+app.rq[i][0]+" pass: "+app.rq[i][1]);
 		if(app.rq[i][0] == 'script' && app.rq[i][1] === 0)	{
@@ -60,9 +64,11 @@ app.u.handleRQ = function()	{
 			app.vars.extensions.push({"namespace":app.rq[i][2],"filename":app.rq[i][3],"callback":app.rq[i][4]}); //add to extension Q.
 			app.rq[i][app.rq[i].length] = false; //will get set to true when script loads as part of callback.
 			app.vars.rq.push(app.rq[i]); //add to pass zero rq.
-
-//on pass 0, no callbacks added to extensions because the model already has a function for checking if extensions are loaded.
-// adding these extensions to the extensions array is necessary for this checker to work.
+//			app.u.dump(" -> app.rq[i][2]: "+app.rq[i][2]);
+//on pass 0, for extensions , their specific callback is not added (if there is one.)
+// because the model will execute it for all extensions once the controller is initiated.
+// so instead, a generic callback function is added to track if the extension is done loading.
+// which is why the extension is added to the extension Q (above).
 			app.u.loadScript(app.rq[i][3],callback,(app.vars.rq.length - 1));
 			app.rq.splice(i, 1); //remove from old array to avoid dupes.
 			}

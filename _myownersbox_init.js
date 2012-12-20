@@ -21,12 +21,29 @@ app.rq.push(['extension',1,'analytics_google','extensions/analytics_google.js','
 //app.rq.push(['extension',1,'powerReviews','extensions/reviews_powerreviews.js','startExtension']);
 //app.rq.push(['extension',0,'magicToolBox','extensions/imaging_magictoolbox.js','startExtension']); // (not working yet - ticket in to MTB)
 
-
-
+//spec_LLTRSHIRT017_0
 //add tabs to product data.
+//tabs are handled this way because jquery UI tabs REALLY wants an id and this ensures unique id's between product
 app.rq.push(['templateFunction','productTemplate','onCompletes',function(P) {
-  $( ".tabbedProductContent",$('#productTemplate_'+app.u.makeSafeHTMLId(P.pid))).tabs();
-  }]);
+  var safePID = app.u.makeSafeHTMLId(P.pid); //can't use jqSelector because productTEmplate_pid still used makesafe. planned Q1-2012 update ###
+  var $tabContainer = $( ".tabbedProductContent",$('#productTemplate_'+safePID));
+    if($tabContainer.length)  {
+      if($tabContainer.data("tabs")){} //tabs have already been instantiated. no need to be redundant.
+      else  {
+        $("div.tabContent",$tabContainer).each(function (index) {
+          $(this).attr("id", "spec_"+safePID+"_" + index.toString());
+        });
+        $(".tabs li a",$tabContainer).each(function (index) {
+          $(this).attr('id','href_'+safePID+"_" + index.toString());
+          $(this).attr("href", "app://#spec_"+safePID+"_" + index.toString());
+        });
+        $tabContainer.localtabs();
+      }
+    }
+  else  {} //couldn't find the tab to tabificate.
+
+  $('#headerCategories').show();
+}]);
 
 app.rq.push(['script',0,(document.location.protocol == 'file:') ? app.vars.httpURL+'jquery/config.js' : app.vars.baseURL+'jquery/config.js']); //The config.js is dynamically generated.
 app.rq.push(['script',0,app.vars.baseURL+'model.js']); //'validator':function(){return (typeof zoovyModel == 'function') ? true : false;}}
@@ -41,11 +58,20 @@ app.rq.push(['script',0,app.vars.baseURL+'controller.js']);
 
 /// hompage \\\
 app.rq.push(['templateFunction','homepageTemplate','onCompletes', function(P) {
+  $('#headerCategories').hide();
   $('#headerBanner').show();
 }]);
 
 app.rq.push(['templateFunction','homepageTemplate','onDeparts', function(P) {
   $('#headerBanner').hide();
+}]);
+
+app.rq.push(['templateFunction','companyTemplate','onCompletes', function(P) {
+  $('#headerCategories').show();
+}]);
+
+app.rq.push(['templateFunction','customerTemplate','onCompletes', function(P) {
+  $('#headerCategories').show();
 }]);
 
 /// categories \\\
@@ -73,7 +99,7 @@ app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
 }]);
 
 app.rq.push(['templateFunction','categoryTemplate','onDeparts', function(P) {
-  $('#headerCategories').hide();
+  // $('#headerCategories').hide();
 }]);
 
 /// checkout \\\
@@ -96,8 +122,8 @@ This function is overwritten once the controller is instantiated.
 Having a placeholder allows us to always reference the same messaging function, but not impede load time with a bulky error function.
 */
 app.u.throwMessage = function(m)  {
-  alert(m); 
-  }
+  alert(m);
+};
 
 app.u.howManyPassZeroResourcesAreLoaded = function(debug) {
   var L = app.vars.rq.length;
@@ -109,7 +135,7 @@ app.u.howManyPassZeroResourcesAreLoaded = function(debug) {
     if(debug) {app.u.dump(" -> "+i+": "+app.vars.rq[i][2]+": "+app.vars.rq[i][app.vars.rq[i].length -1]);}
     }
   return r;
-  }
+};
 
 
 //gets executed once controller.js is loaded.
@@ -122,21 +148,30 @@ app.u.initMVC = function(attempts){
   var includesAreDone = true;
 
 //what percentage of completion a single include represents (if 10 includes, each is 10%).
-  var percentPerInclude = Math.round((100 / app.vars.rq.length));  
+  var percentPerInclude = (100 / app.vars.rq.length);
   var resourcesLoaded = app.u.howManyPassZeroResourcesAreLoaded();
-  var percentComplete = resourcesLoaded * percentPerInclude; //used to sum how many includes have successfully loaded.
-
+  var percentComplete = Math.round(resourcesLoaded * percentPerInclude); //used to sum how many includes have successfully loaded.
+  
+  if(percentComplete > 100 )
+    percentComplete = 100;
+  
   $('#appPreViewProgressBar').val(percentComplete);
   $('#appPreViewProgressText').empty().append(percentComplete+"% Complete");
 
   if(resourcesLoaded == app.vars.rq.length) {
-//instantiate controller. handles all logic and communication between model and view.
-//passing in app will extend app so all previously declared functions will exist in addition to all the built in functions.
-//tmp is a throw away variable. app is what should be used as is referenced within the mvc.
-    app.vars.rq = null; //to get here, all these resources have been loaded. nuke record to keep DOM clean and avoid any duplication.
-    var tmp = new zController(app);
-//instantiate wiki parser.
-    myCreole = new Parse.Simple.Creole();
+    percentComplete = 100;
+    $('#appPreViewProgressBar').val(percentComplete);
+    $('#appPreViewProgressText').empty().append(percentComplete+"% Complete");
+    var clickToLoad = false;
+    if(clickToLoad){
+      $('#loader').fadeOut(1000);
+      $('#tenFourGoodBuddy').delay(1000).fadeIn(1000).click(function() {
+        app.u.loadApp();
+      });
+    } else {
+      app.u.loadApp();
+    }
+    
     }
   else if(attempts > 50)  {
     app.u.dump("WARNING! something went wrong in init.js");
@@ -147,8 +182,17 @@ app.u.initMVC = function(attempts){
   else  {
     setTimeout("app.u.initMVC("+(attempts+1)+")",250);
     }
+};
 
-  }
+app.u.loadApp = function() {
+//instantiate controller. handles all logic and communication between model and view.
+//passing in app will extend app so all previously declared functions will exist in addition to all the built in functions.
+//tmp is a throw away variable. app is what should be used as is referenced within the mvc.
+    app.vars.rq = null; //to get here, all these resources have been loaded. nuke record to keep DOM clean and avoid any duplication.
+    var tmp = new zController(app);
+//instantiate wiki parser.
+    myCreole = new Parse.Simple.Creole();
+};
 
 
 
@@ -156,7 +200,7 @@ app.u.initMVC = function(attempts){
 //will pass in the page info object. (pageType, templateID, pid/navcat/show and more)
 app.u.appInitComplete = function(P) {
   // app.u.dump("Executing myAppIsLoaded code...");
-}
+};
 
 
 

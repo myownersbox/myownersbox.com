@@ -68,7 +68,7 @@ formerly showCart
 				},
 			dispatch : function(tagObj)	{
 //				app.u.dump('BEGIN app.ext.store_cart.calls.cartDetail.dispatch');
-				app.model.addDispatchToQ({"_cmd":"cartDetail","_zjsid":app.sessionId,"_tag": tagObj});
+				app.model.addDispatchToQ({"_cmd":"cartDetail","_tag": tagObj});
 				}
 			},
 
@@ -83,7 +83,7 @@ formerly showCart
 				},
 			dispatch : function(tagObj,Q)	{
 //				app.u.dump(' -> adding to PDQ. callback = '+callback)
-				app.model.addDispatchToQ({"_cmd":"cartDetail","_zjsid":app.sessionId,"_tag": tagObj},Q);
+				app.model.addDispatchToQ({"_cmd":"cartDetail","_tag": tagObj},Q);
 				}
 			},//getCartContents
 
@@ -105,7 +105,7 @@ formerly showCart
 				},
 			dispatch : function(stid,qty,tagObj)	{
 //				app.u.dump(' -> adding to PDQ. callback = '+callback)
-				app.model.addDispatchToQ({"_cmd":"updateCart","stid":stid,"quantity":qty,"_zjsid":app.sessionId,"_tag": tagObj},'immutable');
+				app.model.addDispatchToQ({"_cmd":"cartItemUpdate","stid":stid,"quantity":qty,"_tag": tagObj},'immutable');
 				app.calls.cartSet.init({'payment-pt':null}); //nuke paypal token anytime the cart is updated.
 				}
 			 },
@@ -372,21 +372,24 @@ either templateID needs to be set OR showloading must be true. TemplateID will t
 //the modal opens as quick as possible so users know something is happening.
 //open if it's been opened before so old data is not displayed. placeholder content (including a loading graphic, if set) will be populated pretty quick.
 //the cart messaging is OUTSIDE the template. That way if the template is re-rendered, existing messaging is not lost.
-					if($modal.length == 0)	{
-						$modal = $("<div><div id='cartMessaging' class='appMessaging'><\/div><div id='modalCartContents'><\/div><\/div>").attr({"id":"modalCart","title":"Your Shopping Cart"}).appendTo('body');
-						$modal.dialog({modal: true,width:'80%',height:$(window).height() - 200});  //browser doesn't like percentage for height
-						}
-					else	{
+					if($modal.length)	{
 						$('#modalCartContents',$modal).empty(); //empty to remove any previous content.
 						$('.appMessaging',$modal).empty(); //errors are cleared because if the modal is closed before the default error animation occurs, errors become persistent.
 						$modal.dialog('open');
 						}
+					else	{
+						$modal = $("<div \/>").attr({"id":"modalCart","title":"Your Shopping Cart"}).appendTo('body');
+						$modal.append("<div id='cartMessaging' class='appMessaging'><\/div><div id='modalCartContents'><\/div>");
+						$modal.dialog({modal: true,width:'80%',height:$(window).height() - 200});  //browser doesn't like percentage for height
+						}
+
 					if(P.showLoading === true)	{
 						$('#modalCartContents',$modal).append("<div class='loadingBG' \/>"); //have to add child because the modal classes already have bg assigned
 						}
 					else	{
-						$modal.append(app.renderFunctions.transmogrify('modalCartContents',P.templateID,app.data['cartDetail']));
+						$('#modalCartContents',$modal).append(app.renderFunctions.transmogrify({},P.templateID,app.data['cartDetail']));
 						}
+
 					}
 				else	{
 					app.u.throwGMessage("ERROR! no templateID passed into showCartInModal. P follows: ");
@@ -531,7 +534,7 @@ so if an accessory showed up on four items in the cart, it'd be higher in the li
 				M = app.data.cartDetail['@ITEMS'].length;
 //				app.u.dump(" -> items in cart = "+M);
 				for(j = 0; j < M; j += 1)	{
-					if(proda = app.data.cartDetail['@ITEMS'][j]['full_product']['zoovy:accessory_products'])	{
+					if(proda = app.data.cartDetail['@ITEMS'][j]['%attribs']['zoovy:accessory_products'])	{
 //						app.u.dump(" -> item has accessories: "+proda);
 						prodArray = proda.split(',');
 						L = prodArray.length
