@@ -350,12 +350,12 @@ the object created here is passed as 'data' into the mulitpage template. that's 
 */
 
 			setProdlistVars : function(obj)	{
-//				app.u.dump("BEGIN store_prodlist.u.setProdlistVars");
-//				app.u.dump(obj);
+				//				app.u.dump("BEGIN store_prodlist.u.setProdlistVars");
+				//				app.u.dump(obj);
 				var r = false;
 				var hideMultipageControls = false; //if set to true, will hide just the dropdown/page controls.
 				
-//can't build a prodlist without product.				
+				//can't build a prodlist without product.
 				if(obj.csv && typeof obj.csv == 'object' && obj.csv.length > 0 && obj.loadsTemplate)	{
 
 					var L = obj.csv.length;
@@ -497,8 +497,8 @@ obj is most likely the databind object. It can be any params set in setProdlistV
 params that are missing will be auto-generated.
 */
 			buildProductList : function(obj,$tag)	{
-//				app.u.dump("BEGIN store_prodlist.u.buildProductList()");
-//				app.u.dump(" -> obj: "); app.u.dump(obj);
+				// app.u.dump("BEGIN store_prodlist.u.buildProductList()");
+				// app.u.dump(" -> obj: "); app.u.dump(obj);
 
 //Need either the tag itself ($tag) or the parent id to build a list. recommend $tag to ensure unique parent id is created
 //also need a list of product (csv)

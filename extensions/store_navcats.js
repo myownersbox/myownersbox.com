@@ -161,21 +161,23 @@ obj.PATH = .cat.safe.id
 		appCategoryDetailMax : {
 			init : function(catSafeID,tagObj,Q)	{
 				Q = Q || 'mutable';
-//				app.u.dump('BEGIN app.ext.store_navcats.calls.appCategoryDetailMax.init');
+				// app.u.dump('BEGIN app.ext.store_navcats.calls.appCategoryDetailMax.init');
+				// app.u.dump([catSafeID]);
+				// app.u.dump([tagObj]);
+				// app.u.dump([Q]);
 				var r = 0; //will return 1 if a request is needed. if zero is returned, all data needed was in local.
 				tagObj = typeof tagObj !== 'object' ? {} : tagObj;
-//whether max, more or just detail, always save to same loc.
-//add here so if tagObj is passed directly into callback because data is in localStorage, the datapointer is set.
+				//whether max, more or just detail, always save to same loc.
+				//add here so if tagObj is passed directly into callback because data is in localStorage, the datapointer is set.
 				tagObj.datapointer = 'appCategoryDetail|'+catSafeID;
-//				app.u.dump(' -> datapointer = '+tagObj.datapointer);
-				
+				// app.u.dump(' -> datapointer = '+tagObj.datapointer);
 				if(app.model.fetchData(tagObj.datapointer) == false)	{
-//					app.u.dump(' -> data is not local. go get it.');
+					// app.u.dump(' -> data is not local. go get it.');
 					r += 1;
 					this.dispatch(catSafeID,tagObj,Q);
 					}
 				else	{
-					if(app.data[tagObj.datapointer].detail == 'max')	{
+					if(app.data[tagObj.datapointer].detail === 'max')	{
 						app.u.handleCallback(tagObj);
 						}
 					else 	{

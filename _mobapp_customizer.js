@@ -156,18 +156,21 @@ var mob_customizer = function() {
 			}, //itemAddedToCart
 
 
-// executed in popCustomerFromPresets if s3 is set on uri
-// will populate product in spot 2.
+		// executed in popCustomerFromPresets if s3 is set on uri
+		// will populate product in spot 2.
 		containerCatSelected : {
 			
 			onSuccess : function(tagObj)	{
+				// app.u.dump('containerCatSelected success');
+				// app.u.dump([tagObj]);
 				app.ext.mob_customizer.u.containerCatSelected(tagObj.datapointer.split('|')[1]);
-				},
+			},
 			onError : function(responseData,uuid)	{
-				app.u.handleErrors(responseData,uuid)
-				}
+				// app.u.dump('containerCatSelected error');
+				app.u.handleErrors(responseData,uuid);
+			}
 			
-			},//containerCatSelected
+		},//containerCatSelected
 
 // executed in popCustomerFromPresets if s3 is set on uri
 // will display preview in middle column and adjust number of 'spots' in selected drawers.
@@ -290,9 +293,6 @@ passed on the URI (external links to page)
       
       numRequests += app.ext.store_navcats.calls.appCategoryDetailMax.init('.storage-containers',{"callback":"displayStorageContainers","extension":"mob_customizer"});
       numRequests += app.ext.store_navcats.calls.appCategoryDetailMax.init('.drawers',{"callback":"displayDrawers","extension":"mob_customizer"});
-      
-      app.u.dump('got here');
-
       numRequests += app.ext.mob_customizer.u.popCustomerFromPresets();
 
 //      app.u.dump(" -> numRequests for customizer.init = "+numRequests);
@@ -303,9 +303,9 @@ passed on the URI (external links to page)
 
 
 
-if(typeof addthis == 'object')	{
-	addthis.toolbox('#configuratorAddThis');
-	}
+			if(typeof addthis == 'object')	{
+				// addthis.toolbox('#configuratorAddThis'); // BUG: addthis.toolbox is not a function
+			}
 			
 			}, //initConfigurator
 		
@@ -468,47 +468,47 @@ on whether or not a storage bin is in the cart.  It will also auto-update a div 
 
 
 			
-/*
-executed when a 'storage container' category is clicked (step 1).  it will show a list of storage containers for step 2.
-it will also close the chooser, if it's open.
-*/
+			/*
+			executed when a 'storage container' category is clicked (step 1).  it will show a list of storage containers for step 2.
+			it will also close the chooser, if it's open.
+			*/
 			containerCatSelected : function(catSafeID)	{
-//				app.u.dump("BEGIN mob_customizer.u.containerCatSelected");
+				// app.u.dump("BEGIN mob_customizer.u.containerCatSelected");
 				var numRequests = 0;
-//				app.u.dump("safeid = "+catSafeID);
+				// app.u.dump("safeid = "+catSafeID);
 
 				$('#storageContainerCategories li').removeClass('selected'); //selected class should only be set for one list item.
 				$('#storageContainerCategories_'+app.u.makeSafeHTMLId(catSafeID)).addClass('selected'); //selected class used for makeURL function.
 
-//puts category name at top of dropdown to make it obvious this item is in focus.
+				//puts category name at top of dropdown to make it obvious this item is in focus.
 				$('#storageCatPrompt').empty().text(app.data['appCategoryDetail|'+catSafeID].pretty);
 
-//the css hover menu doesn't close on click. This is a workaround. hides the dropdown, then turns it back on after a moment.
+				//the css hover menu doesn't close on click. This is a workaround. hides the dropdown, then turns it back on after a moment.
 				$('#storageContainerCategories').toggle(false);
 				setTimeout("$('#storageContainerCategories').toggle(true);",1000);
-//the container size code needs to happen after the product list is built, otherwise 'classes' assigned are overwritten w/ transmogrify.
+				//the container size code needs to happen after the product list is built, otherwise 'classes' assigned are overwritten w/ transmogrify.
 
 
-				app.ext.mob_customizer.u.hideChooser(); //closes an open chooser. feels natural when using to have this happen.
+				app.ext.mob_customizer.u.hideChooser(); // closes an open chooser. feels natural when using to have this happen.
 
-//				app.u.dump(" -> before containerSizeSelected function executed. uriParams follow: ");
-//				app.u.dump(app.ext.mob_customizer.vars.uriParams);
+				// app.u.dump(" -> before containerSizeSelected function executed. uriParams follow: ");
+				// app.u.dump([app.ext.mob_customizer.vars.uriParams]);
 
-				if(numRequests = app.ext.store_prodlist.u.buildProductList({"templateID":"mobStorageContainerProductSpec","parentID":"storageContainerProdlist","csv":app.data['appCategoryDetail|'+catSafeID]['@products']})){
+				if(numRequests = app.ext.store_prodlist.u.buildProductList({"templateID":"mobStorageContainerProductSpec","parentID":"storageContainerProdlist","loadsTemplate":"mobStorageContainerProductSpec","csv":app.data['appCategoryDetail|'+catSafeID]['@products']})){
 					app.calls.ping.init({"callback":"containerSizeSelected","extension":"mob_customizer","datapointer":"appProductGet|"+app.ext.mob_customizer.vars.uriParams.s2});
 					app.model.dispatchThis();
-					}
+				}
 				else	{
 					//no dispatch is occuring because all data is in memory. execute the code handled in the ping above.
 					if(app.ext.store_product.calls.appProductGet.init(app.ext.mob_customizer.vars.uriParams.s2,{'callback':'containerSizeSelected','extension':'mob_customizer'}))	{app.model.dispatchThis()}
-					}
+				}
 
 
-//				app.u.dump(" -> END mob_customizer.u.containerCatSelected. uriParams to follow: ");
-//				app.u.dump(app.ext.mob_customizer.vars.uriParams);
+				//				app.u.dump(" -> END mob_customizer.u.containerCatSelected. uriParams to follow: ");
+				//				app.u.dump(app.ext.mob_customizer.vars.uriParams);
 
 
-				},
+			},
 
 /*
 executed when a 'storage container' product is clicked (step 2).  
@@ -589,10 +589,10 @@ if(typeof addthis_share == 'object')	{
 	
 
 	
-//executed when a drawer category is selected.
-//hides all the other product lists and shows the one now in focus.
+			//executed when a drawer category is selected.
+			//hides all the other product lists and shows the one now in focus.
 			drawerCatSelected : function(catSafeID)	{
-//				app.u.dump("BEGIN customizer.u.drawerCatSelected");
+				// app.u.dump("BEGIN customizer.u.drawerCatSelected");
 //				app.u.dump("safeid = "+catSafeID);
 				app.ext.mob_customizer.u.hideChooser(); //closes an open chooser. feels natural when using to have this happen.
 				$('#drawerCategories .prodlist').toggle(false); // hide all the other product lists.
@@ -600,7 +600,7 @@ if(typeof addthis_share == 'object')	{
 				$('#drawerCategories_'+app.u.makeSafeHTMLId(catSafeID)).addClass('selected'); //adds selected class to focus cat.
 				$('#mobDrawerChooser_'+app.u.makeSafeHTMLId(catSafeID)).toggle(true); //makes prodlist for focus cat visible.
 				
-				if(app.ext.store_prodlist.u.buildProductList({"templateID":"mobDrawerProductSpec","parentID":"mobDrawerChooser_"+app.u.makeSafeHTMLId(catSafeID),"csv":app.data['appCategoryDetail|'+catSafeID]['@products']}))	{
+				if(app.ext.store_prodlist.u.buildProductList({"templateID":"mobDrawerProductSpec","parentID":"mobDrawerChooser_"+app.u.makeSafeHTMLId(catSafeID),"loadsTemplate":"mobDrawerChooser", "csv":app.data['appCategoryDetail|'+catSafeID]['@products']}))	{
 					app.model.dispatchThis();
 					}
 
@@ -712,14 +712,18 @@ else	{
 				},
 			
 			
-//moves the chooser off the screen.
-//need to position off instead of toggle, because .position() can't effect hidden elements.
+			//moves the chooser off the screen.
+			//need to position off instead of toggle, because .position() can't effect hidden elements.
 			hideChooser: function()	{
+				// app.u.dump('hiding chooser');
+				// BUG: hideChooser broken - added at center
 				$('#drawerLocationChooser').position({
 					of: $('#drawerLocationChooser'),
+					at: "center",
 					offset: "-4000 -2000"
-					});
-				}, //hideChooser
+				});
+				// app.u.dump('hidden');
+			}, //hideChooser
 
 /*
 executed when a spot in the chooser is clicked.
@@ -879,9 +883,9 @@ feature removed.
 					}
 				var o = "<div class='floatRight'><span class='number '>"+spot+"<\/span><button  onClick=\"app.ext.mob_customizer.u.drawerAssignedToSpot('"+spot+"'); app.ext.mob_customizer.u.hideChooser();\"";
 				if(!P.pid)
-					o += " disabled='disabled' "
+					o += " disabled='disabled' ";
 				o += ">X<\/button><\/div><div onClick=\"app.ext.mob_customizer.u.drawerClicked('"+P.pid+"','selectedDrawerLoc_"+spot+"')\">";
-				o += app.u.makeImage({"h":"35","w":"35","b":"tttttt","name":P.image,"tag":1})
+				o += app.u.makeImage({"h":"35","w":"35","b":"tttttt","name":P.image,"tag":1});
 				o += "<div>"+P.name+"<br />"+P.price+"<\/div>";
 				return o;
 				},
@@ -1058,39 +1062,38 @@ if 'spots' are set, populate them everywhere they need to be populated.
 
 */
 			popCustomerFromPresets : function() {
-				// app.u.dump("BEGIN mob_customizer.u.popCustomerFromPresets");
+				app.u.dump("BEGIN mob_customizer.u.popCustomerFromPresets");
 				var numRequests = 0; //the number of requests that will need to be made. returned.
 				var P = app.ext.mob_customizer.vars.uriParams; //shortcut.
-//				app.u.dump(P);
-//gets storage bin category detail (for step 1 so the list of product is available to pop step 2)
-//product data retrieval and population is handled in a callback.
+				//				app.u.dump(P);
+				//gets storage bin category detail (for step 1 so the list of product is available to pop step 2)
+				//product data retrieval and population is handled in a callback.
 				if(app.u.isSet(P.s1))	{
 					app.u.dump(" -> s1 is populated ["+P.s1+"]");
 					numRequests += app.ext.store_navcats.calls.appCategoryDetailMax.init(P.s1,{"callback":"containerCatSelected","extension":"mob_customizer"});
-          app.u.dump('numRequests: ' + numRequests);
 					}
 
 
 				// app.u.dump(" -> BEFORE LOOP. uriParams to follow: ");
-//				app.u.dump(app.ext.mob_customizer.vars.uriParams);
+				//				app.u.dump(app.ext.mob_customizer.vars.uriParams);
 
 
-//the product info for P.s2 will be retrieved as part of the callback for appCategoryDetailMax above.
-//gets product data each bin specified
+				//the product info for P.s2 will be retrieved as part of the callback for appCategoryDetailMax above.
+				//gets product data each bin specified
 				var i;
 				for(i = 1; i <= 9; i +=1)	{
-//					app.u.dump("['s3d"+i+"'] = "+app.ext.mob_customizer.vars.uriParams['s3d'+i]);
+					//					app.u.dump("['s3d"+i+"'] = "+app.ext.mob_customizer.vars.uriParams['s3d'+i]);
 					if(app.u.isSet(app.ext.mob_customizer.vars.uriParams['s3d'+i]))	{
-//						app.u.dump(" -> spot "+i+": "+app.ext.mob_customizer.vars.uriParams['s3d'+i]);
+						//						app.u.dump(" -> spot "+i+": "+app.ext.mob_customizer.vars.uriParams['s3d'+i]);
 						numRequests += app.ext.store_product.calls.appProductGet.init(app.ext.mob_customizer.vars.uriParams['s3d'+i],{"callback":"addDrawerToSpot","extension":"mob_customizer","spot":i})
 						}
 					else	{
 						this.drawerAssignedToSpot(i); //creates empties.
-						}
 					}
+				}
 
-//gets drawer category details (step 3) for 'openeing' the category and displaying the content.
-//product data retrieval and population is handled in a callback.
+				//gets drawer category details (step 3) for 'openeing' the category and displaying the content.
+				//product data retrieval and population is handled in a callback.
 				if(app.u.isSet(P.s3))	{
 //					app.u.dump(" -> s3 is populated ["+P.s3+"]");
 					numRequests += app.ext.store_navcats.calls.appCategoryDetailMax.init(P.s3,{"callback":"drawerCatSelected","extension":"mob_customizer"}); 
