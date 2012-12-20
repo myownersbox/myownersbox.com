@@ -58,7 +58,7 @@ app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
    -> not ideal, but will do for now till some sort of category template handler is in place (for choosing template)
   */
   if(P.navcat == '.customizer') {
-    // app.u.dump([P]);
+    app.u.dump([P]);
 
     $('#mainContentArea').empty(); //removes templateInstance for cat page which may already be present.
     app.model.abortQ('mutable'); //will kill existing process to stop default cat layout info from loading.

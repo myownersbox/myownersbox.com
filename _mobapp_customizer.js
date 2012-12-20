@@ -231,7 +231,7 @@ passed on the URI (external links to page)
 			$('#headerCategories').show(); // handled in init
 
 			if(app.ext.myRIA)	{
-        app.ext.myRIA.u.addPushState({'pageType':'category','navcat':'.customizer'}); // QUE: addPushState? change to push?
+        app.ext.myRIA.u.addPushState({'pageType':'category','navcat':'.customizer'}); // TODO: not sure if this works
 				}
 
 			$('#mainContentArea').empty().append(app.renderFunctions.transmogrify('configurator','configuratorTemplate',{}));
@@ -592,17 +592,17 @@ if(typeof addthis_share == 'object')	{
 			//executed when a drawer category is selected.
 			//hides all the other product lists and shows the one now in focus.
 			drawerCatSelected : function(catSafeID)	{
-				// app.u.dump("BEGIN customizer.u.drawerCatSelected");
-//				app.u.dump("safeid = "+catSafeID);
+				app.u.dump("BEGIN customizer.u.drawerCatSelected");
+				app.u.dump("safeid = "+catSafeID);
 				app.ext.mob_customizer.u.hideChooser(); //closes an open chooser. feels natural when using to have this happen.
 				$('#drawerCategories .prodlist').toggle(false); // hide all the other product lists.
 				$('#drawerCategories li').removeClass('selected'); //remove selected class from all list elements within drawer cat chooser.
 				$('#drawerCategories_'+app.u.makeSafeHTMLId(catSafeID)).addClass('selected'); //adds selected class to focus cat.
 				$('#mobDrawerChooser_'+app.u.makeSafeHTMLId(catSafeID)).toggle(true); //makes prodlist for focus cat visible.
 				
-				if(app.ext.store_prodlist.u.buildProductList({"templateID":"mobDrawerProductSpec","parentID":"mobDrawerChooser_"+app.u.makeSafeHTMLId(catSafeID),"loadsTemplate":"mobDrawerChooser", "csv":app.data['appCategoryDetail|'+catSafeID]['@products']}))	{
+				if(app.ext.store_prodlist.u.buildProductList({"templateID":"mobDrawerProductSpec","parentID":"mobDrawerChooser_"+app.u.makeSafeHTMLId(catSafeID),"loadsTemplate":"mobDrawerProductSpec", "hide_summary": "true" ,"csv":app.data['appCategoryDetail|'+catSafeID]['@products']}))	{
 					app.model.dispatchThis();
-					}
+				}
 
 //make drawers draggable. NOTE - the build_prodlist function needs to be expanded to include a onComplete function. something like that so that setTimeout can be avoided.
 setTimeout("app.ext.mob_customizer.u.makeDrawersDraggable()",3500);
