@@ -14,6 +14,63 @@
 <!-- TODO: may need to mata data -->
 <!-- <meta name="description" content="Get 15% OFF complete organize and cube sets! The MyOwnersBox sports logo cubicles, embroidered fabric cubes and lidded storage cube options are sensible, offer easy organization opportunities and ultimately alot of fun, whether you're a diehard fan, or simply looking for great storage choices." id='metaDescription' />
 <meta name="keywords" content="Cube Organizer Shelves, Cube Organizer Systems,Stackit Stackable Storage Bins, Fabric Storage Bins, sports logo cubicles, team logo storage cubes, MLB storage organizers, Myownersbox storage organizer" id='metaKeywords' /> -->
+<!-- BUG: category desc wiki format not working -->
+
+
+<!-- TODO: Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" -->
+
+
+
+<!-- Comments on 2nd revision: -->
+<!-- TODO: 1. move down "FREE SHIPPING" & "No Minimum, No end Date" lower so its more centered in the white space -->
+<!-- TODO: 2. Move and reduce font size so "Who's Your Favorite Team?" can fit in between the gray lines coming from the right of MyOwnersBox logo -->
+<!-- TODO: 3. Center bottom- - Remove all black text copy under images, starting with "Fun and Functional organization...." -->
+<!-- TODO: 4. Footer- Add PayPal logo to right of Discover -->
+<!-- TODO: 5. Change address on bottom to 5100 Campus Dr., Suite 140, Plymouth Meeting, PA 19462 -->
+<!-- TODO: 6. Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" -->
+
+<!-- TODO: add the remarketing script to all pages. -->
+
+<!-- Category Page Edit: -->
+<!-- TODO: For Jerry - Change the product layout from verticle to horizontal with larger image thumbnails. Remove the product description. Place the product name, price and an add to cart button beneath the image. i.e. http://www.nyciwear.com/category/sunglasses.tom_ford/ . Eliminate "more information". -->
+<!-- TODO: For Darrel - Make the full product area clickable. -->
+
+<!-- @Darrell Sandstrom Notes from marketing regarding design of homepage text block; -->
+
+<!-- TODO: Add padding above text block -->
+<!-- TODO: font larger -->
+<!-- TODO: Marketing will provide new text that is shorter -->
+<!-- TODO: bold headline -->
+
+<!-- TODO: * Please add below conversion script to the order confirmation page: -->
+
+<!-- Google Code for Purchase/Sale Conversion Page -->
+<!-- 
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 1009031023;
+var google_conversion_language = "en";
+var google_conversion_format = "2";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "O1ylCOHf-QMQ766S4QM";
+var google_conversion_value = %SUBTOTAL%;
+/* ]]> */
+</script>
+<script type="text/javascript" src="http://www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1009031023/?value=%25SUBTOTAL%25&amp;label=O1ylCOHf-QMQ766S4QM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+ -->
+
+<!-- Error -->
+
+<!-- TODO: * During checkout, after processing an order the confirmation page loads for a few seconds then forwards to a blank screen -->
+<!-- TODO: * META variable is not outputting on order sheet.  -->
+<!-- TODO:   Example: A sale from http://www.myownersbox.com/category/drawers/?META=CUBEITS should output CUBEITS on the order invoice. This may need to be escalated -->
+
 
 <!-- used for optional social media extensions -->
 <meta property="og:type" content="http://static.zoovy.com/img/myownersbox/W210-H210-Btttttt/logos/myownersboxlogo.png" id='ogType' />
@@ -32,7 +89,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20121219213341",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20121220170100",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -190,6 +247,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 
 
 <div id='appView' class='displayNone'>
+	<!-- <ul id="tier1categories"></ul> -->
 	<div id='topHead' class='noPrint'>
 		<div class='contentWidth clearfix no_underline'>
 			<div class='floatRight spriteBG minicart miniCartText pointer' onClick='app.ext.myRIA.u.showCart(); return false;'>
@@ -212,7 +270,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 		<div class='mlbLogo'><img src='images/mob_mlblogo-60x30.png' width='60' height='30' alt='mlb' /></div>
 		<!-- TODO: may need to put the 15% Off dialog on the category template -->
 		<!-- <div class='topBanner pointer' onClick="$('#promotionDescription15POff').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescription15POff').dialog('open');"><img src='images/mbo_top2-970x60.png' width='970' height="60" alt='' /></div> -->
-		<div class='topBanner pointer' onClick="$('#promotionDescriptionFreeShipping').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescriptionFreeShipping').dialog('open');"><img src='images/mbo_top2-970x60.png' width='970' height="60" alt='' /></div>
+		<div class='topBanner pointer' onClick="$('#promotionDescriptionFreeShipping').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescriptionFreeShipping').dialog('open');"><img src='images/mbo_top3-970x60.png' width='970' height="60" alt='' /></div>
 
 		<!--
 		headerBanner and headerCategories are both hidden by default. showPage handles which is displayed.
@@ -221,12 +279,12 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 		<div class='customizeBanner displayNone' id='headerBanner'>
 			<!-- <a href='#' onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;">
 			<img src='images/mob_customizebanner8-945x122.png' width="945" height="122" alt="homepage menu" />	</a>	-->
-			<img src='images/mob_customizebanner9-945x122.png' width="945" height="122" alt="homepage menu" usemap="#homeMenu" />
+			<img src='images/mob_customizebanner10-945x122.png' width="945" height="122" alt="homepage menu" usemap="#homeMenu" />
 		</div>
 
 
 		<div class='topCats displayNone' id='headerCategories'>
-			<img src='images/mob_menu3-639x27.png' width="639" height="27" alt="" usemap="#catMap" />
+			<img src='images/mob_menu4-639x27.png' width="639" height="27" alt="" usemap="#catMap" />
 		</div>
 
 
@@ -343,7 +401,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 			<div>
 				Call us 
 				<span class='phoneNumber'>1-877-550-5251</span>
-				M-F 9:00 AM - 5:00 PM CST  |   7803 SW 6th Court Plantation, FL 33324
+				M-F 9:00 AM - 5:00 PM CST  |   5100 Campus Dr., Suite 140, Plymouth Meeting, PA 19462
 			</div>
 		</div>
 	</div>
@@ -682,7 +740,8 @@ COMMONLY EDITED TEMPLATES
 the homepageTemplate template is loaded into mainContentArea by default when the application loads
 -->
 <div id='homepageTemplate'>
-	
+
+
 	<img src='images/mob_homemap14-951x369.jpg' width='951' height='369' border="0" usemap="#homeMap" />
 
 	<div data-bind="var: category(%page.description); format:wiki; wikiFormats:myRIA; editor: textarea;" class='homeDesc'></div>
@@ -747,7 +806,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 		-->
 		<ol id='productListContainer' class='prodlist clearfix' data-bind="var: category(@products); format: productList; editor: finder; extension: store_prodlist; loadsTemplate: productListTemplate; items_per_page:15;withInventory:1;withVariations:1;"></ol>
 
-		<div data-bind="var: category(%page.description); format:wiki; wikiFormats:myRIA; editor: textarea;"></div>
+		<div data-bind="var: category(%page.description); format:wiki; editor:textarea;"></div>
 	</div>
 
 	<!-- <ul class='breadcrumb clearfix noPadOrMargin fluidList' data-bind='var: category(id); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul>

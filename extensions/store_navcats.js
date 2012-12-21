@@ -34,7 +34,7 @@ var store_navcats = function() {
 //formerly categoryTree
 		appCategoryList : {
 			init : function(root,tagObj,Q)	{
-//				app.u.dump("BEGIN store_navcats.calls.appCategoryList.init");
+				// app.u.dump("BEGIN store_navcats.calls.appCategoryList.init");
 				var r = 0; //will return 1 if a request is needed. if zero is returned, all data needed was in local.
 				if(app.model.fetchData('appCategoryList') == false)	{
 					r = 1;

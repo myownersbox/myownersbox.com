@@ -857,6 +857,7 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 //Originally, used: 						if($.inArray(infoObj.navcat,app.ext.myRIA.vars.session.recentCategories) < 0)
 //bad mojo because spot 0 in array isn't necessarily the most recently viewed category, which it should be.
 						if(app.ext.myRIA.vars.session.recentCategories[0] != infoObj.navcat)	{
+							//app.u.dump("HEY LISTEN: "+infoObj.navcat);
 							app.ext.myRIA.vars.session.recentCategories.unshift(infoObj.navcat);
 							}
 						
