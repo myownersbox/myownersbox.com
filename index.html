@@ -59,6 +59,7 @@ var google_conversion_value = %SUBTOTAL%;
 <!-- TODO: * META variable is not outputting on order sheet.  -->
 <!-- TODO:   Example: A sale from http://www.myownersbox.com/category/drawers/?META=CUBEITS should output CUBEITS on the order invoice. This may need to be escalated -->
 
+<!-- do not populate or add meta data or title, the SEO layer will add it -->
 
 <!-- used for optional social media extensions -->
 <meta property="og:type" content="http://static.zoovy.com/img/myownersbox/W210-H210-Btttttt/logos/myownersboxlogo.png" id='ogType' />
@@ -70,18 +71,22 @@ var google_conversion_value = %SUBTOTAL%;
 
 <meta name="google-site-verification" content="il1sb0sKQjBzf2LdUGhPly7dfDkyYcRkXz7N6RKE4vg" />
 
+
 <base href='' /><!-- leave blank so it works for a local file -->
 
 <script type="text/javascript">
-var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPLOYMENT!
+var _gaq = _gaq || {'push':function(){}} //here for testing. TODO: REPLACE BEFORE DEPLOYMENT!
+// _gaq.push(['_setAccount', 'UA-31566065-1']);
+// _gaq.push(['_trackPageview']);
 var myCreole;
 
 var app = {vars:{
-	"release":"20121227174059",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20121227180719",
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
-	"httpURL":"http://www.myownersbox.com/"
+	// "httpURL":"http://www.myownersbox.com/"
+	"httpURL":"http://www.d38a025a.crackle.zoovy.net" // TODO: chance baseURL before production
 	},u:{},rq:[]};
 
 //set base url so images, css, js, etc all load from appropriate location once deployed.
@@ -99,7 +104,7 @@ if(document.location.protocol != 'file:')	{
 all css includes need to be after the js that changes the base url. 
 css files should be included before any .js file to ensure they are downloaded in parallel
 -->
-<link rel="stylesheet" type="text/css" href="qs_styles.css" />
+<!-- <link rel="stylesheet" type="text/css" href="qs_styles.css" /> -->
 <!-- <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/redmond/jquery-ui.css" /> -->
 <link rel="stylesheet" type="text/css" href="_mobstyles_customizer.css" /><!-- left separate for customizer portability -->
 <link rel="stylesheet" type="text/css" href="_mobstyles-20120910.css" /><!-- merges jquery, custom and qs_styles TODO: merge latest qs_styles -->
@@ -140,17 +145,11 @@ if(document.location.protocol != 'file:')	{
 <!-- GA -->
 <!-- TODO: not sure if needed -->
 <script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-31566065-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
+// (function() {
+//   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+//   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+//   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+// })();
 </script>
 
 <!-- BUG: social links now showing -->
