@@ -56,7 +56,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. TODO: REPLACE BEFOR
 var myCreole;
 
 var app = {vars:{
-	"release":"20121227194726",
+	"release":"20121227195335",
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -103,6 +103,10 @@ css files should be included before any .js file to ensure they are downloaded i
 <script src="customTabs.js"></script>
 <script type="text/javascript" src="loadscript.js"></script>
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script> -->
+
+<script type="text/javascript">
+app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
+</script>
 
 <!-- 
 aimediagroup
@@ -177,9 +181,7 @@ if(document.location.protocol != 'file:')	{
 
 
 
-<script type="text/javascript">
-app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
-</script>
+
 
 
 </head>
