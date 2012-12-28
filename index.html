@@ -4,37 +4,48 @@
 <meta charset="utf-8">
 <!-- TODO: get social links to load/work addthis.toolbox not a function -->
 <!-- TODO: category page - link to product add to image and fix magnifier link -->
-<!-- TODO: add sidebar to cats -->
 <!-- BUG: category sub list not getting populating - all app.data gets loaded on customizer only -->
-
-<!-- BUG: category desc wiki format not working -->
-
-
 <!-- TODO: Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" -->
-
 <!-- TODO: dialog - 15% off on customizer? -->
 
 <!-- Comments on 2nd revision: -->
-<!-- TODO: 6. Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" -->
+<!-- TODO: 6. Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" - Waiting to hear back from Sandy -->
 
 <!-- Category Page Edit: -->
 <!-- TODO: Change the product layout from verticle to horizontal with larger image thumbnails. Remove the product description. Place the product name, price and an add to cart button beneath the image. i.e. http://www.nyciwear.com/category/sunglasses.tom_ford/ . Eliminate "more information". -->
 <!-- TODO:Make the full product area clickable. -->
 
-<!-- @Darrell Sandstrom Notes from marketing regarding design of homepage text block; -->
-
 <!-- TODO: Kim - bold headline -->
 
+<!-- My Owners Boxs changes.txt -->
 <!-- TODO: * Please add below conversion script to the order confirmation page: -->
-
-
+<!-- QUE: where to put conversion, checkout_nice/extension/checkoutSuccess?  where in function? -->
+<!-- Google Code for Purchase/Sale Conversion Page -->
+<!--
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 1009031023;
+var google_conversion_language = "en";
+var google_conversion_format = "2";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "O1ylCOHf-QMQ766S4QM";
+var google_conversion_value = %SUBTOTAL%;
+/* ]]> */
+</script>
+<script type="text/javascript" src="http://www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1009031023/?value=%25SUBTOTAL%25&amp;label=O1ylCOHf-QMQ766S4QM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+-->
 <!-- Error -->
-
 <!-- TODO: * During checkout, after processing an order the confirmation page loads for a few seconds then forwards to a blank screen -->
 <!-- TODO: * META variable is not outputting on order sheet.  -->
 <!-- TODO:   Example: A sale from http://www.myownersbox.com/category/drawers/?META=CUBEITS should output CUBEITS on the order invoice. This may need to be escalated -->
 
-<!-- do not populate or add meta data or title, the SEO layer will add it -->
+<!-- BUG: 360 view not working -->
 
 <!-- used for optional social media extensions -->
 <meta property="og:type" content="http://static.zoovy.com/img/myownersbox/W210-H210-Btttttt/logos/myownersboxlogo.png" id='ogType' />
@@ -56,7 +67,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. TODO: REPLACE BEFOR
 var myCreole;
 
 var app = {vars:{
-	"release":"20121227195335",
+	"release":"20121228004722",
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -460,7 +471,6 @@ if(document.location.protocol != 'file:')	{
 		</p>
 	</div>
 
-	<!-- QUE: What text goes in free shipping dialog -->
 	<div id='promotionDescriptionFreeShipping' class='displayNone promotionDialog' title="">
 		<h2>Free shipping</h2>
 		<ul>
@@ -829,20 +839,17 @@ the loadingBG class is removed (must be that classname) when the template is tra
 remember to NOT put the button inside the 'onclick' container or two events will occur onclick.
 -->
 <li id='productListTemplate' class='loadingBG  clearfix productListItem' >
-
+<!-- here -->
 	<div class='prodThumbContainer'>
-		<div class='magGlassIcon pointer' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
-		<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='120' height='120' />
+		<div class='magGlassIcon'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
+		<img class='prodThumb pointer' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});' onMouseOver="$(this).addClass('productListItemThumbHover');" onMouseLeave="$(this).removeClass('productListItemThumbHover');" data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='160' height='160' />
 		<div data-bind="var: product(user:prod_360_url); format:view360inModal; extension: mob_customizer;" class='displayNone'><img src='images/mob_360view-116x37.png' width='116' height="37" alt='click here for 360 view' border='0' /></div>
 	</div>
 
-	<div class='nameNDesc'>
+	<div class='nameNDesc pointer' onClick="showContent('product',{'pid':$(this).attr('data-pid')})" onMouseOver="$(this).addClass('productListItemNameHover');" onMouseLeave="$(this).removeClass('productListItemNameHover');" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
 		<h6 data-bind='var: product(zoovy:prod_name); format:text;'></h6>
-
-		<div class='prodDesc' data-bind='var: product(zoovy:prod_desc); format:truncText; numCharacters:150;'></div>
-
-		<div data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' onClick="showContent('product',{'pid':$(this).attr('data-pid')})" class='pointer moreInfo'>More Information &#187;</div>
-		
+		<!-- <div class='prodDesc' data-bind='var: product(zoovy:prod_desc); format:truncText; numCharacters:150;'></div> -->
+		<div class='moreInfo'>More Information &#187;</div>
 	</div>
 
 	<div class='priceEtAll'>
@@ -852,15 +859,14 @@ remember to NOT put the button inside the 'onclick' container or two events will
 	
 		<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
 		
-		<input type='submit' value='Add to Cart' data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' class='displayNone pointer floatRight spriteBG addToCartButton' />
-		
 		<fieldset data-bind='var: product(pid); format:atcQuantityInput; extension:store_product; pretext:Qty: ;' class='borderNone floatRight'></fieldset>
-	
+
+		<input type='submit' value='Add to Cart' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseLeave="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' class='displayNone pointer floatRight spriteBG addToCartButton' />
 	</form>
 
 
 		
-		<div data-bind='var: product(pid); format:linkToConfigurator; extension:mob_customizer;' class='showInCustomizer'></div>
+		<div onMouseOver="$(this).addClass('showInCustomizerHover');" onMouseLeave="$(this).removeClass('showInCustomizerHover');" data-bind='var: product(pid); format:linkToConfigurator; extension:mob_customizer;' class='showInCustomizer'></div>
 		
 	</div>
 	

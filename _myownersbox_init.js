@@ -96,6 +96,7 @@ app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
   // if(app.data['appPageGet|'+P.navcat] && typeof app.data['appPageGet|'+P.navcat]['%page'] == 'object' && typeof app.data['appPageGet|'+P.navcat]['%page']['picture1'])  {
     // $('#catPageTopContent').show();
   // }
+
 }]);
 
 app.rq.push(['templateFunction','categoryTemplate','onDeparts', function(P) {

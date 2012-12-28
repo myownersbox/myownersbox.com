@@ -1229,7 +1229,7 @@ button:focus	{outline:none;}
 
 
 
-.spriteBG	{background:url(images/mob_sprite4-500x346.png) no-repeat;}
+.spriteBG	{background:url(images/mob_sprite8-500x346.png) no-repeat;}
 
 
 .no_underline a	{text-decoration:none;} /* this should be left alone */
@@ -2160,4 +2160,79 @@ and offMenu is toggle off, hiding the change button.
 .homeDesc p {
   font-size: 1.3em;
   line-height: 1.5em;
+}
+
+.prodlist li {
+  width: 167px;
+  padding: 0 5px;
+  display: inline-block;
+  vertical-align: top;
+  /*float: left; TODO: move to ie7 css */
+  clear: none;
+}
+
+.prodlist li .prodThumbContainer {
+  margin: 0;
+}
+
+
+.productListItemThumbHover {
+  /* opacity */
+  zoom: 1;
+  filter: alpha(opacity = 80);
+  opacity: 0.8;
+}
+
+.prodlist li .prodThumbContainer .magGlassIcon {
+  /*top: auto;*/
+  top: 4px;
+  left: 4px;
+  z-index: 4;
+}
+
+.prodlist li .nameNDesc {
+  width: 100%;
+  height: 85px;
+  margin: 5px 0;
+}
+
+.prodlist li .nameNDesc h6 {
+  width: 100%;
+  margin-bottom: 3px;
+  color: #777;
+}
+
+.prodlist li .nameNDesc.productListItemNameHover h6 {
+  color: #333;
+}
+
+.prodlist li .nameNDesc .moreInfo {
+  color: #333;
+}
+
+.prodlist li .nameNDesc.productListItemNameHover .moreInfo {
+  color: #000;
+}
+
+.addToCartButton {
+  height: 18px;
+  background-position: -365px -96px;
+}
+
+.addToCartButtonHover {
+  background-position: -365px -112px;
+}
+
+.addToCartButtonActive {
+  background-position: -365px -111px;
+}
+
+.prodlist li .addContainerLink {
+  width: 167px;
+  background-position: -18px -207px;
+}
+
+.prodlist li .showInCustomizerHover .addContainerLink {
+  width: 167px;
+  background-position: -18px -248px;
 }

@@ -360,12 +360,14 @@ passed on the URI (external links to page)
 //in this case, more than one attribute is needed, so the pid is passed in and the product data object is looked up.
 //since in a product list, the product data 'may' not be in memory yet, and else is present if data not available.
 			linkToConfigurator : function($tag,data)	{
+				app.u.dump([data]);
 				if(app.data['appProductGet|'+data.value])	{
 					var pData = app.data['appProductGet|'+data.value]['%attribs'];
 					var pid = data.value;
 					if(pData['zoovy:prod_dimensions'] && pData['user:prod_organization'] && app.ext.mob_customizer.u.guessContainerParentCat(pid))	{
 						$tag.addClass('pointer').click(function(){
-							app.ext.mob_customizer.actions.initConfigurator({'s1':app.ext.mob_customizer.u.guessContainerParentCat(pid),'s2':pid}); return false;
+							app.ext.mob_customizer.actions.initConfigurator({'s1':app.ext.mob_customizer.u.guessContainerParentCat(pid),'s2':pid});
+							return false;
 							}).append("<span class='spriteBG addContainerLink'></span>");
 						}
 					else	{
