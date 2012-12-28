@@ -7,26 +7,14 @@
 <!-- TODO: add sidebar to cats -->
 <!-- BUG: category sub list not getting populating - all app.data gets loaded on customizer only -->
 
-<!-- do not populate or add meta data or title, the SEO layer will add it -->
-
-<!-- <title>MyOwnersBox: Cubeits, Storeits and Stackits Storage Organization</title> -->
-
-<!-- TODO: may need to mata data -->
-<!-- <meta name="description" content="Get 15% OFF complete organize and cube sets! The MyOwnersBox sports logo cubicles, embroidered fabric cubes and lidded storage cube options are sensible, offer easy organization opportunities and ultimately alot of fun, whether you're a diehard fan, or simply looking for great storage choices." id='metaDescription' />
-<meta name="keywords" content="Cube Organizer Shelves, Cube Organizer Systems,Stackit Stackable Storage Bins, Fabric Storage Bins, sports logo cubicles, team logo storage cubes, MLB storage organizers, Myownersbox storage organizer" id='metaKeywords' /> -->
 <!-- BUG: category desc wiki format not working -->
 
 
 <!-- TODO: Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" -->
 
-
+<!-- TODO: dialog - 15% off on customizer? -->
 
 <!-- Comments on 2nd revision: -->
-<!-- TODO: 1. move down "FREE SHIPPING" & "No Minimum, No end Date" lower so its more centered in the white space -->
-<!-- TODO: 2. Move and reduce font size so "Who's Your Favorite Team?" can fit in between the gray lines coming from the right of MyOwnersBox logo -->
-<!-- TODO: 3. Center bottom- - Remove all black text copy under images, starting with "Fun and Functional organization...." -->
-<!-- TODO: 4. Footer- Add PayPal logo to right of Discover -->
-<!-- TODO: 5. Change address on bottom to 5100 Campus Dr., Suite 140, Plymouth Meeting, PA 19462 -->
 <!-- TODO: 6. Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" -->
 
 <!-- TODO: add the remarketing script to all pages. -->
@@ -89,7 +77,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20121220170100",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20121227174059",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -212,6 +200,23 @@ if(document.location.protocol != 'file:')	{
 		url : window.location.href //changed in configurator.
 	}
 </script>
+
+<!-- Google Code for Remarketing tag -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 1009031023;
+var google_conversion_label = "zsPTCJHjhQQQ766S4QM";
+var google_custom_params = window.google_tag_params;
+var google_remarketing_only = true;
+/* ]]> */
+</script>
+<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/1009031023/?value=0&amp;label=zsPTCJHjhQQQ766S4QM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
 
 
 
@@ -487,7 +492,7 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 		<area shape="rect" coords="500,0,639,27" href="#" onClick="showContent('category',{'navcat':'.stackits'}); return false;">
 	</map>
 	
-	<div id='promotionDescription15POff' class='displayNone' title="Take 15% Off">
+	<div id='promotionDescription15POff' class='displayNone promotionDialog' title="Take 15% Off">
 		<h2>Fill every bin on a cube organizer and save 15% on your entire order!</h2>
 		<p>
 			Buy 3 drawers with our 3x1 cube organizer/bench and save.<br />
@@ -497,11 +502,12 @@ app.u.loadScript(app.vars.baseURL+"_myownersbox_init.js");
 	</div>
 
 	<!-- QUE: What text goes in free shipping dialog -->
-	<div id='promotionDescriptionFreeShipping' class='displayNone' title="Free Shipping">
-		<h2>Free shipping!</h2>
-		<p>
-			Free shipping text
-		</p>
+	<div id='promotionDescriptionFreeShipping' class='displayNone promotionDialog' title="">
+		<h2>Free shipping</h2>
+		<ul>
+			<li>FREE standard ground shipping to continental U.S. only</li>
+			<li>Use the Customizer tool and earn 15% off when you buy enough STOREITS fabric drawers to fill a CUBEITS storage organizer</li>
+		</ul>
 	</div>
 	
 	<!--
