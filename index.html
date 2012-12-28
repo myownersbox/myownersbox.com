@@ -17,41 +17,16 @@
 <!-- Comments on 2nd revision: -->
 <!-- TODO: 6. Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" -->
 
-<!-- TODO: add the remarketing script to all pages. -->
-
 <!-- Category Page Edit: -->
-<!-- TODO: For Jerry - Change the product layout from verticle to horizontal with larger image thumbnails. Remove the product description. Place the product name, price and an add to cart button beneath the image. i.e. http://www.nyciwear.com/category/sunglasses.tom_ford/ . Eliminate "more information". -->
-<!-- TODO: For Darrel - Make the full product area clickable. -->
+<!-- TODO: Change the product layout from verticle to horizontal with larger image thumbnails. Remove the product description. Place the product name, price and an add to cart button beneath the image. i.e. http://www.nyciwear.com/category/sunglasses.tom_ford/ . Eliminate "more information". -->
+<!-- TODO:Make the full product area clickable. -->
 
 <!-- @Darrell Sandstrom Notes from marketing regarding design of homepage text block; -->
 
-<!-- TODO: Add padding above text block -->
-<!-- TODO: font larger -->
-<!-- TODO: Marketing will provide new text that is shorter -->
-<!-- TODO: bold headline -->
+<!-- TODO: Kim - bold headline -->
 
 <!-- TODO: * Please add below conversion script to the order confirmation page: -->
 
-<!-- Google Code for Purchase/Sale Conversion Page -->
-<!-- 
-<script type="text/javascript">
-/* <![CDATA[ */
-var google_conversion_id = 1009031023;
-var google_conversion_language = "en";
-var google_conversion_format = "2";
-var google_conversion_color = "ffffff";
-var google_conversion_label = "O1ylCOHf-QMQ766S4QM";
-var google_conversion_value = %SUBTOTAL%;
-/* ]]> */
-</script>
-<script type="text/javascript" src="http://www.googleadservices.com/pagead/conversion.js">
-</script>
-<noscript>
-<div style="display:inline;">
-<img height="1" width="1" style="border-style:none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1009031023/?value=%25SUBTOTAL%25&amp;label=O1ylCOHf-QMQ766S4QM&amp;guid=ON&amp;script=0"/>
-</div>
-</noscript>
- -->
 
 <!-- Error -->
 
@@ -81,12 +56,12 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. TODO: REPLACE BEFOR
 var myCreole;
 
 var app = {vars:{
-	"release":"20121227180940",
+	"release":"20121227194726",
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
-	// "httpURL":"http://www.myownersbox.com/"
-	"httpURL":"http://www.d38a025a.crackle.zoovy.net/" // TODO: chance baseURL before production
+	"httpURL":"http://www.myownersbox.com/"
+	// "httpURL":"http://www.d38a025a.crackle.zoovy.net/" // TODO: change baseURL before production
 	},u:{},rq:[]};
 
 //set base url so images, css, js, etc all load from appropriate location once deployed.
@@ -152,7 +127,7 @@ if(document.location.protocol != 'file:')	{
 // })();
 </script>
 
-<!-- BUG: social links now showing -->
+<!-- BUG: social links not showing -->
 
 <script>
 	var upfront = document.createElement('SCRIPT'); upfront.type = "text/javascript"; upfront.async = true;
@@ -199,23 +174,6 @@ if(document.location.protocol != 'file:')	{
 		url : window.location.href //changed in configurator.
 	}
 </script>
-
-<!-- Google Code for Remarketing tag -->
-<script type="text/javascript">
-/* <![CDATA[ */
-var google_conversion_id = 1009031023;
-var google_conversion_label = "zsPTCJHjhQQQ766S4QM";
-var google_custom_params = window.google_tag_params;
-var google_remarketing_only = true;
-/* ]]> */
-</script>
-<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
-</script>
-<noscript>
-<div style="display:inline;">
-<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/1009031023/?value=0&amp;label=zsPTCJHjhQQQ766S4QM&amp;guid=ON&amp;script=0"/>
-</div>
-</noscript>
 
 
 
@@ -811,7 +769,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 		-->
 		<ol id='productListContainer' class='prodlist clearfix' data-bind="var: category(@products); format: productList; editor: finder; extension: store_prodlist; loadsTemplate: productListTemplate; items_per_page:15;withInventory:1;withVariations:1;"></ol>
 
-		<div data-bind="var: category(%page.description); format:wiki; editor:textarea;"></div>
+		<div data-bind="var: category(%page.description); format:wiki;  wikiFormats:myRIA; editor: textarea;"></div>
 	</div>
 
 	<!-- <ul class='breadcrumb clearfix noPadOrMargin fluidList' data-bind='var: category(id); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul>
@@ -2084,20 +2042,21 @@ The 'data-action' attribute is used to assign an onclick.
 	information or placed on pages related to sensitive categories. For
 	instructions on adding this tag and more information on the above requirements,
 	read the setup guide: google.com/ads/remarketingsetup -->
-<script type="text/javascript">
-/* <![CDATA[ */
-var google_conversion_id = 998684134;
-var google_conversion_label = "LnsrCPKf0QUQ5uua3AM";
-var google_custom_params = window.google_tag_params;
-var google_remarketing_only = true;
-/* ]]> */
-</script>
-<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js"></script>
-<noscript>
-<div style="display:inline;">
-<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/998684134/?value=0&amp;label=LnsrCPKf0QUQ5uua3AM&amp;guid=ON&amp;script=0"/>
-</div>
-</noscript>
+	<script type="text/javascript">
+	/* <![CDATA[ */
+	var google_conversion_id = 1009031023;
+	var google_conversion_label = "zsPTCJHjhQQQ766S4QM";
+	var google_custom_params = window.google_tag_params;
+	var google_remarketing_only = true;
+	/* ]]> */
+	</script>
+	<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+	</script>
+	<noscript>
+	<div style="display:inline;">
+	<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/1009031023/?value=0&amp;label=zsPTCJHjhQQQ766S4QM&amp;guid=ON&amp;script=0"/>
+	</div>
+	</noscript>
 
 <menu>
 	<li><a href='#' onClick="return showContent('category',{'navcat':'.'});">Homepage</a></li>
