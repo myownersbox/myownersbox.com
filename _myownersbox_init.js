@@ -84,7 +84,9 @@ app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
    -> not ideal, but will do for now till some sort of category template handler is in place (for choosing template)
   */
   if(P.navcat == '.customizer') {
-    app.u.dump([P]);
+    // app.u.dump([P]);
+    $('#mastHead .promotionFree').hide();
+    $('#mastHead .promotion15Off').show();
 
     $('#mainContentArea').empty(); //removes templateInstance for cat page which may already be present.
     app.model.abortQ('mutable'); //will kill existing process to stop default cat layout info from loading.
@@ -101,6 +103,11 @@ app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
 
 app.rq.push(['templateFunction','categoryTemplate','onDeparts', function(P) {
   // $('#headerCategories').hide();
+  if(P.navcat == '.customizer') {
+    // app.u.dump([P]);
+    $('#mastHead .promotion15Off').hide();
+    $('#mastHead .promotionFree').show();
+  }
 }]);
 
 /// checkout \\\
