@@ -2145,6 +2145,14 @@ and offMenu is toggle off, hiding the change button.
 
 /* 201248 Update Styles */
 
+#mastHead .customizeBanner  {
+  top:103px; 
+  left:324px; 
+  height:auto; 
+  width:auto; 
+  z-index:10;
+}
+
 .promotionDialog ul {
   margin-top: 0.5em;
 }

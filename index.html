@@ -67,7 +67,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. TODO: REPLACE BEFOR
 var myCreole;
 
 var app = {vars:{
-	"release":"20130102132535",
+	"release":"20130102135856",
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -252,13 +252,12 @@ if(document.location.protocol != 'file:')	{
 		both are hidden to avoid popping
 		-->
 		<div class='customizeBanner displayNone' id='headerBanner'>
-			<!-- <a href='#' onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;">
-			<img src='images/mob_customizebanner8-945x122.png' width="945" height="122" alt="homepage menu" />	</a>	-->
-			<img src='images/mob_customizebanner12-945x122.png' width="945" height="122" alt="homepage menu" usemap="#homeMenu" />
+			<!-- <img src='images/mob_customizebanner8-945x122.png' width="945" height="122" alt="homepage menu" /> -->
+			<a href="#customizer" title="Customizer" onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;"><img src='images/mob_home_customizer.png' width="332" height="21" alt="Customizer"/></a>
 		</div>
 
 
-		<div class='topCats displayNone' id='headerCategories'>
+		<div class='topCats' id='headerCategories'>
 			<img src='images/mob_menu4-639x27.png' width="639" height="27" alt="" usemap="#catMap" />
 		</div>
 
@@ -446,6 +445,7 @@ if(document.location.protocol != 'file:')	{
 		<!-- <area shape="rect" coords="646,1,949,100" href="#customizer" onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;" alt='customizer'> -->
 	</map>
 
+	<!-- 
 	<map name="homeMenu">
 			<area shape="rect" coords="300,20,650,55" href="#customizer" alt="customizer" onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;">
 			<area shape="rect" coords="310,70,460,105" href="#top" alt="customizer" onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;">
@@ -453,7 +453,7 @@ if(document.location.protocol != 'file:')	{
 			<area shape="rect" coords="655,70,770,105" href="#top" alt="cubeits" onClick="showContent('',{'pageType':'category','navcat':'.the-cube-organizers'}); return false;">
 			<area shape="rect" coords="810,70,945,105" href="#top" alt="stackits" onClick="showContent('',{'pageType':'category','navcat':'.stackits'}); return false;">
 	</map>
-
+ 	-->
 
 	<map name="catMap">
 		<area shape="rect" coords="5,-5,150,30" href="#" onClick="showContent('category',{'navcat':'.customizer'}); return false;" />

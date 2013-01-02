@@ -42,7 +42,7 @@ app.rq.push(['templateFunction','productTemplate','onCompletes',function(P) {
     }
   else  {} //couldn't find the tab to tabificate.
 
-  $('#headerCategories').show();
+  // $('#headerCategories').show();
 }]);
 
 app.rq.push(['script',0,(document.location.protocol == 'file:') ? app.vars.httpURL+'jquery/config.js' : app.vars.baseURL+'jquery/config.js']); //The config.js is dynamically generated.
@@ -58,7 +58,7 @@ app.rq.push(['script',0,app.vars.baseURL+'controller.js']);
 
 /// hompage \\\
 app.rq.push(['templateFunction','homepageTemplate','onCompletes', function(P) {
-  $('#headerCategories').hide();
+  // $('#headerCategories').hide();
   $('#headerBanner').show();
 }]);
 
@@ -67,16 +67,16 @@ app.rq.push(['templateFunction','homepageTemplate','onDeparts', function(P) {
 }]);
 
 app.rq.push(['templateFunction','companyTemplate','onCompletes', function(P) {
-  $('#headerCategories').show();
+  // $('#headerCategories').show();
 }]);
 
 app.rq.push(['templateFunction','customerTemplate','onCompletes', function(P) {
-  $('#headerCategories').show();
+  // $('#headerCategories').show();
 }]);
 
 /// categories \\\
 app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
-  $('#headerCategories').show();
+  // $('#headerCategories').show();
 
   /*
   handles loading the customizer if the apprpriate cateory page is in focus
