@@ -711,11 +711,11 @@ and override using classes or id's as needed.
 
 .productList h4, .productList h5, .productList h6, .categoryList h4, .categoryList h5, .categoryList h6	{padding:0; margin:0;} /* h4 - h6 are used in default templates for name, price, etc */
 
-.productList li, categoryList li	{font-size:.8em;}
+/*.productList li, categoryList li	{font-size:.8em;}*/
 
-.productList h4, .categoryList h4	{font-size:1em;}
-.productList h5, .categoryList h5	{font-size:.9em;}
-.productList h6, .categoryList h6	{font-size:.85em;}
+/*.productList h4, .categoryList h4	{font-size:1em;}*/
+/*.productList h5, .categoryList h5	{font-size:.9em;}*/
+/*.productList h6, .categoryList h6	{font-size:.85em;}*/
 
 
 /* multpage header for lists (product list) - most styling handled by jqueryUI */
@@ -1636,7 +1636,7 @@ div.zform_div input[type="radio"]:before {
 /* a default used for making sure images in a product list are a reasonable size. */
 .prodlist	{list-style:none; clear:both;margin-bottom:12px;}
 .prodlist li	{margin:0 0 12px 0; position:relative; display:block; border-bottom:1px solid #cccccc; padding-bottom:12px;}
-.prodlist li:last-child	{border-bottom:0;}
+/*.prodlist li:last-child	{border-bottom:0;}*/
 
 .prodlist li .prodThumbContainer	{margin-right:12px; float:left; position:relative;}
 .prodlist li .prodThumb	{border:1px solid #cccccc;}
@@ -2219,7 +2219,7 @@ and offMenu is toggle off, hiding the change button.
   color: #777;
 }
 
-.prodlist li .nameNDesc.productListItemNameHover h6 {
+.prodlist li .nameNDesc.productListItemNameHover h5, .prodlist li .nameNDesc.productListItemNameHover h6 {
   color: #333;
 }
 
