@@ -17,6 +17,17 @@
 <!-- TODO: * META variable is not outputting on order sheet.  -->
 <!-- TODO:   Example: A sale from http://www.myownersbox.com/category/drawers/?META=CUBEITS should output CUBEITS on the order invoice. This may need to be escalated -->
 
+<!-- 1-4-13 -->
+<!-- TODO: Add back Facebook next to Google + on all pages -->
+<!-- TODO: Customizer page- add back "who's your favorite team!" in same place as the other pages -->
+<!-- TODO: Category pages- Only the magnifying glass icon should link to bigger image pop-up. The rest of the product image area should link to the product page -->
+<!-- TODO: Most of the last list of changes have not been implemented -->
+<!-- TODO: Will we be on latest Zoovy platform version when we go live with updated content? -->
+<!-- TODO: for the 3 Cubeits products pages add the 360 degree option -->
+<!-- TODO: At the bottom of Storeits and Stackits category page, the black tesxt copy has this symbol showing === need to remove -->
+<!-- TODO: On Storeits category pages- image is too large for Detroit Tigers and Washington Nationals -->
+<!-- TODO: Customizer page- all the sharing and email options are missing under "add to Cart" -->
+
 <!-- BUG: 360 view not working -->
 
 <!-- TODO: ask about social media js -->
@@ -41,7 +52,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130103164517",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130104145721",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -171,6 +182,7 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 
 <div id='appView' class='displayNone'>
 	<!-- VIEW CONTENT -->
+	<!-- <ul id="tier1categories"></ul> -->
 	<div id='topHead' class='noPrint'>
 		<div class='contentWidth clearfix no_underline'>
 			<div class='floatRight spriteBG minicart miniCartText pointer' onClick='app.ext.myRIA.u.showCart(); return false;'>
@@ -309,7 +321,7 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 			<div class='floatRight poweredByZoovy noPrint'>
 				<a href='http://www.zoovy.com/' target='_blank'>Powered by Zoovy</a>
 			</div>
-			<div class='floatRight'>Copyright &copy; 2012 All Rights Reserved</div>
+			<div class='floatRight'>Copyright &copy; 2013 All Rights Reserved</div>
 
 			<div>
 				Call us 
@@ -615,7 +627,6 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 		</div>
 		
 		
-		
 		</div>
 	</div>
 		</div><!-- /configuratorRightColumn -->
@@ -657,7 +668,7 @@ the homepageTemplate template is loaded into mainContentArea by default when the
 	<!-- <ul data-bind="var: category(@subcategoryDetail); format: categoryList; extension: store_navcats; loadsTemplate: categoryListTemplate; detail:max;" class='listStyleNone fluidList clearfix noPadOrMargin categoryList'></ul> -->
 	
 	<!-- <ul data-bind="var: category(@products); format: productList; editor: finder; extension: store_prodlist; loadsTemplate: productListTemplate; hide_summary:1; before:<h2>Featured Items</h2>; withReviews:1;" class='listStyleNone fluidList clearfix noPadOrMargin productList'></ul> -->
-	<div data-bind="var: category(%page.description); format:wiki; wikiFormats:myRIA; editor: textarea;"></div>
+	<div class='homeDesc' data-bind="var: category(%page.description); format:wiki; wikiFormats:myRIA; editor: textarea;"></div>
 
 	<!-- <ul id='homeProdSearchBestSellers' data-bind='var: elastic-native({"size":"4","mode":"elastic-native","filter":{"term":{"tags":"IS_BESTSELLER"}}}); format: productSearch; extension: myRIA; loadsTemplate: productListTemplateResults; before:<h2>Best Sellers</h2>;' class='listStyleNone fluidList clearfix noPadOrMargin productList'></ul> -->
 
