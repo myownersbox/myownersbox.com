@@ -151,11 +151,11 @@ app.u.howManyPassZeroResourcesAreLoaded = function(debug)	{
 //the 'attempts' var is incremented each time the function is executed.
 
 app.u.initMVC = function(attempts){
-//	app.u.dump("app.u.initMVC activated ["+attempts+"]");
+  //	app.u.dump("app.u.initMVC activated ["+attempts+"]");
 	var includesAreDone = true;
 
-//what percentage of completion a single include represents (if 10 includes, each is 10%).
-	var percentPerInclude = (100 / app.vars.rq.length);  
+  //what percentage of completion a single include represents (if 10 includes, each is 10%).
+	var percentPerInclude = (100 / app.vars.rq.length);
 	var resourcesLoaded = app.u.howManyPassZeroResourcesAreLoaded();
 	var percentComplete = Math.round(resourcesLoaded * percentPerInclude); //used to sum how many includes have successfully loaded.
 	
@@ -179,18 +179,18 @@ app.u.initMVC = function(attempts){
 			app.u.loadApp();
 		}
 		
-		}
+	}
 	else if(attempts > 50)	{
 		app.u.dump("WARNING! something went wrong in init.js");
 		//this is 10 seconds of trying. something isn't going well.
 		$('#appPreView').empty().append("<h2>Uh Oh. Something seems to have gone wrong. </h2><p>Several attempts were made to load the store but some necessary files were not found or could not load. We apologize for the inconvenience. Please try 'refresh' and see if that helps.<br><b>If the error persists, please contact the site administrator</b><br> - dev: see console.</p>");
 		app.u.howManyPassZeroResourcesAreLoaded(true);
-		}
+	}
 	else	{
 		setTimeout("app.u.initMVC("+(attempts+1)+")",250);
-		}
-
 	}
+
+};
 
 app.u.loadApp = function() {
 //instantiate controller. handles all logic and communication between model and view.

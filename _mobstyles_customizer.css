@@ -392,3 +392,20 @@ ul.cssDDMenu,
 #recentlyRemovedProdlistNav a:focus { outline: none; }
 
 #recentlyRemovedProdlist .prodThumb	{float:left; margin:0 3px 0 0;}
+
+/* 201248 Update */
+
+#drawerCategories .prodlist li {
+  width: auto;
+  margin: 5px;
+}
+
+.dragIconContainer {
+  /*display: inline-block;*/
+  float:right;
+}
+
+#drawerCategories .prodAttContainer {
+	height: 45px;
+	display: block;
+}

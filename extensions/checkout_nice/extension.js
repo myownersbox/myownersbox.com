@@ -1,18 +1,18 @@
 /* **************************************************************
 
-   Copyright 2011 Zoovy, Inc.
+	 Copyright 2011 Zoovy, Inc.
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+	 Licensed under the Apache License, Version 2.0 (the "License");
+	 you may not use this file except in compliance with the License.
+	 You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+		 http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+	 Unless required by applicable law or agreed to in writing, software
+	 distributed under the License is distributed on an "AS IS" BASIS,
+	 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 See the License for the specific language governing permissions and
+	 limitations under the License.
 
 CHECOUT_NICE.JS (just here to make it easier to know which extension is open)
 
@@ -42,7 +42,7 @@ var convertSessionToOrder = function() {
 /*
 unlike other extensions, checkout calls rarely do a 'fetchData'. The thought here is to make sure we always have the most recent data.
 calls should always return the number of dispatches needed. allows for cancelling a dispatchThis if not needed.
-   so in most of these, a hard return of 1 is set.
+	 so in most of these, a hard return of 1 is set.
 
 initially, this extension auto-executed. Later, after callbacks were added to the extension object
 the startCheckout call was added, which contains the code that was auto-executed as part of the INIT callback.
@@ -516,6 +516,8 @@ error would mean something was not complete.
 				app.u.dump('BEGIN app.ext.convertSessionToOrder.callbacks.finishedValidatingCheckout.onSuccess');
 			
 				$('#modalProcessCheckout').append("<h2>Creating Order...</h2>");
+				// conversion script
+				$('#modalProcessCheckout').append("<script type='text/javascript'> var google_conversion_id = 1009031023; var google_conversion_language = 'en'; var google_conversion_format = '2'; var google_conversion_color = 'ffffff'; var google_conversion_label = 'O1ylCOHf-QMQ766S4QM'; var google_conversion_value = %SUBTOTAL%; </script> <script type='text/javascript' src='http://www.googleadservices.com/pagead/conversion.js'> </script> <noscript> <div style='display:inline;'> <img height='1' width='1' style='border-style:none;' alt='' src='http://www.googleadservices.com/pagead/conversion/1009031023/?value=%25SUBTOTAL%25&amp;label=O1ylCOHf-QMQ766S4QM&amp;guid=ON&amp;script=0'/> </div> </noscript>");
 //okay, now build the paymentQ. This will add 1 payment to the Q. Giftcards et all will be handled by now.
 				app.ext.store_checkout.u.buildPaymentQ();
 				app.ext.store_checkout.calls.cartOrderCreate.init("checkoutSuccess");
@@ -1061,7 +1063,7 @@ make sure all the data is up to date (shipping options, inventory check, etc).
 a given panel can update another, but should NOT contain code to modify another panel.
 all logic should be in the panel itself. That'll make it easier to maintain.
  -> there is one exception to this. currently, 'ship to billing' will hide/unhide the shipping address panel instead of reloading it. 
- 	this is handled differently because it's more efficient to just hide/unhide the panel then reload it each time.
+	this is handled differently because it's more efficient to just hide/unhide the panel then reload it each time.
 */ 
 		panelContent : {
 
@@ -1201,7 +1203,7 @@ an existing user gets a list of previous addresses they've used and an option to
 				var data = app.data.cartDetail;
 				var txt = '';
 				var cssClass; //used to hide the form inputs if user is logged in and has predefined addresses. inputs are still generated so user can create a new address.
-			 	var authState = app.u.determineAuthentication();
+				var authState = app.u.determineAuthentication();
 				if(authState == 'authenticated' && app.ext.store_checkout.u.buyerHasPredefinedAddresses('bill') == true)	{
 //					app.u.dump(" -> user is logged in AND has predefined billing address(es)");
 					txt = "Please choose from (click on) billing address(es) below:";

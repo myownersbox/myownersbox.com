@@ -1182,8 +1182,10 @@ body	{font-family:Arial, Helvetica, sans-serif; color: #000000; margin:0; paddin
 /* removes bottom padding/margin from form in old browsers */
 form	{display:inline;}
 
-a	{color:#990000;} /* this color should match the color set in zlink */
-a:hover	{color:#990000;}
+a:link    {color:#990000;} /* this color should match the color set in zlink */
+a:visited {color:#440000;}
+a:hover   {color:#000000;}
+a:active  {color:#000000;}
 
 img	{border:0; vertical-align: baseline;} /* vertical-align: baseline; removes the whitespace sometimes added under an image. use floats if needed */
 
@@ -2094,7 +2096,7 @@ ul.zwarn li	{margin-left:15px;}
 
 /* tier 1 menu link style (ok to change this). will affect tier2 also */
 .ddUlMenu ul li a {
-	float: left;
+	float: left; 
 	text-decoration:none;
 	padding:0 12px;
 	cursor:pointer;
@@ -2144,6 +2146,30 @@ and offMenu is toggle off, hiding the change button.
 #CRMButtonMenu	{margin:0; padding:0; margin-bottom:12px;}
 
 /* 201248 Update Styles */
+
+/*
+#topHead nav a:link {
+  color: #990000;
+}
+#topHead nav a:hover {
+  color: #660000;
+}
+*/
+
+#topHead nav a:visited {
+  color: #990000;
+}
+/*
+#topHead nav a:active {
+  color: #333333;
+}
+*/
+
+#mastHead .topBanner {
+  width: 417px;
+  height: 60px;
+  left: 275px;
+}
 
 #mastHead .customizeBanner  {
   top:103px; 
@@ -2209,7 +2235,7 @@ and offMenu is toggle off, hiding the change button.
 
 .prodlist li .nameNDesc {
   width: 100%;
-  height: 85px;
+  height: 66px;
   margin: 5px 0;
 }
 
@@ -2252,4 +2278,16 @@ and offMenu is toggle off, hiding the change button.
 .prodlist li .showInCustomizerHover .addContainerLink {
   width: 167px;
   background-position: -18px -248px;
+}
+
+.productImageContainer {
+  position: relative;
+  z-index: 1;
+}
+
+.productImageContainer .magGlassIcon {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 2;
 }

@@ -4,42 +4,14 @@
 <meta charset="utf-8">
 
 <!-- TODO: get social links to load/work addthis.toolbox not a function -->
-<!-- TODO: category page - link to product add to image and fix magnifier link -->
-<!-- BUG: category sub list not getting populating - all app.data gets loaded on customizer only -->
 <!-- TODO: Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" -->
-<!-- TODO: dialog - 15% off on customizer? -->
+<!-- TODO: test conversion script -->
+<!-- TODO: suggest having one review per category -->
 
 <!-- Comments on 2nd revision: -->
 <!-- TODO: 6. Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" - Waiting to hear back from Sandy -->
 
-<!-- Category Page Edit: -->
-<!-- TODO:Make the full product area clickable. -->
 
-<!-- TODO: Kim - bold headline -->
-
-<!-- My Owners Boxs changes.txt -->
-<!-- TODO: * Please add below conversion script to the order confirmation page: -->
-<!-- QUE: where to put conversion, checkout_nice/extension/checkoutSuccess?  where in function? -->
-<!-- Google Code for Purchase/Sale Conversion Page -->
-<!--
-<script type="text/javascript">
-/* <![CDATA[ */
-var google_conversion_id = 1009031023;
-var google_conversion_language = "en";
-var google_conversion_format = "2";
-var google_conversion_color = "ffffff";
-var google_conversion_label = "O1ylCOHf-QMQ766S4QM";
-var google_conversion_value = %SUBTOTAL%;
-/* ]]> */
-</script>
-<script type="text/javascript" src="http://www.googleadservices.com/pagead/conversion.js">
-</script>
-<noscript>
-<div style="display:inline;">
-<img height="1" width="1" style="border-style:none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1009031023/?value=%25SUBTOTAL%25&amp;label=O1ylCOHf-QMQ766S4QM&amp;guid=ON&amp;script=0"/>
-</div>
-</noscript>
--->
 <!-- Error -->
 <!-- TODO: * During checkout, after processing an order the confirmation page loads for a few seconds then forwards to a blank screen -->
 <!-- TODO: * META variable is not outputting on order sheet.  -->
@@ -69,7 +41,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130102220138",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130103164517",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -188,7 +160,7 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 	</div>
 	<div id="tenFourGoodBuddy" class="displayNone pointer">
 		Click here to load My Owners Box
-	<div>
+	</div>
 	<div class='appMessaging'></div>
 	</td>
 </tr>
@@ -219,8 +191,8 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 	<div id='mastHead' class='noPrint'>
 		<div class='pointer' onClick="showContent('category',{'navcat':'.'});" id='logo'><img src='images/myownersboxlogo.png' width='210' height='155' alt='MyOwnersBox' class='logo' /></div>
 		<div class='mlbLogo'><img src='images/mob_mlblogo-60x30.png' width='60' height='30' alt='mlb' /></div>
-		<div class='topBanner pointer promotion15Off displayNone' onClick="$('#promotionDescription15POff').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescription15POff').dialog('open');"><img src='images/mbo_top-970x60.png' width='970' height="60" alt='' /></div>
-		<div class='topBanner pointer promotionFree' onClick="$('#promotionDescriptionFreeShipping').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescriptionFreeShipping').dialog('open');"><img src='images/mbo_top3-970x60.png' width='970' height="60" alt='' /></div>
+		<div class='topBanner pointer promotion15Off displayNone' onClick="$('#promotionDescription15POff').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescription15POff').dialog('open');"><img src='images/mbo_top15percent_1b-417x60.png' width='417' height="60" alt='' /></div>
+		<div class='topBanner pointer promotionFree' onClick="$('#promotionDescriptionFreeShipping').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescriptionFreeShipping').dialog('open');"><img src='images/mbo_top-shipping_1a-417x60.png' width='417' height="60" alt='' /></div>
 		<div class='customizeBanner displayNone' id='headerBanner'>
 			<a href="#customizer" title="Customizer" onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;"><img src='images/mob_home_customizer.png' width="332" height="21" alt="Customizer"/></a>
 		</div>
@@ -422,11 +394,11 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 	
 	<div id='promotionDescription15POff' class='displayNone promotionDialog' title="Take 15% Off">
 		<h2>Fill every bin on a cube organizer and save 15% on your entire order!</h2>
-		<p>
-			Buy 3 drawers with our 3x1 cube organizer/bench and save.<br />
-			Buy 6 drawers with our 2x3 cube organizer and save.<br />
-			Buy 9 drawers with our 3x3 cube organizer and save.
-		</p>
+		<ul>
+			<li>Buy 3 drawers with our 3x1 cube organizer/bench and save.</li>
+			<li>Buy 6 drawers with our 2x3 cube organizer and save.</li>
+			<li>Buy 9 drawers with our 3x3 cube organizer and save.</li>
+		</ul>
 	</div>
 
 	<div id='promotionDescriptionFreeShipping' class='displayNone promotionDialog' title="">
@@ -512,7 +484,7 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 		<div class='magGlassIcon pointer' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
 
 		<div class='prodAttContainer pointer' onClick="app.ext.mob_customizer.u.drawerClicked($(this).parent().attr('data-pid'),$(this).parent().attr('id'))">
-			<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL; bgcolor:tttttt;' width='70' height='55' />
+			<img class='prodThumb' data-bind='var: product(zoovy:prod_image1); format:imageURL; bgcolor:tttttt;' width='57' height='45' />
 			<div class='prodName' data-bind='var: product(user:prod_organization); format:text; defaultVar: product(zoovy:prod_name);'></div>
 		</div>
 	</li>
@@ -797,9 +769,9 @@ Used for the product in a product list (prodlist), usually in the body of a cate
 the loadingBG class is removed (must be that classname) when the template is translated.
 remember to NOT put the button inside the 'onclick' container or two events will occur onclick.
 -->
-<li id='productListTemplate' class='loadingBG  ' onMouseOver="$('.quickView',$(this)).show();" onMouseOut="$('.quickView').hide();" >
+<li id='productListTemplate' class='loadingBG  ' >
 	<div class='prodThumbContainer'>
-		<div class='magGlassIcon'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
+		<div class='pointer magGlassIcon' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
 		<img class='prodThumb pointer' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});' onMouseOver="$(this).addClass('productListItemThumbHover');" onMouseLeave="$(this).removeClass('productListItemThumbHover');" data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='160' height='160' />
 		<div data-bind="var: product(user:prod_360_url); format:view360inModal; extension: mob_customizer;" class='displayNone'><img src='images/mob_360view-116x37.png' width='116' height="37" alt='click here for 360 view' border='0' /></div>
 	</div>
@@ -807,13 +779,13 @@ remember to NOT put the button inside the 'onclick' container or two events will
 	<div class='nameNDesc pointer' onClick="showContent('product',{'pid':$(this).attr('data-pid')})" onMouseOver="$(this).addClass('productListItemNameHover');" onMouseLeave="$(this).removeClass('productListItemNameHover');" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
 		<h6 data-bind='var: product(zoovy:prod_name); format:text;'></h6>
 		<!-- <div class='prodDesc' data-bind='var: product(zoovy:prod_desc); format:truncText; numCharacters:150;'></div> -->
-		<div class='moreInfo'>More Information &#187;</div>
+		<!-- <div class='moreInfo'>More Information &#187;</div> -->
 	</div>
 
 	<div class='priceEtAll'>
 		<div class='prodPrice' data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; className:price; pretext: Price: ;'></div>
 
-	<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodListAddToCartForm marginBottom clearfix' id='prodListAddToCartFrm' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart(this.id,{'action':'modal'});  return false;">
+	<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodListAddToCartForm marginBottom clearfix' id='prodListAddToCartFrm' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart($(this),{'action':'modal'}); return false;">
 	
 		<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
 		
@@ -823,7 +795,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 	</form>
 		
 	<div onMouseOver="$(this).addClass('showInCustomizerHover');" onMouseLeave="$(this).removeClass('showInCustomizerHover');" data-bind='var: product(pid); format:linkToConfigurator; extension:mob_customizer;' class='showInCustomizer'></div>
-		
+
 	</div>
 
 	<!-- <button class='floatRight pointer quickView displayNone' onClick="quickView('product',{'templateID':'productTemplateQuickView','pid':$(this).closest('[data-pid]').attr('data-pid')});">Quickview</button> -->
@@ -838,9 +810,9 @@ remember to NOT put the button inside the 'onclick' container or two events will
 		<!-- <h6 data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; className:price; pretext: Our Price: ;'></h6> -->
 		
 		
-		<!-- <span data-bind='var: product(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span> -->
-	<!-- 	<span data-bind='var: reviews(total); format:text; pretext: from ;posttext: reviews; className:numReviews;'></span> -->
-	</div>
+		<!-- <span data-bind='var: reviews(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span> -->
+	<!-- 	<span data-bind='var: reviews(reviews.total); format:text; pretext: from ;posttext: reviews; className:numReviews;'></span> -->
+	<!-- </div> -->
 </li>
 
 
@@ -859,7 +831,7 @@ container ul should have lineItemProdlist class on it instead of productList
 	
 		<h6 data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; className:price; pretext: Our Price: ;'></h6>
 		
-		<span data-bind='var: product(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span>
+		<span data-bind='var: reviews(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span>
 
 		<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodListAddToCartForm marginBottom clearfix' id='accessoriesAddToCartFrm' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart(this.id,{'action':'modal'}); return false;">
 		
@@ -902,7 +874,7 @@ container ul should have lineItemProdlist class on it instead of productList
 				</div>
 			</div>
 		</div>
-		<span data-bind='var: product(reviews.average); format:addClass; className:review_;' class='reviewSprite floatRight' ></span>
+		<span data-bind='var: reviews(reviews.average); format:addClass; className:review_;' class='reviewSprite floatRight' ></span>
 
 		<h5 data-bind='var: product(zoovy:prod_name); format:text;'></h5>
 	
@@ -934,7 +906,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 	<div onMouseOver="$(this).addClass('productListItemNameHover');" onMouseLeave="$(this).removeClass('productListItemNameHover');" onClick="showContent('product',{'pid':$(this).attr('data-pid')})" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='nameNDesc pointer'>
 		<h5 data-bind='var: product(prod_name); format:text;'></h5>
 		<h6 data-bind='var: product(base_price); format:elasticMoney; currencySign: $;  hideZero:true; className:price; pretext: Our Price: ;'></h6>
-		<div class='moreInfo'>More Information &#187;</div>
+		<!-- <div class='moreInfo'>More Information &#187;</div> -->
 	</div>
 	
 </li>
@@ -968,6 +940,8 @@ Additionally, the cross selling features also have hard coded id's, though they'
 this will likely become more flexible in the future. ###
 -->
 
+<!-- TODO: do product template -->
+
 
 <div id='productTemplate'>
 
@@ -976,77 +950,94 @@ this will likely become more flexible in the future. ###
 <table class='prodViewerContainer'>
 <tr>
 	<td class='imageContainer'>
-<!--	<img src='%PROJECT_URL%/blank.gif' id='bobWasHere' class='prodBigImage' data-bind='var: product(zoovy:prod_image1); format: magicZoomPlus; extension: magicToolBox;' width='340' height='340' /> -->
-	
-<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).attr("data-pid")});' class='pointer clearfix'  data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
+		<!--	<img src='%PROJECT_URL%/blank.gif' id='bobWasHere' class='prodBigImage' data-bind='var: product(zoovy:prod_image1); format: magicZoomPlus; extension: magicToolBox;' width='340' height='340' /> -->
+		
+		<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).attr("data-pid")});' class='productImageContainer pointer clearfix' onMouseOver="$(this).addClass('productListItemThumbHover');" onMouseLeave="$(this).removeClass('productListItemThumbHover');" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
+			<div class='magGlassIcon pointer'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
+			<div data-bind="var: product(zoovy:prod_is_tags); format:addTagSpans;" class='tagsContainer'></div>
+			<img src='blank.gif' class='prodBigImage' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='340' height='340' />
 
-	<div data-bind="var: product(zoovy:prod_is_tags); format:addTagSpans;" class='tagsContainer'></div>
-	<img src='blank.gif' class='prodBigImage' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='340' height='340' />
+		</div>
 
-</div>
-
-	<div data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='prodThumbs'>
-	
-<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().attr("data-pid"),"int":"2"});' class='pointer'><img src='blank.gif' data-bind='var: product(zoovy:prod_image2); format:imageURL;' width='100' height='100' /></div>
-	
-<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().attr("data-pid"),"int":"3"});' class='pointer'><img src='blank.gif' data-bind='var: product(zoovy:prod_image3); format:imageURL;' width='100' height='100' /></div>
-	
-<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().attr("data-pid"),"int":"4"});' class='pointer'><img src='blank.gif' data-bind='var: product(zoovy:prod_image4); format:imageURL;' width='100' height='100' /></div>
-	
-	</div>
+		<div data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='prodThumbs'>
+			
+			<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().attr("data-pid"),"int":"2"});' class='pointer'><img src='blank.gif' data-bind='var: product(zoovy:prod_image2); format:imageURL;' width='100' height='100' /></div>
+				
+			<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().attr("data-pid"),"int":"3"});' class='pointer'><img src='blank.gif' data-bind='var: product(zoovy:prod_image3); format:imageURL;' width='100' height='100' /></div>
+				
+			<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().attr("data-pid"),"int":"4"});' class='pointer'><img src='blank.gif' data-bind='var: product(zoovy:prod_image4); format:imageURL;' width='100' height='100' /></div>
+			
+		</div>
 
 	</td>
 
 	<td class='prodSummaryContainer marginBottom no_underline'>
-	<h1 data-bind='var: product(zoovy:prod_name); format:text;'></h1>
+		<h1 data-bind='var: product(zoovy:prod_name); format:text;'></h1>
+		
+		<h5 class='stid floatRight' data-bind='var: product(pid); format:text; pretext: Sku: ;'></h5>
+		<!-- <h5 data-bind='var: product(zoovy:prod_mfg); format:searchLink; extension:myRIA; pretext: Mfg: ;'></h5> -->
+		<!-- <h5 data-bind='var: product(zoovy:prod_mfgid); format:text; pretext: Mfg ID: ;'></h5> -->
+		
+		
+		<div class='priceContainer'>
+			<h2 class='basePrice' data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; pretext: only ;'></h2>
+			<!-- <h5 class='prodMSRP' data-bind='var: product(zoovy:prod_msrp); format:money; currencySign: $;  hideZero:true; pretext: MSRP: ;'></h5> -->
+			<!-- 
+			<span class='savings'>
+				<span class='savingsDifference' data-bind='var: product(pid); format:priceRetailSavingsDifference; extension:myRIA; pretext: You save: ;'></span>
+				<span class='savingsPercentage' data-bind='var: product(pid); format:priceRetailSavingsPercentage; extension:myRIA; pretext: (; posttext:);'></span>
+			</span> 
+			-->
+		</div>
 	
-	<h5 class='stid' data-bind='var: product(pid); format:text; pretext: Sku: ;'></h5>
-	<h5 data-bind='var: product(zoovy:prod_mfg); format:searchLink; extension:myRIA; pretext: Mfg: ;'></h5>
-	<h5 data-bind='var: product(zoovy:prod_mfgid); format:text; pretext: Mfg ID: ;'></h5>
+		<section class='marginBottom'>
+			<span data-bind='var: reviews(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span>
+			<span data-bind='var: reviews(reviews.total); format:text;posttext: from ;posttext: reviews; className:numReviews;'></span>
+		</section>
 	
-	
-	<div class='priceContainer'>
-		<h4 class='basePrice' data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; pretext: Our Price: ;'></h4>
-		<h5 class='prodMSRP' data-bind='var: product(zoovy:prod_msrp); format:money; currencySign: $;  hideZero:true; pretext: MSRP: ;'></h5>
-		<span class='savings'>
-			<span class='savingsDifference' data-bind='var: product(pid); format:priceRetailSavingsDifference; extension:myRIA; pretext: You save: ;'></span>
-			<span class='savingsPercentage' data-bind='var: product(pid); format:priceRetailSavingsPercentage; extension:myRIA; pretext: (; posttext:);'></span>
-		</span>
-	</div>
-	
-	
-	<ul title='please choose' id='prodlistChildren' class='listStyleNone fluidList clearfix noPadOrMargin productList smallProdlist' data-bind="var: product(zoovy:grp_children); format:productList; extension:store_prodlist; loadsTemplate:productListTemplateChildren;hide_summary:true;"></ul>
+		<ul title='please choose' id='prodlistChildren' class='listStyleNone fluidList clearfix noPadOrMargin productList smallProdlist' data-bind="var: product(zoovy:grp_children); format:productList; extension:store_prodlist; loadsTemplate:productListTemplateChildren;hide_summary:true;"></ul>
 
 	
-<!--	<div data-bind='var: product(@inventory.inv); format:simpleInvDisplay; extension:store_product;' class='inventory'></div> -->
-	<div data-bind='var: product(zoovy:ship_latency); format:text;pretext:Normally ships in ;posttext: day(s);' class='latency'></div>
+		<div data-bind='var: product(@inventory.inv); format:simpleInvDisplay; extension:store_product;' class='inventory'></div> 
+		
+		<div data-bind='var: product(zoovy:ship_latency); format:text;pretext:Normally ships in ;posttext: day(s);' class='latency'></div>
+		
+		
+		<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodViewerAddToCartForm clearfix' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart($(this),{'action':'modal'}); return false;">
 	
-	
-	<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodViewerAddToCartForm clearfix' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart($(this),{'action':'modal'}); return false;">
-	
-		<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
-		<fieldset data-bind='var: product(pid); format:atcQuantityInput; extension:store_product; pretext:Quantity: ;' class='borderNone'></fieldset>
-	
-		<input type='submit' value='Add to Cart' class='ui-button ui-button-text ui-corner-all ui-state-default addToCartButton displayNone' data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' />
-	</form>
+			<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
+			<fieldset data-bind='var: product(pid); format:atcQuantityInput; extension:store_product; pretext:Quantity: ;' class='borderNone'></fieldset>
+		
+			<input type='submit' value='Add to Cart' class='displayNone pointer spriteBG addToCartButton' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseLeave="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' />
+		</form>
+		
+
+		<!-- TODO: fix add to cart active -->
+		<!-- 
+		<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodViewerAddToCartForm clearfix' id='' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart($(this).id,{'action':'modal'}); return false;">
+			<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
+			<fieldset data-bind='var: product(pid); format:atcQuantityInput; extension:store_product; pretext:Quantity: ;' class='borderNone'></fieldset>
+			<input type='submit' value='Add to Cart' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseLeave="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='productAddToCartBtn' class='displayNone pointer spriteBG addToCartButton' />
+		</form>
+		-->
+
+		<div onMouseOver="$(this).addClass('showInCustomizerHover');" onMouseLeave="$(this).removeClass('showInCustomizerHover');" data-bind='var: product(pid); format:linkToConfigurator; extension:mob_customizer;' class='showInCustomizer'></div>
+		
 	
 
-	<div data-bind='var:product(zoovy:qty_price);format:quantityDiscounts; extension:store_product; pretext:Quantity Discounts:; className:marginBottom;'></div>
+		<div data-bind='var:product(zoovy:qty_price);format:quantityDiscounts; extension:store_product; pretext:Quantity Discounts:; className:marginBottom;'></div>
 
-	<section class='marginBottom'>
-		<span data-bind='var: product(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span>
-		<span data-bind='var: reviews(total); format:text;posttext: from ;posttext: reviews; className:numReviews;'></span>
-	</section>
 	
-	<menu data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='CRMButtonMenu'>
+		<menu data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='CRMButtonMenu'>
+			<button class='ui-button-text ui-button ui-state-default ui-corner-all' onClick='app.ext.store_crm.u.showReviewFrmInModal({"pid":$(this).attr("data-pid"),"templateID":"reviewFrmTemplate"});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>Write Review</button>
+			<!--
+			<a href='#' onClick='app.ext.store_crm.u.showReviewFrmInModal({"pid":$(this).parent().attr("data-pid"),"templateID":"reviewFrmTemplate"}); return false;'>Write Review</a>	| 
 
-	<a href='#' onClick='app.ext.store_crm.u.showReviewFrmInModal({"pid":$(this).parent().attr("data-pid"),"templateID":"reviewFrmTemplate"}); return false;'>Write Review</a>	| 
+			<a href='#' onClick="app.ext.myRIA.a.add2BuyerList({pid:$(this).parent().attr('data-pid'),'listid':'wishlist'}); return false;">Add to Wishlist</a>
+			-->
+		</menu>
 
-	<a href='#' onClick="app.ext.myRIA.a.add2BuyerList({pid:$(this).parent().attr('data-pid'),'listid':'wishlist'}); return false;">Add to Wishlist</a>
-
-	</menu>
-
-	<span id="buySAFE_Kicker" name="buySAFE_Kicker" type="Kicker Guaranteed Transparent 33 175x30"></span>
+		<span id="buySAFE_Kicker" name="buySAFE_Kicker" type="Kicker Guaranteed Transparent 33 175x30"></span>
 	</td>
 </tr>
 <tr>
@@ -1086,7 +1077,7 @@ It's done this way because ID's hard coded into template are bad mojo (templates
 			<button class='ui-button-text ui-button ui-state-default ui-corner-all' onClick='app.ext.store_crm.u.showReviewFrmInModal({"pid":$(this).attr("data-pid"),"templateID":"reviewFrmTemplate"});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>Write Review</button>
 		</div>
 		
-		<ul class='listStyleNone clearfix productReviewsList' id='prodViewerReviews' data-bind="var: reviews(@reviews); format:reviewList; extension:store_product; loadsTemplate:productReviewsTemplateDetail;"></ul>
+		<ul class='listStyleNone clearfix productReviewsList' id='prodViewerReviews' data-bind="var: reviews(reviews.@reviews); format:reviewList; extension:store_product; loadsTemplate:productReviewsTemplateDetail;"></ul>
 
 	</div>
 	
@@ -1148,8 +1139,8 @@ It's done this way because ID's hard coded into template are bad mojo (templates
 	<div data-bind='var: product(zoovy:ship_latency); format:text;pretext:Normally ships in ;posttext: day(s);' class='latency'></div>
 	
 	<section id='prodViewerReviewSummary' class='marginBottom'>
-		<span data-bind='var: product(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span>
-		<span data-bind='var: reviews(total); format:text;posttext: from ;posttext: reviews; className:numReviews;'></span>
+		<span data-bind='var: reviews(reviews.average); format:addClass; className:review_;' class='reviewSprite'></span>
+		<span data-bind='var: reviews(reviews.total); format:text;posttext: from ;posttext: reviews; className:numReviews;'></span>
 	</section>
 	
 	<div id="prodDesc" data-bind='var: product(zoovy:prod_desc); format:wiki; wikiFormats:myRIA;'></div>
@@ -1159,7 +1150,7 @@ It's done this way because ID's hard coded into template are bad mojo (templates
 <tr>
 	<td colspan='2'>
 		
-	<ul class='listStyleNone clearfix productReviewsList' id='prodViewerReviews' data-bind="var: reviews(@reviews); format:reviewList; extension:store_product; loadsTemplate:productReviewsTemplateDetail;"></ul>
+	<ul class='listStyleNone clearfix productReviewsList' id='prodViewerReviews' data-bind="var: reviews(reviews.@reviews); format:reviewList; extension:store_product; loadsTemplate:productReviewsTemplateDetail;"></ul>
 
 	</td>
 </tr>

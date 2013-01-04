@@ -55,7 +55,8 @@ var myRIA = function() {
 			'faqTopicTemplate',
 			'faqQnATemplate',
 			'billAddressTemplate',
-			'shipAddressTemplate'],
+			'shipAddressTemplate',
+			'leftColRootCatsTemplate'],
 		"sotw" : {}, //state of the world. set to most recent page info object.
 		"hotw" : new Array(15), //history of the world. contains 15 most recent sotw objects.
 		"session" : {
