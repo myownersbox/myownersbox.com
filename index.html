@@ -15,11 +15,8 @@
 <!-- 1-4-13 -->
 <!-- TODO: Add back Facebook next to Google + on all pages -->
 <!-- TODO: Customizer page- add back "who's your favorite team!" in same place as the other pages -->
-<!-- TODO: Category pages- Only the magnifying glass icon should link to bigger image pop-up. The rest of the product image area should link to the product page -->
 <!-- TODO: Most of the last list of changes have not been implemented -->
-<!-- TODO: Will we be on latest Zoovy platform version when we go live with updated content? -->
 <!-- TODO: for the 3 Cubeits products pages add the 360 degree option -->
-<!-- TODO: At the bottom of Storeits and Stackits category page, the black tesxt copy has this symbol showing === need to remove -->
 <!-- TODO: On Storeits category pages- image is too large for Detroit Tigers and Washington Nationals -->
 <!-- TODO: Customizer page- all the sharing and email options are missing under "add to Cart" -->
 
@@ -47,20 +44,22 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130104193130",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130104220951",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
 	// "httpURL":"http://www.myownersbox.com/"
-	"httpURL":"http://www.d38a025a.crackle.zoovy.net/" // TODO: change baseURL before production
+	"httpURL":"http://www.d38a025a.crackle.zoovy.net/" // TODO: change httpURL before production
+	// "httpURL": "/" // local testing - apache
 },u:{},rq:[]};
+
 
 //set base url so images, css, js, etc all load from appropriate location once deployed.
 //baseURL as blank lets loadScript function run off local copy when testing locally.
 if(document.location.protocol != 'file:')	{
 	app.vars.baseURL  = "https:" == document.location.protocol ? app.vars.httpsURL : app.vars.httpURL; 
 	document.getElementsByTagName('base')[0].href = app.vars.baseURL;
-	}
+}
 </script>
 
 <link rel="SHORTCUT ICON" href="images/favicon.ico" />
@@ -97,6 +96,19 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 </script>
 
 <!-- BUG: social links not showing -->
+
+<script type="text/javascript">
+var addthis_config = {
+	"data_track_addressbar":true,
+	"data_track_clickback":false, //set to false for customizer 'email' url to work properly. test that feature before changing this.
+	"ui_click":true,
+	"username":"addthis@myownersbox.com"
+};
+var addthis_share = {
+	url : window.location.href //changed in configurator.
+};
+</script>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4f6223ef1dfb7836"></script>
 
 <script>
 	var upfront = document.createElement('SCRIPT'); upfront.type = "text/javascript"; upfront.async = true;
@@ -236,13 +248,11 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 	<div class='contentWidth clearfix noPrint' id='socialLinks'>
 		<!-- AddThis Button BEGIN -->
 		<div class="addthis_toolbox addthis_default_style ">
-			<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+			<a class="addthis_button_facebook_like" fb:like:layout="button_count" fb:like:href="http://facebook.com/myownersbox" fb:like:send="true" fb:like:width="80" fb:like:show-faces="false"></a>
 			<a class="addthis_button_tweet"></a>
 			<a class="addthis_button_pinterest_pinit"></a>
 			<a class="addthis_counter addthis_pill_style"></a>
 		</div>
-		<script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
-		<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4f6223ef1dfb7836"></script>
 		<!-- AddThis Button END -->
 
 
@@ -323,14 +333,14 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 			<div class='spriteBG miniCartText bigMinicart floatRight pointer' onClick='app.ext.myRIA.u.showCart(); return false;'>
 				<span class='cartItemCount'>0</span> items
 			</div>
-			<!-- (c) 2005, 2013. Authorize.Net is a registered trademark of CyberSource Corporation -->
-			<div class="AuthorizeNetSeal">
-				<script type="text/javascript" language="javascript">var ANS_customer_id="0a37c5cf-0c5a-4f61-85e3-997f846fb316";</script>
-				<script type="text/javascript" language="javascript" src="//verify.authorize.net/anetseal/seal.js" ></script>
-				<a href="http://www.authorize.net/" id="AuthorizeNetText" target="_blank">
-					<img src="images/authorize.net_secure90x72.gif" alt="Authorize.net Logo" width='90' height='72'>
-				</a>
-			</div> 
+			<div class="authorizeNetSealContainer">
+				<!-- (c) 2005, 2013. Authorize.Net is a registered trademark of CyberSource Corporation -->
+				<div class="AuthorizeNetSeal">
+					<script type="text/javascript" language="javascript">var ANS_customer_id="0a37c5cf-0c5a-4f61-85e3-997f846fb316";</script>
+					<script type="text/javascript" language="javascript" src="//verify.authorize.net/anetseal/seal.js" ></script>
+					<a href="http://www.authorize.net/" id="AuthorizeNetText" target="_blank"></a>
+				</div>
+			</div>
 		</div>
 	</div><!-- /footer -->
 	

@@ -2299,11 +2299,11 @@ and offMenu is toggle off, hiding the change button.
   z-index: 2;
 }
 
-.AuthorizeNetSeal {
+.authorizeNetSealContainer {
   width: 275px;
   float: right;
 }
 
-.addthis_toolbox a {
-  /*width: 15px;*/
+.AuthorizeNetSeal {
+  float:left;
 }
