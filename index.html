@@ -4,13 +4,8 @@
 <meta charset="utf-8">
 
 <!-- TODO: get social links to load/work addthis.toolbox not a function -->
-<!-- TODO: Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" -->
 <!-- TODO: test conversion script -->
 <!-- TODO: suggest having one review per category -->
-
-<!-- Comments on 2nd revision: -->
-<!-- TODO: 6. Add "Authorize .net" Verified Merchant logo to bottom right near to "Go To Cart" - Waiting to hear back from Sandy -->
-
 
 <!-- Error -->
 <!-- TODO: * During checkout, after processing an order the confirmation page loads for a few seconds then forwards to a blank screen -->
@@ -52,7 +47,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130104161021",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130104193130",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -239,6 +234,17 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 
 	<!-- wrapper social links bar near footer -->
 	<div class='contentWidth clearfix noPrint' id='socialLinks'>
+		<!-- AddThis Button BEGIN -->
+		<div class="addthis_toolbox addthis_default_style ">
+			<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+			<a class="addthis_button_tweet"></a>
+			<a class="addthis_button_pinterest_pinit"></a>
+			<a class="addthis_counter addthis_pill_style"></a>
+		</div>
+		<script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
+		<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4f6223ef1dfb7836"></script>
+		<!-- AddThis Button END -->
+
 
 		<div class='floatLeft'>
 		</div>
@@ -247,17 +253,22 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 
 			<div class="fb-like " data-href="http://facebook.com/myownersbox" data-send="true" data-width="80" data-show-faces="false"></div>
 
+			 
 			<div class=''>
 				<a href="https://twitter.com/myownersbox" class="twitter-follow-button" data-show-count="false" target="_blank">Follow @myownersbox</a>
 			</div>
+			
 
+			
 			<div class=''>
 				<g:plusone size="medium" annotation="inline" width="120"></g:plusone>
 			</div>
-
+			
+			 
 			<div class=''>
 				<a href="http://pinterest.com/myownersbox/" target="_blank"><img src="https://a248.e.akamai.net/passets.pinterest.com.s3.amazonaws.com/images/about/buttons/follow-me-on-pinterest-button.png" width="169" height="28" alt="Follow Me on Pinterest" /></a>
 			</div>
+			
 		</div>
 	</div>
 	
@@ -311,7 +322,15 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 
 			<div class='spriteBG miniCartText bigMinicart floatRight pointer' onClick='app.ext.myRIA.u.showCart(); return false;'>
 				<span class='cartItemCount'>0</span> items
-			</div>	
+			</div>
+			<!-- (c) 2005, 2013. Authorize.Net is a registered trademark of CyberSource Corporation -->
+			<div class="AuthorizeNetSeal">
+				<script type="text/javascript" language="javascript">var ANS_customer_id="0a37c5cf-0c5a-4f61-85e3-997f846fb316";</script>
+				<script type="text/javascript" language="javascript" src="//verify.authorize.net/anetseal/seal.js" ></script>
+				<a href="http://www.authorize.net/" id="AuthorizeNetText" target="_blank">
+					<img src="images/authorize.net_secure90x72.gif" alt="Authorize.net Logo" width='90' height='72'>
+				</a>
+			</div> 
 		</div>
 	</div><!-- /footer -->
 	
@@ -782,7 +801,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 -->
 <li id='productListTemplate' class='loadingBG  ' >
 	<div class='prodThumbContainer'>
-		<div class='pointer magGlassIcon'><a href='javascript:void(0)' title='preview image' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).attr("data-pid")});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></a></div>
+		<div class='pointer magGlassIcon'><a href='javascript:void(0)' title='Larger View' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).attr("data-pid")});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></a></div>
 		<div class='nameNDesc pointer' onClick="showContent('product',{'pid':$(this).attr('data-pid')})" onMouseOver="$(this).addClass('productListItemNameHover');" onMouseLeave="$(this).removeClass('productListItemNameHover');" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
 			<img class='prodThumb pointer' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='160' height='160' />
 			<h6 data-bind='var: product(zoovy:prod_name); format:text;'></h6>

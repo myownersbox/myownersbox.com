@@ -2235,13 +2235,14 @@ and offMenu is toggle off, hiding the change button.
 
 .prodlist li .nameNDesc {
   width: 100%;
-  height: 226px;
+  /*height: 226px;*/
   /*margin: 5px 0;*/
 }
 
 .prodlist li .nameNDesc h6 {
-  width: 100%;
   margin: 5px 0 3px;
+  width: 100%;
+  height: 66px;
   color: #777;
 }
 
@@ -2296,4 +2297,13 @@ and offMenu is toggle off, hiding the change button.
   top: 5px;
   left: 5px;
   z-index: 2;
+}
+
+.AuthorizeNetSeal {
+  width: 275px;
+  float: right;
+}
+
+.addthis_toolbox a {
+  /*width: 15px;*/
 }
