@@ -52,7 +52,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130104145721",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130104161021",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -385,9 +385,9 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 	</div>
 	
 	<map name="homeMap">
-		<area shape="rect" coords="18,23,300,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.drawers'}); return false;" alt='storeits' />
-		<area shape="rect" coords="360,23,605,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.the-cube-organizers'}); return false;" alt='cubeits' />
-		<area shape="rect" coords="627,23,938,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.stackits'}); return false;" alt='stackits' />
+		<area shape="rect" coords="18,23,300,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.drawers'}); return false;" title='Cubeits' />
+		<area shape="rect" coords="360,23,605,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.the-cube-organizers'}); return false;" title='Storeits' />
+		<area shape="rect" coords="627,23,938,355" href="#top" onClick="showContent('',{'pageType':'category','navcat':'.stackits'}); return false;" title='Stackits' />
 
 		<!-- <area shape="rect" coords="300,5,397,90" href="#" onClick="app.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'50062MLB'}); return false;" alt='2x3 storage organizer' /> -->
 		<!-- <area shape="rect" coords="405,7,521,88" href="#" onClick="app.ext.mob_customizer.actions.initConfigurator({'s1':'.storage-containers.major-league-baseball','s2':'50092MLB'}); return false;" alt='3x3 storage organizer' /> -->
@@ -398,10 +398,10 @@ app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 	</map>
 
 	<map name="catMap">
-		<area shape="rect" coords="5,-5,150,30" href="#" onClick="showContent('category',{'navcat':'.customizer'}); return false;" />
-		<area shape="rect" coords="180,-5,320,30" href="#" onClick="showContent('category',{'navcat':'.drawers'}); return false;">
-		<area shape="rect" coords="340,-5,470,30" href="#" onClick="showContent('category',{'navcat':'.the-cube-organizers'}); return false;">
-		<area shape="rect" coords="500,-5,639,30" href="#" onClick="showContent('category',{'navcat':'.stackits'}); return false;">
+		<area shape="rect" coords="5,-5,150,30" 	href="#" title='Customizer' onClick="showContent('category',{'navcat':'.customizer'}); return false;" />
+		<area shape="rect" coords="180,-5,320,30" href="#" title='Storeits' 	onClick="showContent('category',{'navcat':'.the-cube-organizers'}); return false;">
+		<area shape="rect" coords="340,-5,470,30" href="#" title='Cubeits' 		onClick="showContent('category',{'navcat':'.drawers'}); return false;">
+		<area shape="rect" coords="500,-5,639,30" href="#" title='Stackits' 	onClick="showContent('category',{'navcat':'.stackits'}); return false;">
 	</map>
 	
 	<div id='promotionDescription15POff' class='displayNone promotionDialog' title="Take 15% Off">
@@ -782,16 +782,14 @@ remember to NOT put the button inside the 'onclick' container or two events will
 -->
 <li id='productListTemplate' class='loadingBG  ' >
 	<div class='prodThumbContainer'>
-		<div class='pointer magGlassIcon' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
-		<img class='prodThumb pointer' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().parent().attr("data-pid")});' onMouseOver="$(this).addClass('productListItemThumbHover');" onMouseLeave="$(this).removeClass('productListItemThumbHover');" data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='160' height='160' />
+		<div class='pointer magGlassIcon'><a href='javascript:void(0)' title='preview image' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).attr("data-pid")});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></a></div>
+		<div class='nameNDesc pointer' onClick="showContent('product',{'pid':$(this).attr('data-pid')})" onMouseOver="$(this).addClass('productListItemNameHover');" onMouseLeave="$(this).removeClass('productListItemNameHover');" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
+			<img class='prodThumb pointer' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='160' height='160' />
+			<h6 data-bind='var: product(zoovy:prod_name); format:text;'></h6>
+		</div>
 		<div data-bind="var: product(user:prod_360_url); format:view360inModal; extension: mob_customizer;" class='displayNone'><img src='images/mob_360view-116x37.png' width='116' height="37" alt='click here for 360 view' border='0' /></div>
 	</div>
 
-	<div class='nameNDesc pointer' onClick="showContent('product',{'pid':$(this).attr('data-pid')})" onMouseOver="$(this).addClass('productListItemNameHover');" onMouseLeave="$(this).removeClass('productListItemNameHover');" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
-		<h6 data-bind='var: product(zoovy:prod_name); format:text;'></h6>
-		<!-- <div class='prodDesc' data-bind='var: product(zoovy:prod_desc); format:truncText; numCharacters:150;'></div> -->
-		<!-- <div class='moreInfo'>More Information &#187;</div> -->
-	</div>
 
 	<div class='priceEtAll'>
 		<div class='prodPrice' data-bind='var: product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; className:price; pretext: Price: ;'></div>
@@ -916,7 +914,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 
 	<div onMouseOver="$(this).addClass('productListItemNameHover');" onMouseLeave="$(this).removeClass('productListItemNameHover');" onClick="showContent('product',{'pid':$(this).attr('data-pid')})" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='nameNDesc pointer'>
 		<h5 data-bind='var: product(prod_name); format:text;'></h5>
-		<h6 data-bind='var: product(base_price); format:elasticMoney; currencySign: $;  hideZero:true; className:price; pretext: Our Price: ;'></h6>
+		<h6 data-bind='var: product(base_price); format:elasticMoney; currencySign: $;  hideZero:true; className:price; pretext: only ;'></h6>
 		<!-- <div class='moreInfo'>More Information &#187;</div> -->
 	</div>
 	
