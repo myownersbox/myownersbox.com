@@ -444,9 +444,9 @@ for(var i = 0; i < L; i += 1)	{
 	if(a[TYPE+'_address2'])	{r +=a[TYPE+'_address2']+"<br \/>"}
 	r += a[TYPE+'_city'];
 //state, zip and country may not be populated. check so 'undef' isn't written to screen.
-	if(a[TYPE+'_state']) {r += " "+a[TYPE+'_state']+", "}
-	if(a[TYPE+'_zip'])	{r +=a[TYPE+'_zip']}
-	if(app.u.isSet(a[TYPE+'_country']))	{r += "<br \/>"+a[TYPE+'_country']}
+	if(a[TYPE+'_region']) {r += " "+a[TYPE+'_region']+", "}
+	if(a[TYPE+'_postal'])	{r +=a[TYPE+'_postal']}
+	if(app.u.isSet(a[TYPE+'_countrycode']))	{r += "<br \/>"+a[TYPE+'_countrycode']}
 	r += "<\/address>";
 	}
 var parentID = (TYPE == 'ship') ? 'chkoutShipAddressFieldset' : 'chkoutBillAddressFieldset';
@@ -674,9 +674,9 @@ _gaq.push(['_trackEvent','Checkout','User Event','Pre-defined address selected (
 				$('#data-'+addressType+'_address1').val(a[addressType+'_address1']);
 				if(app.u.isSet(a[addressType+'_address2'])){$('#data-'+addressType+'_address2').val(a[addressType+'_address2'])};
 				$('#data-'+addressType+'_city').val(a[addressType+'_city']);
-				$('#data-'+addressType+'_state').val(a[addressType+'_state']);
-				$('#data-'+addressType+'_zip').val(a[addressType+'_zip']);
-				$('#data-'+addressType+'_country').val(a[addressType+'_country'] ? a[addressType+'_country'] : "US"); //country is sometimes blank. This appears to mean it's a US company?
+				$('#data-'+addressType+'_state').val(a[addressType+'_region']);
+				$('#data-'+addressType+'_zip').val(a[addressType+'_postal']);
+				$('#data-'+addressType+'_country').val(a[addressType+'_countrycode'] ? a[addressType+'_countrycode'] : "US"); //country is sometimes blank. This appears to mean it's a US company?
 				$('#data-'+addressType+'_firstname').val(a[addressType+'_firstname']);
 				$('#data-'+addressType+'_lastname').val(a[addressType+'_lastname']);
 				if(app.u.isSet(a[addressType+'_phone'])){$('#data-'+addressType+'_phone').val(a[addressType+'_phone'])};
