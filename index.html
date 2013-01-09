@@ -54,7 +54,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130108214902",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130108220102",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -725,14 +725,14 @@ don't modify the 'data-templateid' unless you are changing template names and up
 		<div class='sideline sidelineCompanyCategory displayNone printNo' >
 			<nav class='companyNav'>
 			<ul class='listStyleNone noPadOrMargin'>
-				<li><a href='#company?show=about' class='bindByAnchor'>About Us</a></li>
-				<li><a href='#company?show=contact' class='bindByAnchor'>Contact Information</a></li>
-				<li><a href='#company?show=faq' class='bindByAnchor'>FAQ</a></li>
-				<li><a href='#company?show=payment' class='bindByAnchor'>Payment Policy</a></li>
-				<li><a href='#company?show=privacy' class='bindByAnchor'>Privacy Statement</a></li>
-				<li><a href='#company?show=return' class='bindByAnchor'>Return Policy</a></li>
-				<li><a href='#company?show=shipping' class='bindByAnchor'>Shipping Information</a></li>
-				<li><a href='#category?navcat=.press-releases' class='bindByAnchor'>Press Releases</a></li>
+				<li><a href="#top" onClick="return showContent('company','about');" title='About Us'>About Us</a></li>
+				<li><a href="#top" onClick="return showContent('company','contact');" title='Contact Information'>Contact Information</a></li>
+				<li><a href="#top" onClick="return showContent('company','faq');" title='FAQ'>FAQ</a></li>
+				<li><a href="#top" onClick="return showContent('company','payment');" title='Payment Policy'>Payment Policy</a></li>
+				<li><a href="#top" onClick="return showContent('company','privacy');" title='Privacy Statement'>Privacy Statement</a></li>
+				<li><a href="#top" onClick="return showContent('company','return');" title='Return Policy'>Return Policy</a></li>
+				<li><a href="#top" onClick="return showContent('company','shipping');" title='Shipping Information'>Shipping Information</a></li>
+				<li><a href="#category?navcat=.press-releases" class='bindByAnchor' title='Press Releases'>Press Releases</a></li>
 			</ul>
 			</nav>
 		</div>
