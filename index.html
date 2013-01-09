@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 
-<!-- TODO: get social links to load/work addthis.toolbox not a function -->
 <!-- TODO: test conversion script -->
 <!-- TODO: suggest having one review per category -->
 
@@ -13,21 +12,19 @@
 <!-- TODO:   Example: A sale from http://www.myownersbox.com/category/drawers/?META=CUBEITS should output CUBEITS on the order invoice. This may need to be escalated -->
 
 <!-- 1-4-13 -->
-<!-- TODO: Add back Facebook next to Google + on all pages -->
 <!-- TODO: Customizer page- add back "who's your favorite team!" in same place as the other pages -->
 <!-- TODO: Most of the last list of changes have not been implemented -->
-<!-- TODO: for the 3 Cubeits products pages add the 360 degree option -->
 <!-- TODO: On Storeits category pages- image is too large for Detroit Tigers and Washington Nationals -->
-<!-- TODO: Customizer page- all the sharing and email options are missing under "add to Cart" -->
 
-<!-- BUG: 360 view not working -->
+<!-- 101912 -->
+<!-- 5. Remove shipping module in cart and checkout and highlight that there is FREE SHIPPING -->
 
-<!-- TODO: ask about social media js -->
-<!-- TODO: customizer expand product -->
+
+<!-- TODO: 15% image - remove gray bg -->
 
 <!-- TODO: look at text files in project folder -->
-<!-- TODO: fix add to cart button sprite -->
-<!-- TODO: cubeits small thumbs float left -->
+
+<!-- BUG: chrome, productlist, on mouseleave not working -->
 
 <!-- do not populate or add meta data or title, the SEO layer will add it -->
 
@@ -48,12 +45,12 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130107175253",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130108213830",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
-	// "httpURL":"http://www.myownersbox.com/"
-	"httpURL":"http://www.d38a025a.crackle.zoovy.net/" // TODO: change httpURL before production
+	"httpURL":"http://www.myownersbox.com/"
+	// "httpURL":"http://www.d38a025a.crackle.zoovy.net/" // TODO: change httpURL before production
 	// "httpURL": "/" // local testing - apache
 },u:{},rq:[]};
 
@@ -214,9 +211,10 @@ var addthis_share = {
 	<div id='mastHead' class='noPrint'>
 		<div class='pointer' onClick="showContent('category',{'navcat':'.'});" id='logo'><img src='images/myownersboxlogo.png' width='210' height='155' alt='MyOwnersBox' class='logo' /></div>
 		<div class='mlbLogo'><img src='images/mob_mlblogo-60x30.png' width='60' height='30' alt='mlb' /></div>
+		<div class='ncaaLogo'><img src='images/logo_ncaa2.png' width='30' height='30' alt='ncaa' /></div>
 		<div class='topBanner pointer promotion15Off displayNone' onClick="$('#promotionDescription15POff').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescription15POff').dialog('open');"><img src='images/mbo_top15percent_1b-417x60.png' width='417' height="60" alt='' /></div>
 		<div class='topBanner pointer promotionFree' onClick="$('#promotionDescriptionFreeShipping').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescriptionFreeShipping').dialog('open');"><img src='images/mbo_top-shipping_1a-417x60.png' width='417' height="60" alt='' /></div>
-		<div class='customizeBanner displayNone' id='headerBanner'>
+		<div class='customizeBanner' id='headerBanner'>
 			<a href="#customizer" title="Customizer" onClick="app.ext.mob_customizer.actions.initConfigurator(); return false;"><img src='images/mob_home_customizer.png' width="332" height="21" alt="Customizer"/></a>
 		</div>
 
@@ -715,11 +713,29 @@ don't modify the 'data-templateid' unless you are changing template names and up
 		<ul id='subcategoryListContainer' class='clearfix padMargBorderBottom' data-bind="var: category(@subcategoryDetail); format: categoryList; extension: store_navcats; loadsTemplate: leftColRootCatsTemplate; detail:max;"></ul><!-- outputs a list of subcategories -->
 		<!-- <ul id='subcategoryListContainer' class='clearfix padMargBorderBottom' data-bind="var: category(@subcategoryDetail); format: subcategoryList; extension: myRIA; loadsTemplate: leftColRootCatsTemplate;"></ul> -->
 		<ul id='recentlyViewedProdListContainer' class='noListStyle clearfix'></ul>
+		<div class='sideline sidelineCompanyCategory displayNone printNo' >
+			<nav class='companyNav'>
+			<ul class='listStyleNone noPadOrMargin'>
+				<li><a href='#company?show=about' class='bindByAnchor'>About Us</a></li>
+				<li><a href='#company?show=contact' class='bindByAnchor'>Contact Information</a></li>
+				<li><a href='#company?show=faq' class='bindByAnchor'>FAQ</a></li>
+				<li><a href='#company?show=payment' class='bindByAnchor'>Payment Policy</a></li>
+				<li><a href='#company?show=privacy' class='bindByAnchor'>Privacy Statement</a></li>
+				<li><a href='#company?show=return' class='bindByAnchor'>Return Policy</a></li>
+				<li><a href='#company?show=shipping' class='bindByAnchor'>Shipping Information</a></li>
+				<li><a href='#category?navcat=.press-releases' class='bindByAnchor'>Press Releases</a></li>
+			</ul>
+			</nav>
+		</div>
 	</div>
 	
 	<div class='mainColumn' id='catPageContentContainer'>
 	
 		<ul id='breadcrumb' class='clearfix noPadOrMargin fluidList' data-bind='var: category(id); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul>
+
+		<div class='categoryExtra displayNone'>
+			<h1 data-bind="var:category(pretty); format:text;"></h1>
+		</div>
 		
 		<div id='' class='catPageTopContent pageHeader displayNone'>
 			
@@ -739,6 +755,7 @@ don't modify the 'data-templateid' unless you are changing template names and up
 		</div>
 		
 		<div data-bind='var: category(%page.header_subcats1); format:text;className:header_subcats1;'></div>
+
 
 		<!-- 
 		if a product list is going to have an add to cart button, variations and inventory MUST be retrieved so that validation can occur.
@@ -982,10 +999,9 @@ this will likely become more flexible in the future. ###
 			<div class='magGlassIcon pointer'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
 			<div data-bind="var: product(zoovy:prod_is_tags); format:addTagSpans;" class='tagsContainer'></div>
 			<img src='blank.gif' class='prodBigImage' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='340' height='340' />
-
 		</div>
 
-		<div data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='prodThumbs'>
+		<div data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='prodThumbs clearfix'>
 			
 			<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).parent().attr("data-pid"),"int":"2"});' class='pointer'><img src='blank.gif' data-bind='var: product(zoovy:prod_image2); format:imageURL;' width='100' height='100' /></div>
 				
@@ -1021,8 +1037,9 @@ this will likely become more flexible in the future. ###
 			<span data-bind='var: reviews(reviews.total); format:text;posttext: from ;posttext: reviews; className:numReviews;'></span>
 		</section>
 	
-		<ul title='please choose' id='prodlistChildren' class='listStyleNone fluidList clearfix noPadOrMargin productList smallProdlist' data-bind="var: product(zoovy:grp_children); format:productList; extension:store_prodlist; loadsTemplate:productListTemplateChildren;hide_summary:true;"></ul>
+		<div data-bind="var: product(user:prod_360_url); format:view360inModal; extension: mob_customizer;" class='displayNone'><img src='images/mob_360view-116x37.png' width='116' height="37" alt='click here for 360 view' border='0' /></div>
 
+		<!-- <ul title='please choose' id='prodlistChildren' class='listStyleNone fluidList clearfix noPadOrMargin productList smallProdlist' data-bind="var: product(zoovy:grp_children); format:productList; extension:store_prodlist; loadsTemplate:productListTemplateChildren;hide_summary:true;"></ul> -->
 	
 		<div data-bind='var: product(@inventory.inv); format:simpleInvDisplay; extension:store_product;' class='inventory'></div> 
 		
@@ -1247,21 +1264,22 @@ adding classes is not likely to have any bad effects.
 
 <!-- loadingBG needed on this for app init (content may take a moment to load) -->
 <div id='companyTemplate' class='clearfix loadingBG'>
-
+	 
 	<div class='sideline' >
-<nav id='companyNav'>
-<ul class='listStyleNone noPadOrMargin'>
-	<li><a href='#company?show=about'  id='navLink_about'>About Us</a></li>
-	<li><a href='#company?show=contact'  id='navLink_contact'>Contact Information</a></li>
-	<li><a href='#company?show=faq'  id='navLink_faq'>FAQ</a></li>
-	<li><a href='#company?show=payment' id='navLink_payment'>Payment Policy</a></li>
-	<li><a href='#company?show=privacy' id='navLink_privacy'>Privacy Statement</a></li>
-	<li><a href='#company?show=return' id='navLink_return'>Return Policy</a></li>
-	<li><a href='#company?show=shipping' id='navLink_shipping'>Shipping Information</a></li>
-</ul>
-</nav>
+		<nav id='companyNav'>
+		<ul class='listStyleNone noPadOrMargin'>
+			<li><a href='#company?show=about'  id='navLink_about'>About Us</a></li>
+			<li><a href='#company?show=contact'  id='navLink_contact'>Contact Information</a></li>
+			<li><a href='#company?show=faq'  id='navLink_faq'>FAQ</a></li>
+			<li><a href='#company?show=payment' id='navLink_payment'>Payment Policy</a></li>
+			<li><a href='#company?show=privacy' id='navLink_privacy'>Privacy Statement</a></li>
+			<li><a href='#company?show=return' id='navLink_return'>Return Policy</a></li>
+			<li><a href='#company?show=shipping' id='navLink_shipping'>Shipping Information</a></li>
+			<li><a href='#category?navcat=.press-releases' id='navLink_press-releases'>Press Releases</a></li>
+		</ul>
+		</nav>
 	</div>
-
+ 	
 	<div class='mainColumn'>
 <!-- .textContentArea is used as a selector in quickstart.js because article tag type isn't ie8 friendly -->
 		<div id='aboutArticle' class='textContentArea article'>
@@ -1270,7 +1288,7 @@ adding classes is not likely to have any bad effects.
 		</div>
 	
 	
-		<div id='contactArticle' class='displayNone textContentArea'>
+		<div id='contactArticle' class='displayNone textContentArea article'>
 			<h1>Contact Information</h1>
 			<form action='#' onSubmit="app.ext.store_crm.calls.appSendMessage.init($(this).serializeJSON(),{'callback':'showMessaging','parentID':'contactFormMessaging','message':'Thank you, your message has been sent'},'immutable'); app.model.dispatchThis('immutable');  return false;" id='contactForm' name='contactForm'>
 			<fieldset>
@@ -1289,20 +1307,20 @@ adding classes is not likely to have any bad effects.
 	
 		
 	
-		<div id='faqArticle' class='displayNone textContentArea'>
+		<div id='faqArticle' class='displayNone textContentArea article'>
 			<h1>Frequently Asked Questions</h1>
 			<div id='faqContent' class='loadingBG ui-accordion ui-widget ui-helper-reset ui-accordion-icons appAccordianesque'></div>
 		</div>
 	
 
 	
-		<div class='displayNone textContentArea' id='paymentArticle'>
+		<div class='displayNone textContentArea article' id='paymentArticle'>
 			<h1>Payment Policy</h1>
 			<div data-bind='var: profile(zoovy:payment_policy); format:wiki; wikiFormats:myRIA;' id='paymentContent'></div>
 		</div>
 		
 		
-		<div class='displayNone textContentArea' id='privacyArticle'>
+		<div class='displayNone textContentArea article' id='privacyArticle'>
 			<h1>Privacy Statement</h1>
 	<h4>About this Privacy Policy:</h4>
 	<p>The entire site, or at least specific portions of this site are assisted by Zoovy technology. Zoovy has created this privacy policy as a template for customers who are using Zoovy technology with their websites. Zoovy in no way takes responsibility for the accuracy or enforcement of this policy. For a copy of Zoovy's privacy policy (which does not necessarily apply to the customers of its customers) visit http://www.zoovy.com/legal</p>
@@ -1346,14 +1364,14 @@ adding classes is not likely to have any bad effects.
 		
 		
 		
-		<div class='displayNone textContentArea' id='returnArticle'>
+		<div class='displayNone textContentArea article' id='returnArticle'>
 			<h1>Return Policy</h1>
 			<div data-bind='var: profile(zoovy:return_policy); format:wiki; wikiFormats:myRIA;' id='returnContent'></div>
 		</div>
 	
 	
 		
-		<div class='displayNone textContentArea' id='shippingArticle'>
+		<div class='displayNone textContentArea article' id='shippingArticle'>
 			<h1>Shipping Information</h1>
 			<div data-bind='var: profile(zoovy:shipping_policy); format:wiki; wikiFormats:myRIA;' id='shippingContent'></div>
 		</div>
@@ -1383,12 +1401,12 @@ adding classes is not likely to have any bad effects.
 
 	<div class='mainColumn'>
 <!-- .textContentArea is used as a selector because IE8 doesn't play well  with tag type article as a selector -->
-		<div id='newsletterArticle' class='displayNone textContentArea'>
+		<div id='newsletterArticle' class='displayNone textContentArea article'>
 			<h1>Subscribe to our Newsletter and Save!</h1>
 			<div id='newsletterFormContainer'></div>
 		</div>
 	
-		<div id='myaccountArticle' class='displayNone textContentArea'>
+		<div id='myaccountArticle' class='displayNone textContentArea article'>
 			<h1>My Account</h1>
 			<div id='logMessaging'></div>
 			<div><a href="#" onClick="app.u.logBuyerOut(); showContent('homepage',{}); return false;">Log Out</a></div>
@@ -1413,14 +1431,14 @@ adding classes is not likely to have any bad effects.
 		</div>
 	
 	
-		<div id='ordersArticle' class='displayNone textContentArea'>
+		<div id='ordersArticle' class='displayNone textContentArea article'>
 			<h1>Order History</h1>
 			<div id='orderHistoryContainer' class='ui-accordion ui-widget ui-helper-reset ui-accordion-icons '></div>
 		</div>
 	
 	
 	
-		<div id='changepasswordArticle' class='displayNone textContentArea'>
+		<div id='changepasswordArticle' class='displayNone textContentArea article'>
 			<h1>Change Password</h1>
 			<div id='changepasswordContainer'>
 
@@ -1436,7 +1454,7 @@ adding classes is not likely to have any bad effects.
 			</div>
 		</div>
 	
-		<div id='listsArticle' class='displayNone textContentArea'>
+		<div id='listsArticle' class='displayNone textContentArea article'>
 			<h1>List Manager</h1>
 			<div id='listsContainer' class='prodlist loadingBG'></div>
 			
@@ -1444,7 +1462,7 @@ adding classes is not likely to have any bad effects.
 			
 		</div>
 	
-		<div id='forgetmeArticle' class='displayNone textContentArea'>
+		<div id='forgetmeArticle' class='displayNone textContentArea article'>
 			<h1>Your 'Forget Me' list</h1>
 			<p>Items on this list will not show up anywhere on the site. Use it for items you never want to see again. If you add an item to the list by mistake, use this page to remove it from the list and it will start re-appearing during your shopping experience.</p>
 			<ul id='forgetmeContainer' class='prodlist loadingBG'>

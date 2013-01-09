@@ -1231,7 +1231,7 @@ button:focus	{outline:none;}
 
 
 
-.spriteBG	{background:url(images/mob_sprite8-500x346.png) no-repeat;}
+.spriteBG	{background:url(images/mob_sprite9-500x346.png) no-repeat;}
 
 
 .no_underline a	{text-decoration:none;} /* this should be left alone */
@@ -1583,9 +1583,9 @@ so the displayNone class is used, then a .grpType_PARENT class is added if the i
 
 
 
-#mainContentArea article h1	{margin-bottom:12px;}
-.textContentArea article h4, .textContentArea article h3, .textContentArea article p 	{margin-bottom:12px;}
-.textContentArea article p {font-weight:normal;}
+#mainContentArea .article h1	{margin-bottom:12px;}
+.textContentArea .article h4, .textContentArea .article h3, .textContentArea .article p 	{margin-bottom:12px;}
+.textContentArea .article p {font-weight:normal;}
 
 
 
@@ -2184,6 +2184,20 @@ and offMenu is toggle off, hiding the change button.
   left: 291px;
 }
 
+#mastHead .mlbLogo {
+  left:160px;
+  bottom:13px;
+}
+
+#mastHead .ncaaLogo {
+  width:30px;
+  height:30px;
+  position:absolute;
+  left:220px;
+  bottom:13px;
+  z-index:11;
+}
+
 .customizeBanner a {
   display: block;
 }
@@ -2270,11 +2284,11 @@ and offMenu is toggle off, hiding the change button.
 }
 
 .addToCartButtonHover {
-  background-position: -365px -112px;
+  background-position: -365px -113px;
 }
 
 .addToCartButtonActive {
-  background-position: -365px -111px;
+  background-position: -365px -112px;
 }
 
 .prodlist li .addContainerLink {
@@ -2306,4 +2320,30 @@ and offMenu is toggle off, hiding the change button.
 
 .AuthorizeNetSeal {
   float:left;
+}
+
+.prodThumbs {
+  margin-bottom: 20px;
+}
+
+.prodThumbs div {
+  float:left;
+}
+
+.ui-dialog {
+  border: 2px solid #BF0400;
+}
+
+.sideline {
+  float: left;
+}
+
+.sideline li {
+  line-height: 2em;
+}
+
+#leftCol .sideline nav li a {
+  display: inline;
+  margin: 0;
+  padding: 3px 0;
 }
