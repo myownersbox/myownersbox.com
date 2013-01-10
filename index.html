@@ -54,7 +54,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130109192500",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130109194148",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -90,6 +90,9 @@ css files should be included before any .js file to ensure they are downloaded i
 <link media="handheld, only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" href="_mobstyles_customizer_mobile.css" type="text/css" rel="stylesheet" />
 <!--[if IEMobile]>
 <link rel="stylesheet" type="text/css" href="_mobstyles_customizer_mobile.css" media="screen" />
+<![endif]-->
+<!--[if lt IE 8]>
+	<link rel="stylesheet" type="text/css" href="_mobstyles-ie.css" />
 <![endif]-->
 <link rel="stylesheet" href="_mobstyles_print.css" type="text/css" media="print" />
 
