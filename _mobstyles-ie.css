@@ -1,3 +1,23 @@
 .prodlist li {
   float: left;
 }
+
+.breadcrumb {
+  width: 100%;
+}
+
+#drawerCategories .prodAttContainer {
+  width: 200px;
+}
+
+#drawerCategories .prodlist .magGlassIcon {
+  float: left;
+}
+
+#drawerCategories .prodlist img {
+  float: left;
+}
+
+#configuratorContainer h3 {
+  background: #b42618;
+}

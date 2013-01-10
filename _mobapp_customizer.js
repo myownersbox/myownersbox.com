@@ -109,7 +109,7 @@ var mob_customizer = function() {
           //        app.u.dump('BEGIN app.ext.mob_customizer.callbacks.displayStorageContainers.onSuccess ');
           //        app.u.dump(' -> datapointer = '+tagObj.datapointer);
           //could use tagObj.datapointer.split('|')[0] instead of hard coding IF we need that flexibility. if not, just hard code it so no extra work has to be done (faster).
-          app.ext.store_navcats.u.getChildDataOf('.storage-containers',{'parentID':'storageContainerCategories','callback':'addCatToDom','templateID':'mobStorageChooser','extension':'store_navcats'},'appCategoryDetailMax');
+          app.ext.store_navcats.u.getChildDataOf('.storage-containers',{'parentID':'storageContainerCategories','callback':'addCatToDom','templateID':'mobStorageChooser','extension':'store_navcats', 'hide_summary':'true'},'appCategoryDetailMax');
           //        for(var i = 0; i < app.data['appCategoryDetail|.storage-containers'].subcategoryCount; i +=1) {
           //          app.ext.store_prodlist.u.getProductDataForLaterUse(app.data['appCategoryDetail|.storage-containers']['@subcategoryDetail'][i]['@products']);
           //          }
@@ -450,7 +450,7 @@ var mob_customizer = function() {
         // app.u.dump(" -> before containerSizeSelected function executed. uriParams follow: ");
         // app.u.dump([app.ext.mob_customizer.vars.uriParams]);
 
-        numRequests = app.ext.store_prodlist.u.buildProductList({"templateID":"mobStorageContainerProductSpec","parentID":"storageContainerProdlist","loadsTemplate":"mobStorageContainerProductSpec","csv":app.data['appCategoryDetail|'+catSafeID]['@products']});
+        numRequests = app.ext.store_prodlist.u.buildProductList({"templateID":"mobStorageContainerProductSpec","parentID":"storageContainerProdlist","loadsTemplate":"mobStorageContainerProductSpec","csv":app.data['appCategoryDetail|'+catSafeID]['@products'], 'hide_summary':'true'});
         if(numRequests){
           app.calls.ping.init({"callback":"containerSizeSelected","extension":"mob_customizer","datapointer":"appProductGet|"+app.ext.mob_customizer.vars.uriParams.s2});
           app.model.dispatchThis();
