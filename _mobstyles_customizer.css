@@ -35,7 +35,7 @@ ul.prodlist li	{list-style:none;}
 /* MyOwnersBox (mob) configurator styles */
 
 /* do not add overflow hidden cuz chooser needs to be visible */
-#configuratorContainer	{height:610px; width:936px; position:relative;}
+#configuratorContainer	{height:680px; width:936px; position:relative;}
 #configuratorLeftColumn		{position:absolute; top:0; left:0; width:290px; height:610px;} 
 #configuratorMiddleColumn	{position:absolute; top:0; left:290px; width:466px; height:610px;}
 #configuratorRightColumn	{position:absolute; top:0; right:0; width:180px; height:610px; }

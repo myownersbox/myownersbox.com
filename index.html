@@ -54,13 +54,13 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130108220923",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130109183735",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
 	// "httpURL":"http://www.myownersbox.com/"
-	"httpURL":"http://www.d38a025a.crackle.zoovy.net/" // TODO: change httpURL before production
-	// "httpURL": "/" // local testing - apache
+	// "httpURL":"http://www.d38a025a.crackle.zoovy.net/" // TODO: change httpURL before production
+	"httpURL": "/" // local testing - apache
 },u:{},rq:[]};
 
 
@@ -381,7 +381,7 @@ var addthis_share = {
 <div id='appTemplates' class='displayNone'>
 	<!-- Custom templates -->
 
-	<div id='fb-root'></div>
+	<!-- <div id='fb-root'></div> -->
 
 	<!-- hover/popup for template location chooser. not technically a template -->
 
@@ -826,7 +826,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 <li id='productListTemplate' class='loadingBG  ' >
 	<div class='prodThumbContainer'>
 		<div class='pointer magGlassIcon'><a href='javascript:void(0)' title='Larger View' onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).attr("data-pid")});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></a></div>
-		<div class='nameNDesc pointer' onClick="showContent('product',{'pid':$(this).attr('data-pid')})" onMouseOver="$(this).addClass('productListItemNameHover');" onMouseLeave="$(this).removeClass('productListItemNameHover');" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
+		<div class='nameNDesc pointer' onClick="showContent('product',{'pid':$(this).attr('data-pid')});" onMouseOver="$(this).addClass('productListItemNameHover');" onMouseOut="$(this).removeClass('productListItemNameHover');" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
 			<img class='prodThumb pointer' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='160' height='160' />
 			<h6 data-bind='var: product(zoovy:prod_name); format:text;'></h6>
 		</div>
@@ -843,10 +843,10 @@ remember to NOT put the button inside the 'onclick' container or two events will
 		
 		<fieldset data-bind='var: product(pid); format:atcQuantityInput; extension:store_product; pretext:Qty: ;' class='borderNone floatRight'></fieldset>
 
-		<input type='submit' value='Add to Cart' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseLeave="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' class='displayNone pointer floatRight spriteBG addToCartButton' />
+		<input type='submit' value='Add to Cart' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseOut="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' class='displayNone pointer floatRight spriteBG addToCartButton' />
 	</form>
 		
-	<div onMouseOver="$(this).addClass('showInCustomizerHover');" onMouseLeave="$(this).removeClass('showInCustomizerHover');" data-bind='var: product(pid); format:linkToConfigurator; extension:mob_customizer;' class='showInCustomizer'></div>
+	<div onMouseOver="$(this).addClass('showInCustomizerHover');" onMouseOut="$(this).removeClass('showInCustomizerHover');" data-bind='var: product(pid); format:linkToConfigurator; extension:mob_customizer;' class='showInCustomizer'></div>
 
 	</div>
 
@@ -955,7 +955,7 @@ remember to NOT put the button inside the 'onclick' container or two events will
 		<img src='blank.gif' class='prodThumb' data-bind='var: product(images); format:elasticImage1URL;bgcolor:ffffff;' width='160' height='160' />
 	</div>
 
-	<div onMouseOver="$(this).addClass('productListItemNameHover');" onMouseLeave="$(this).removeClass('productListItemNameHover');" onClick="showContent('product',{'pid':$(this).attr('data-pid')})" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='nameNDesc pointer'>
+	<div onMouseOver="$(this).addClass('productListItemNameHover');" onMouseOut="$(this).removeClass('productListItemNameHover');" onClick="showContent('product',{'pid':$(this).attr('data-pid')})" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='nameNDesc pointer'>
 		<h5 data-bind='var: product(prod_name); format:text;'></h5>
 		<h6 data-bind='var: product(base_price); format:elasticMoney; currencySign: $;  hideZero:true; className:price; pretext: only ;'></h6>
 		<!-- <div class='moreInfo'>More Information &#187;</div> -->
@@ -1004,7 +1004,7 @@ this will likely become more flexible in the future. ###
 	<td class='imageContainer'>
 		<!--	<img src='%PROJECT_URL%/blank.gif' id='bobWasHere' class='prodBigImage' data-bind='var: product(zoovy:prod_image1); format: magicZoomPlus; extension: magicToolBox;' width='340' height='340' /> -->
 		
-		<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).attr("data-pid")});' class='productImageContainer pointer clearfix' onMouseOver="$(this).addClass('productListItemThumbHover');" onMouseLeave="$(this).removeClass('productListItemThumbHover');" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
+		<div onClick='app.ext.store_product.u.showPicsInModal({"pid":$(this).attr("data-pid")});' class='productImageContainer pointer clearfix' onMouseOver="$(this).addClass('productListItemThumbHover');" onMouseOut="$(this).removeClass('productListItemThumbHover');" data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>
 			<div class='magGlassIcon pointer'><img src='images/magnify-14x14.png' width='14' height='14' alt='enlarge image' /></div>
 			<div data-bind="var: product(zoovy:prod_is_tags); format:addTagSpans;" class='tagsContainer'></div>
 			<img src='blank.gif' class='prodBigImage' data-bind='var: product(zoovy:prod_image1); format:imageURL;' width='340' height='340' />
@@ -1060,7 +1060,7 @@ this will likely become more flexible in the future. ###
 			<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
 			<fieldset data-bind='var: product(pid); format:atcQuantityInput; extension:store_product; pretext:Quantity: ;' class='borderNone'></fieldset>
 		
-			<input type='submit' value='Add to Cart' class='displayNone pointer spriteBG addToCartButton' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseLeave="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' />
+			<input type='submit' value='Add to Cart' class='displayNone pointer spriteBG addToCartButton' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseOut="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' />
 		</form>
 		
 
@@ -1069,11 +1069,11 @@ this will likely become more flexible in the future. ###
 		<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodViewerAddToCartForm clearfix' id='' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart($(this).id,{'action':'modal'}); return false;">
 			<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
 			<fieldset data-bind='var: product(pid); format:atcQuantityInput; extension:store_product; pretext:Quantity: ;' class='borderNone'></fieldset>
-			<input type='submit' value='Add to Cart' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseLeave="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='productAddToCartBtn' class='displayNone pointer spriteBG addToCartButton' />
+			<input type='submit' value='Add to Cart' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseOut="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='productAddToCartBtn' class='displayNone pointer spriteBG addToCartButton' />
 		</form>
 		-->
 
-		<div onMouseOver="$(this).addClass('showInCustomizerHover');" onMouseLeave="$(this).removeClass('showInCustomizerHover');" data-bind='var: product(pid); format:linkToConfigurator; extension:mob_customizer;' class='showInCustomizer'></div>
+		<div onMouseOver="$(this).addClass('showInCustomizerHover');" onMouseOut="$(this).removeClass('showInCustomizerHover');" data-bind='var: product(pid); format:linkToConfigurator; extension:mob_customizer;' class='showInCustomizer'></div>
 		
 	
 
