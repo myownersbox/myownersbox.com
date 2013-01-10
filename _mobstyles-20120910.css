@@ -590,7 +590,7 @@ qs_styles.css
 
 #appTemplates {display:none;} /* container for all templates. should be hidden */
 
-
+#appPreView {width:550px; margin:0 auto;}
 
 
 
