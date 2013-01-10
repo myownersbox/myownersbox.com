@@ -54,7 +54,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130109212611",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130109213938",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -743,7 +743,9 @@ don't modify the 'data-templateid' unless you are changing template names and up
 	
 	<div class='mainColumn' id='catPageContentContainer'>
 	
-		<ul id='breadcrumb' class='clearfix noPadOrMargin fluidList' data-bind='var: category(id); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul>
+		<ul class='breadcrumb clearfix noPadOrMargin fluidList' data-bind='var: category(id); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul>
+
+		<!-- <ul id='breadcrumb' class='clearfix noPadOrMargin fluidList' data-bind='var: category(id); format:breadcrumb; extension:store_navcats; loadsTemplate: breadcrumbTemplate;'></ul> -->
 
 		<div class='categoryExtra displayNone'>
 			<h1 data-bind="var:category(pretty); format:text;"></h1>
