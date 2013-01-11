@@ -209,7 +209,7 @@ var mob_customizer = function() {
         $('#mastHead .promotion15Off').show();
 
         if(app.ext.myRIA) {
-          app.ext.myRIA.u.addPushState({'pageType':'category','navcat':'.customizer'}); // TODO: not sure if this works
+          app.ext.myRIA.u.addPushState({'pageType':'category','navcat':'.customizer'});
         }
 
         $('#mainContentArea').empty().append(app.renderFunctions.transmogrify('configurator','configuratorTemplate',{}));
@@ -280,7 +280,7 @@ var mob_customizer = function() {
 
         if(typeof addthis == 'object')  {
           // app.u.dump([addthis]);
-          addthis.toolbox('#configuratorAddThis'); // BUG: addthis.toolbox is not a function
+          addthis.toolbox('#configuratorAddThis');
         }
       }, //initConfigurator
       
@@ -673,7 +673,6 @@ var mob_customizer = function() {
       //need to position off instead of toggle, because .position() can't effect hidden elements.
       hideChooser: function() {
         // app.u.dump('hiding chooser');
-        // BUG: hideChooser broken - added at center
         $('#drawerLocationChooser').position({
           of: $('#drawerLocationChooser'),
           at: "center",

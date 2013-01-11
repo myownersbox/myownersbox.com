@@ -12,7 +12,6 @@
 <!-- TODO:   Example: A sale from http://www.myownersbox.com/category/drawers/?META=CUBEITS should output CUBEITS on the order invoice. This may need to be escalated -->
 
 <!-- 1-4-13 -->
-<!-- TODO: Customizer page- add back "who's your favorite team!" in same place as the other pages -->
 <!-- TODO: Most of the last list of changes have not been implemented -->
 <!-- TODO: On Storeits category pages- image is too large for Detroit Tigers and Washington Nationals -->
 
@@ -20,7 +19,6 @@
 <!-- TODO: 5. Remove shipping module in cart and checkout and highlight that there is FREE SHIPPING -->
 
 <!-- 010213 -->
-<!-- TODO: 6. In checkout, remove these two options:  FedEx Ground and FedEx Express Saver -->
 <!-- TODO: 13. Add new name highlighted in red below (but put in black text on site) to each product as follows
 a. Arizona Diamondbacks MLB STOREITS™ Fabric Storage Drawer
 b. MLB CUBEITS™ White 3-Cube Bench Storage Organizer
@@ -28,14 +26,11 @@ b. MLB CUBEITS™ White 3-Cube Bench Storage Organizer
 a. View STOREITS™ Storage Drawers Below
 b. View CUBEITS™ Cube Organizers Below -->
 
-
-<!-- TODO: 15% image - remove gray bg -->
-
 <!-- TODO: look at text files in project folder -->
+<!-- TODO: embed youtube video http://www.youtube.com/watch?v=4QZVOVH50pY -->
 
-<!-- BUG: customizer - selecting step 1 at top add organizer row to step 2 (similar to step 3) -->
-<!-- TODO: center contact form -->
 <!-- do not populate or add meta data or title, the SEO layer will add it -->
+
 
 <!-- used for optional social media extensions -->
 <meta property="og:type" content="" id='ogType' />
@@ -54,7 +49,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130110212403",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130111150109",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -82,7 +77,7 @@ css files should be included before any .js file to ensure they are downloaded i
 <!-- <link rel="stylesheet" type="text/css" href="qs_styles.css" /> -->
 <!-- <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/redmond/jquery-ui.css" /> -->
 <link rel="stylesheet" type="text/css" href="_mobstyles_customizer.css" /><!-- left separate for customizer portability -->
-<link rel="stylesheet" type="text/css" href="_mobstyles-20120910.css" /><!-- merges jquery, custom and qs_styles TODO: merge latest qs_styles -->
+<link rel="stylesheet" type="text/css" href="_mobstyles-20120910.css" /><!-- merges jquery, custom and qs_styles -->
 <!-- mobile device css overrides -->
 <link media="handheld, only screen and (max-width: 480px), only screen and (max-device-width: 480px)" href="_mobstyles_customizer_mobile.css" type="text/css" rel="stylesheet" /> 
 <!-- pad specific css overrides -->
@@ -107,8 +102,6 @@ css files should be included before any .js file to ensure they are downloaded i
 <script type="text/javascript">
 app.u.loadScript(app.vars.baseURL+"_mobapp_init.js");
 </script>
-
-<!-- BUG: social links not showing -->
 
 <script type="text/javascript">
 var addthis_config = {
@@ -223,7 +216,7 @@ var addthis_share = {
 	<div id='mastHead' class='noPrint'>
 		<div class='pointer' onClick="showContent('category',{'navcat':'.'});" id='logo'><img src='images/myownersboxlogo.png' width='210' height='155' alt='MyOwnersBox' class='logo' /></div>
 		<div class='mlbLogo'><img src='images/mob_mlblogo-60x30.png' width='60' height='30' alt='mlb' /></div>
-		<div class='ncaaLogo'><img src='images/logo_ncaa2.png' width='30' height='30' alt='ncaa' /></div>
+		<div class='ncaaLogo'><img src='images/logo_ncaa.png' width='30' height='30' alt='ncaa' /></div>
 		<div class='topBanner pointer promotion15Off displayNone' onClick="$('#promotionDescription15POff').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescription15POff').dialog('open');"><img src='images/mbo_top15percent_1b-417x60.png' width='417' height="60" alt='' /></div>
 		<div class='topBanner pointer promotionFree' onClick="$('#promotionDescriptionFreeShipping').dialog({width:500,height:500,autoOpen:false}); $('#promotionDescriptionFreeShipping').dialog('open');"><img src='images/mbo_top-shipping_1a-417x60.png' width='417' height="60" alt='' /></div>
 		<div class='customizeBanner' id='headerBanner'>
@@ -314,6 +307,7 @@ var addthis_share = {
 			<div class='floatLeft'>
 				<h6>About Us</h6>
 				<a href='#' onClick="showContent('',{'pageType':'company','show':'about'}); return false;">Company Information</a>
+				<embed>
 			</div>
 
 			<div class='vertRule'></div>
@@ -725,21 +719,6 @@ don't modify the 'data-templateid' unless you are changing template names and up
 		<ul id='subcategoryListContainer' class='clearfix padMargBorderBottom' data-bind="var: category(@subcategoryDetail); format: categoryList; extension: store_navcats; loadsTemplate: leftColRootCatsTemplate; detail:max;"></ul><!-- outputs a list of subcategories -->
 		<!-- <ul id='subcategoryListContainer' class='clearfix padMargBorderBottom' data-bind="var: category(@subcategoryDetail); format: subcategoryList; extension: myRIA; loadsTemplate: leftColRootCatsTemplate;"></ul> -->
 		<ul id='recentlyViewedProdListContainer' class='noListStyle clearfix'></ul>
-		<div class='sideline sidelineCompanyCategory displayNone printNo' >
-			<nav class='companyNav'>
-			<ul class='listStyleNone noPadOrMargin'>
-				<li><a href="#top" onClick="return showContent('company',{'show':'about'});" title='About Us'>About Us</a></li>
-				<li><a href="#top" onClick="return showContent('company',{'show':'contact'});" title='Contact Information'>Contact Information</a></li>
-				<li><a href="#top" onClick="return showContent('company',{'show':'faq'});" title='FAQ'>FAQ</a></li>
-				<li><a href="#top" onClick="return showContent('company',{'show':'payment'});" title='Payment Policy'>Payment Policy</a></li>
-				<li><a href="#top" onClick="return showContent('company',{'show':'privacy'});" title='Privacy Statement'>Privacy Statement</a></li>
-				<li><a href="#top" onClick="return showContent('company',{'show':'return'});" title='Return Policy'>Return Policy</a></li>
-				<li><a href="#top" onClick="return showContent('company',{'show':'shipping'});" title='Shipping Information'>Shipping Information</a></li>
-				<!-- <li><a href="#category?navcat=.press-releases" class='bindByAnchor' title='Press Releases'>Press Releases</a></li> -->
-				<li><a href="#top" onClick="return showContent('company',{'show':'about'});" title='Press'>Press</a></li>
-			</ul>
-			</nav>
-		</div>
 	</div>
 	
 	<div class='mainColumn' id='catPageContentContainer'>
@@ -998,8 +977,6 @@ Additionally, the cross selling features also have hard coded id's, though they'
 this will likely become more flexible in the future. ###
 -->
 
-<!-- TODO: do product template -->
-
 
 <div id='productTemplate'>
 
@@ -1070,7 +1047,6 @@ this will likely become more flexible in the future. ###
 		</form>
 		
 
-		<!-- TODO: fix add to cart active -->
 		<!-- 
 		<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodViewerAddToCartForm clearfix' id='' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart($(this).id,{'action':'modal'}); return false;">
 			<fieldset data-bind='var: product(pid); format:atcVariations; extension:store_product;' class='borderNone'></fieldset>
@@ -1306,6 +1282,7 @@ adding classes is not likely to have any bad effects.
 	
 		<div id='contactArticle' class='displayNone textContentArea article'>
 			<h1>Contact Information</h1>
+			<div data-bind='var: profile(zoovy:contact); format:wiki; wikiFormats:myRIA;' id='contactContent'></div>
 			<form action='#' onSubmit="app.ext.store_crm.calls.appSendMessage.init($(this).serializeJSON(),{'callback':'showMessaging','parentID':'contactFormMessaging','message':'Thank you, your message has been sent'},'immutable'); app.model.dispatchThis('immutable');  return false;" id='contactForm' name='contactForm'>
 			<fieldset>
 				<legend>Contact Us</legend>
@@ -1318,7 +1295,6 @@ adding classes is not likely to have any bad effects.
 				</div>
 			</fieldset>
 			</form>
-			<div data-bind='var: profile(zoovy:contact); format:wiki; wikiFormats:myRIA;' id='contactContent'></div>
 		</div>
 	
 		

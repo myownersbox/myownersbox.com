@@ -79,10 +79,7 @@ app.rq.push(['script',0,app.vars.baseURL+'controller.js']);
 // }]);
 
 /// categories \\\
-var $sidelineCompany;
 var $catPageTopContent;
-var $breadcrumb;
-var $categoryExtra;
 
 app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
   // $('#headerCategories').show();
@@ -106,17 +103,6 @@ app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
     $('#mainContentArea').empty(); //removes templateInstance for cat page which may already be present.
     app.model.abortQ('mutable'); //will kill existing process to stop default cat layout info from loading.
     app.ext.mob_customizer.actions.initConfigurator(P);
-  }else if (P.navcat == '.press-releases') {
-    $sidelineCompany = $sidelineCompany || $('#'+P.parentID+' '+'.sidelineCompanyCategory');
-    $breadcrumb      = $breadcrumb      || $('#'+P.parentID+' '+'#breadcrumb');
-    $categoryExtra   = $categoryExtra   || $('#'+P.parentID+' '+'.categoryExtra');
-
-    $sidelineCompany.show();
-    $breadcrumb.hide();
-    $categoryExtra.show();
-    // $('#mainContentArea').append($('.sidelineCompany'));
-  // $sidelineCompany = $sidelineCompany || $('#mainContentArea').append($('.sidelineCompany'));
-  // $('.sidelineCompany').show();
   }
   
 
@@ -128,15 +114,6 @@ app.rq.push(['templateFunction','categoryTemplate','onDeparts', function(P) {
     // app.u.dump([P]);
     $('#mastHead .promotion15Off').hide();
     $('#mastHead .promotionFree').show();
-  }
-  if($sidelineCompany) {
-    $sidelineCompany.hide();
-  }
-  if($breadcrumb) {
-    $breadcrumb.hide();
-  }
-  if($categoryExtra) {
-    $categoryExtra.hide();
   }
 }]);
 
