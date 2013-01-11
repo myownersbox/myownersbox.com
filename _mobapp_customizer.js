@@ -21,6 +21,8 @@
 var mob_customizer = function() {
   var r = {
     vars : {
+      "currentCategory" : "",
+      "currentDrawer": "",
       "recentlyRemoved" : [],
       "uriParams" : "", //stores a list of K/V pairs of what is selected in the customizer. used when a shopper returns to the page.
       "templates" : ['mobDrawerChooser','mobStorageContainerProductSpec','mobStorageChooser','mobDrawerProductSpec','mobRecentViewedProductSpec'],
@@ -106,7 +108,7 @@ var mob_customizer = function() {
       //gets executed (eventually) once a category is selected in step 1. shows the product for that category.
       displayStorageContainers : {
         onSuccess : function(tagObj)  {
-          //        app.u.dump('BEGIN app.ext.mob_customizer.callbacks.displayStorageContainers.onSuccess ');
+                 // app.u.dump('BEGIN app.ext.mob_customizer.callbacks.displayStorageContainers.onSuccess ');
           //        app.u.dump(' -> datapointer = '+tagObj.datapointer);
           //could use tagObj.datapointer.split('|')[0] instead of hard coding IF we need that flexibility. if not, just hard code it so no extra work has to be done (faster).
           app.ext.store_navcats.u.getChildDataOf('.storage-containers',{'parentID':'storageContainerCategories','callback':'addCatToDom','templateID':'mobStorageChooser','extension':'store_navcats', 'hide_summary':'true'},'appCategoryDetailMax');
@@ -433,32 +435,42 @@ var mob_customizer = function() {
         var numRequests = 0;
         // app.u.dump("safeid = "+catSafeID);
 
-        $('#storageContainerCategories li').removeClass('selected'); //selected class should only be set for one list item.
-        $('#storageContainerCategories_'+app.u.makeSafeHTMLId(catSafeID)).addClass('selected'); //selected class used for makeURL function.
+        // if already current, don't show
+        if (!r.vars.currentCategory || r.vars.currentCategory != catSafeID) {
+          // app.u.dump('not current');
 
-        //puts category name at top of dropdown to make it obvious this item is in focus.
-        $('#storageCatPrompt').empty().text(app.data['appCategoryDetail|'+catSafeID].pretty);
 
-        //the css hover menu doesn't close on click. This is a workaround. hides the dropdown, then turns it back on after a moment.
-        $('#storageContainerCategories').toggle(false);
-        setTimeout("$('#storageContainerCategories').toggle(true);",1000);
-        //the container size code needs to happen after the product list is built, otherwise 'classes' assigned are overwritten w/ transmogrify.
+          $('#storageContainerCategories li').removeClass('selected'); //selected class should only be set for one list item.
+          $('#storageContainerCategories_'+app.u.makeSafeHTMLId(catSafeID)).addClass('selected'); //selected class used for makeURL function.
 
+          //puts category name at top of dropdown to make it obvious this item is in focus.
+          $('#storageCatPrompt').empty().text(app.data['appCategoryDetail|'+catSafeID].pretty);
+
+          //the css hover menu doesn't close on click. This is a workaround. hides the dropdown, then turns it back on after a moment.
+          $('#storageContainerCategories').toggle(false);
+          setTimeout("$('#storageContainerCategories').toggle(true);",1000);
+          //the container size code needs to happen after the product list is built, otherwise 'classes' assigned are overwritten w/ transmogrify.
+
+
+
+          // app.u.dump(" -> before containerSizeSelected function executed. uriParams follow: ");
+          // app.u.dump([app.ext.mob_customizer.vars.uriParams]);
+
+          numRequests = app.ext.store_prodlist.u.buildProductList({"templateID":"mobStorageContainerProductSpec","parentID":"storageContainerProdlist","loadsTemplate":"mobStorageContainerProductSpec","csv":app.data['appCategoryDetail|'+catSafeID]['@products'], 'hide_summary':'true'});
+          if(numRequests){
+            app.calls.ping.init({"callback":"containerSizeSelected","extension":"mob_customizer","datapointer":"appProductGet|"+app.ext.mob_customizer.vars.uriParams.s2});
+            app.model.dispatchThis();
+          }
+          else  {
+            //no dispatch is occuring because all data is in memory. execute the code handled in the ping above.
+            if(app.ext.store_product.calls.appProductGet.init(app.ext.mob_customizer.vars.uriParams.s2,{'callback':'containerSizeSelected','extension':'mob_customizer'}))  {app.model.dispatchThis();}
+          }
+        }
 
         app.ext.mob_customizer.u.hideChooser(); // closes an open chooser. feels natural when using to have this happen.
 
-        // app.u.dump(" -> before containerSizeSelected function executed. uriParams follow: ");
-        // app.u.dump([app.ext.mob_customizer.vars.uriParams]);
+        r.vars.currentCategory = catSafeID; // set current for next
 
-        numRequests = app.ext.store_prodlist.u.buildProductList({"templateID":"mobStorageContainerProductSpec","parentID":"storageContainerProdlist","loadsTemplate":"mobStorageContainerProductSpec","csv":app.data['appCategoryDetail|'+catSafeID]['@products'], 'hide_summary':'true'});
-        if(numRequests){
-          app.calls.ping.init({"callback":"containerSizeSelected","extension":"mob_customizer","datapointer":"appProductGet|"+app.ext.mob_customizer.vars.uriParams.s2});
-          app.model.dispatchThis();
-        }
-        else  {
-          //no dispatch is occuring because all data is in memory. execute the code handled in the ping above.
-          if(app.ext.store_product.calls.appProductGet.init(app.ext.mob_customizer.vars.uriParams.s2,{'callback':'containerSizeSelected','extension':'mob_customizer'}))  {app.model.dispatchThis();}
-        }
         //        app.u.dump(" -> END mob_customizer.u.containerCatSelected. uriParams to follow: ");
         //        app.u.dump(app.ext.mob_customizer.vars.uriParams);
       },
@@ -549,10 +561,18 @@ var mob_customizer = function() {
         $('#drawerCategories li').removeClass('selected'); //remove selected class from all list elements within drawer cat chooser.
         $('#drawerCategories_'+app.u.makeSafeHTMLId(catSafeID)).addClass('selected'); //adds selected class to focus cat.
         $('#mobDrawerChooser_'+app.u.makeSafeHTMLId(catSafeID)).toggle(true); //makes prodlist for focus cat visible.
-        
-        if(app.ext.store_prodlist.u.buildProductList({"templateID":"mobDrawerProductSpec","parentID":"mobDrawerChooser_"+app.u.makeSafeHTMLId(catSafeID),"loadsTemplate":"mobDrawerProductSpec", "hide_summary": "true" ,"csv":app.data['appCategoryDetail|'+catSafeID]['@products']})) {
-          app.model.dispatchThis();
+
+        // if drawers already show, don't show again
+        // if drawers already loaded, don't load more
+        // app.u.dump($('#mobDrawerChooser_'+app.u.makeSafeHTMLId(catSafeID)).children('li').length);
+        if ((!r.vars.currentDrawer || r.vars.currentDrawer != catSafeID) && $('#mobDrawerChooser_'+app.u.makeSafeHTMLId(catSafeID)).children('li').length === 0 ) {
+          if(app.ext.store_prodlist.u.buildProductList({"templateID":"mobDrawerProductSpec","parentID":"mobDrawerChooser_"+app.u.makeSafeHTMLId(catSafeID),"loadsTemplate":"mobDrawerProductSpec", "hide_summary": "true" ,"csv":app.data['appCategoryDetail|'+catSafeID]['@products']})) {
+            app.model.dispatchThis();
+          }
         }
+        r.vars.currentDrawer = catSafeID;
+
+        
 
         //make drawers draggable. NOTE - the build_prodlist function needs to be expanded to include a onComplete function. something like that so that setTimeout can be avoided.
         setTimeout("app.ext.mob_customizer.u.makeDrawersDraggable()",3500);
@@ -995,7 +1015,7 @@ var mob_customizer = function() {
         //gets storage bin category detail (for step 1 so the list of product is available to pop step 2)
         //product data retrieval and population is handled in a callback.
         if(app.u.isSet(P.s1)) {
-          app.u.dump(" -> s1 is populated ["+P.s1+"]");
+          // app.u.dump(" -> s1 is populated ["+P.s1+"]");
           numRequests += app.ext.store_navcats.calls.appCategoryDetailMax.init(P.s1,{"callback":"containerCatSelected","extension":"mob_customizer"});
           }
 
