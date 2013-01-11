@@ -56,27 +56,27 @@ app.rq.push(['script',0,app.vars.baseURL+'controller.js']);
 ///// custom \\\\\
 
 /// hompage \\\
-app.rq.push(['templateFunction','homepageTemplate','onCompletes', function(P) {
-  // $('#headerCategories').hide();
-  // $('#headerBanner').show();
-}]);
+// app.rq.push(['templateFunction','homepageTemplate','onCompletes', function(P) {
+//   // $('#headerCategories').hide();
+//   // $('#headerBanner').show();
+// }]);
 
-app.rq.push(['templateFunction','homepageTemplate','onDeparts', function(P) {
-  // $('#headerBanner').hide();
-}]);
+// app.rq.push(['templateFunction','homepageTemplate','onDeparts', function(P) {
+//   // $('#headerBanner').hide();
+// }]);
 
-app.rq.push(['templateFunction','companyTemplate','onCompletes', function(P) {
-  // $('#headerCategories').show();
-}]);
+// app.rq.push(['templateFunction','companyTemplate','onCompletes', function(P) {
+//   // $('#headerCategories').show();
+// }]);
 
 
-app.rq.push(['templateFunction','companyTemplate','onCompletes', function(P) {
-  // $('#headerCategories').show();
-}]);
+// app.rq.push(['templateFunction','companyTemplate','onCompletes', function(P) {
+//   // $('#headerCategories').show();
+// }]);
 
-app.rq.push(['templateFunction','customerTemplate','onCompletes', function(P) {
-  // $('#headerCategories').show();
-}]);
+// app.rq.push(['templateFunction','customerTemplate','onCompletes', function(P) {
+//   // $('#headerCategories').show();
+// }]);
 
 /// categories \\\
 var $sidelineCompany;
@@ -89,12 +89,6 @@ app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
 
   //handle conditional display of category page content.
   // $('.catPageTopContent').show();
-  app.u.dump('start');
-  app.u.dump([app.data['appPageGet|'+P.navcat]]);
-  app.u.dump(typeof app.data['appPageGet|'+P.navcat]['%page'] == 'object');
-  app.u.dump(typeof app.data['appPageGet|'+P.navcat]['%page']['picture1']);
-  app.u.dump('end');
-
   if(app.data['appPageGet|'+P.navcat] && typeof app.data['appPageGet|'+P.navcat]['%page'] == 'object' && typeof app.data['appPageGet|'+P.navcat]['%page']['picture1'] == 'string')  {
     $('#'+P.parentID+' '+'.catPageTopContent').show();
   }

@@ -34,6 +34,7 @@ b. View CUBEITS™ Cube Organizers Below -->
 <!-- TODO: look at text files in project folder -->
 
 <!-- BUG: customizer - selecting step 1 at top add organizer row to step 2 (similar to step 3) -->
+<!-- TODO: center contact form -->
 <!-- do not populate or add meta data or title, the SEO layer will add it -->
 
 <!-- used for optional social media extensions -->
@@ -53,12 +54,12 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130109225513",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130110180733",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
-	// "httpURL":"http://www.myownersbox.com/"
-	"httpURL":"http://www.d38a025a.crackle.zoovy.net/" // TODO: change httpURL before production
+	"httpURL":"http://www.myownersbox.com/"
+	// "httpURL":"http://www.d38a025a.crackle.zoovy.net/" // TODO: change httpURL before production
 	// "httpURL": "/" // local testing - apache
 },u:{},rq:[]};
 
@@ -734,7 +735,8 @@ don't modify the 'data-templateid' unless you are changing template names and up
 				<li><a href="#top" onClick="return showContent('company',{'show':'privacy'});" title='Privacy Statement'>Privacy Statement</a></li>
 				<li><a href="#top" onClick="return showContent('company',{'show':'return'});" title='Return Policy'>Return Policy</a></li>
 				<li><a href="#top" onClick="return showContent('company',{'show':'shipping'});" title='Shipping Information'>Shipping Information</a></li>
-				<li><a href="#category?navcat=.press-releases" class='bindByAnchor' title='Press Releases'>Press Releases</a></li>
+				<!-- <li><a href="#category?navcat=.press-releases" class='bindByAnchor' title='Press Releases'>Press Releases</a></li> -->
+				<li><a href="#top" onClick="return showContent('company',{'show':'about'});" title='Press'>Press</a></li>
 			</ul>
 			</nav>
 		</div>
@@ -1288,7 +1290,8 @@ adding classes is not likely to have any bad effects.
 			<li><a href='#company?show=privacy' id='navLink_privacy'>Privacy Statement</a></li>
 			<li><a href='#company?show=return' id='navLink_return'>Return Policy</a></li>
 			<li><a href='#company?show=shipping' id='navLink_shipping'>Shipping Information</a></li>
-			<li><a href='#category?navcat=.press-releases' id='navLink_press-releases'>Press Releases</a></li>
+			<!-- <li><a href='#category?navcat=.press-releases' id='navLink_press-releases'>Press Releases</a></li> -->
+			<li><a href='#company?show=about'  id='navLink_press'>Press</a></li>
 		</ul>
 		</nav>
 	</div>
