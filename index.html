@@ -49,7 +49,7 @@ var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPL
 var myCreole;
 
 var app = {vars:{
-	"release":"20130111170916",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130111173317",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
@@ -1064,7 +1064,7 @@ this will likely become more flexible in the future. ###
 	
 		<menu data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;' class='CRMButtonMenu'>
 			<button class='ui-button-text ui-button ui-state-default ui-corner-all' onClick='app.ext.store_crm.u.showReviewFrmInModal({"pid":$(this).attr("data-pid"),"templateID":"reviewFrmTemplate"});' data-bind='var:product(pid);format:assignAttribute; attribute:data-pid;'>Write Review</button>
-			<button class='ui-state-default ui-corner-all' onClick="window.open($(this).attr('\'data-pdf\''));" data-bind='var:product(zoovy:prod_url_pdf); format:assignAttribute; attribute:data-pdf;'>Assembly Instructions</button>
+			<span data-bind="var:product(zoovy:prod_url_pdf); format:showIfSetInlineBlock; extension:mob_customizer;" class='displayNone'><button class='ui-state-default ui-corner-all' onClick="window.open($(this).attr('data-pdf'));" data-bind='var:product(zoovy:prod_url_pdf); format:assignAttribute; attribute:data-pdf;'>Assembly Instructions</button></span>
 			<!--
 			<a href='#' onClick='app.ext.store_crm.u.showReviewFrmInModal({"pid":$(this).parent().attr("data-pid"),"templateID":"reviewFrmTemplate"}); return false;'>Write Review</a>	| 
 

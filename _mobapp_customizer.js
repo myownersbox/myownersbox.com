@@ -322,9 +322,14 @@ var mob_customizer = function() {
 
     renderFormats : {
 
-      addLinkOnclick : function ($tag, data) {
-        
-      },
+      showIfSetInlineBlock : function($tag,data) {
+        //      app.u.dump('BEGIN control.renderFormats.hideorShowTab');
+        //      app.u.dump(' -> data.value'+data.value);
+        if(data.value)  {
+          //        app.u.dump(' -> setting $tag.show()');
+          $tag.show().css('display','inline-block'); //IE isn't responding to the 'show', so the display:block is added as well.
+          }
+        },
 
       //the link should ONLy appear if the sku is a storageContainer.
       //in this case, more than one attribute is needed, so the pid is passed in and the product data object is looked up.
