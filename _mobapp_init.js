@@ -81,6 +81,28 @@ app.rq.push(['script',0,app.vars.baseURL+'controller.js']);
 /// categories \\\
 var $catPageTopContent;
 
+function getCategory (navcat, subLevel) {
+  function getPeriodCount(value) {
+    if (value) {
+      return value.split('.').length - 1;
+    }else {
+      return 0;
+    }
+  }
+
+  var periodCount = getPeriodCount(navcat);
+  var level = (subLevel || 0) + 1; // default is category
+  var value;
+
+  if (periodCount > 0) {
+    value = navcat.split('.')[level];
+    if (value) {
+      return '.' + value;
+    }
+  }
+  return '';
+}
+
 app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
   // $('#headerCategories').show();
 
@@ -103,6 +125,10 @@ app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
     $('#mainContentArea').empty(); //removes templateInstance for cat page which may already be present.
     app.model.abortQ('mutable'); //will kill existing process to stop default cat layout info from loading.
     app.ext.mob_customizer.actions.initConfigurator(P);
+  }
+  if (/\.ncaa-.+/.test(getCategory(P.navcat, 1))) {
+    // app.u.dump('on ncaa');
+    $('#' + P.parentID + ' ' + '.categoryImage').html("<img src='images/banner_college.jpg' alt='Category Image' />").show();
   }
   
 
