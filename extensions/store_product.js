@@ -352,9 +352,9 @@ addToCart : function (pid){
 				},
 
 			simpleInvDisplay : function($tag,data)	{
-//data.value = available inventory
-//				app.u.dump("BEGIN store_product.renderFunctions.invAvail.");
-				if(data.value > 0)
+				//data.value = available inventory
+				app.u.dump("BEGIN store_product.renderFunctions.invAvail.");
+				if(app.ext.store_product.u.getProductInventory(data.value) > 0)
 					$tag.addClass('instock').append("In Stock");
 				else
 					$tag.addClass('outofstock').append("Sold Out");
