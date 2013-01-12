@@ -322,6 +322,10 @@ var mob_customizer = function() {
 
     renderFormats : {
 
+      addLinkOnclick : function ($tag, data) {
+        
+      },
+
       //the link should ONLy appear if the sku is a storageContainer.
       //in this case, more than one attribute is needed, so the pid is passed in and the product data object is looked up.
       //since in a product list, the product data 'may' not be in memory yet, and else is present if data not available.
