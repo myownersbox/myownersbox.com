@@ -1296,7 +1296,7 @@ tag = boolean. Set to true to output the <img tag. set to false or blank to just
 app.u.makeImage({"name":"","w":150,"h":150,"b":"FFFFFF","class":"prodThumb","tag":1});
 */
 		makeImage : function(a)	{
-			app.u.dump('W = '+a.w+' and H = '+a.h);
+			//	app.u.dump('W = '+a.w+' and H = '+a.h);
 
 			a.lib = app.u.isSet(a.lib) ? a.lib : app.vars.username;  //determine protocol
 			a.m = a.m ? 'M' : '';  //default to minimal mode off. If anything true value (not 0, false etc) is passed in as m, minimal is turned on.
@@ -1334,7 +1334,7 @@ app.u.makeImage({"name":"","w":150,"h":150,"b":"FFFFFF","class":"prodThumb","tag
 				}
 			url += '\/'+a.name;
 		
-		//		app.u.dump(url);
+				app.u.dump(url);
 			
 			if(a.tag == true)	{
 				a['class'] = typeof a['class'] == 'string' ? a['class'] : ''; //default class to blank
