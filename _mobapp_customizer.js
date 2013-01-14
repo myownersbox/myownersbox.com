@@ -719,15 +719,15 @@ var mob_customizer = function() {
             snapMode: "inner",
             containment: '#configuratorContainer',
             start : function(event, ui) {
-              //    app.u.dump(" INDEX: "+$(this).parent().index());
+              app.u.dump(" INDEX: "+$(this).parent().index());
               $(this).attr("data-formerparentindex",$(this).parent().index());
               dropped = false;
               _gaq.push(['_trackEvent', 'Customizer', 'Drag', 'Move Within Organizer']);
             },
             stop: function(event, ui) {
               if (dropped === true) {
-                //      app.u.dump("$(this).data('formerParentIndex'): "+$(this).data('formerParentIndex'));
-                //      $(this).attr('data-formerparentindex','')
+                app.u.dump("$(this).data('formerParentIndex'): "+$(this).data('formerParentIndex'));
+                $(this).attr('data-formerparentindex','');
               }
             }
           });
