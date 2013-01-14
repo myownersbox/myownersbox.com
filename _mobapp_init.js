@@ -140,6 +140,10 @@ app.rq.push(['templateFunction','categoryTemplate','onDeparts', function(P) {
     // app.u.dump([P]);
     $('#mastHead .promotion15Off').hide();
     $('#mastHead .promotionFree').show();
+
+    // fix for customizer items not showing if you leave customizer and return
+    app.ext.mob_customizer.vars.currentCategory = '';
+    app.ext.mob_customizer.vars.currentDrawer = '';
   }
 }]);
 
