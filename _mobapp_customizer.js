@@ -697,9 +697,9 @@ var mob_customizer = function() {
       data-pid is set/reset for each li.  Those are later used for adding items to the cart.
       */
       drawerAssignedToSpot : function(spot,pid) {
-        //        app.u.dump("BEGIN mob_customizer.u.drawerAssignedToSpot.");
-        //        app.u.dump(" -> spot = "+spot);
-        //        app.u.dump(" -> pid = "+pid);
+        app.u.dump("BEGIN mob_customizer.u.drawerAssignedToSpot.");
+        app.u.dump(" -> spot = "+spot);
+        app.u.dump(" -> pid = "+pid);
         app.ext.mob_customizer.vars.uriParams["s3d"+spot] = pid; //save to var object so that items populate when returning to page.
         var $previewSpot = $('#drawerLoc_'+spot).empty().attr('data-pid','');
         var $chooserSpot = $('#chooserDrawerLoc_'+spot).empty().attr('data-pid','');
