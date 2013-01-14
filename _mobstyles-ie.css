@@ -6,16 +6,13 @@
   width: 100%;
 }
 
-#drawerCategories .prodAttContainer {
-  /*width: 200px;*/
+#drawerCategories .prodlist {
+  width: 270px;
+  position: relative;
 }
 
-#drawerCategories .prodlist .magGlassIcon {
-  /*float: left;*/
-}
-
-#drawerCategories .prodlist img {
-  /*float: left;*/
+#drawerCategories .prodlist li {
+  width: 230px;
 }
 
 #configuratorContainer h3 {
