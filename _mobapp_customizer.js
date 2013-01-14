@@ -856,7 +856,7 @@ var mob_customizer = function() {
       //this could/should be a template?  !!! look in to this.
       //this function is also executed on init.
       addToSelectedUL : function(spot, pid) {
-        app.u.dump("spot: "+spot+" and pid: "+pid);
+        // app.u.dump("spot: "+spot+" and pid: "+pid);
         var $spot = $('#selectedDrawerLoc_'+spot).removeClass('empty').removeClass('occupied').empty();
         var name,image,cssClass,price;
         //if no pid is defined, then this spot is being emptied (or initially created).
@@ -873,9 +873,6 @@ var mob_customizer = function() {
           cssClass = 'occupied';
           price = app.u.formatMoney(app.data['appProductGet|'+pid]['%attribs']['zoovy:base_price'],'$',2,true);
           image = app.data['appProductGet|'+pid]['%attribs']['zoovy:prod_image1'];
-          if (image) {
-            app.u.dump('theres an image');
-          }
         }
         
         var o = this.selectedULTemplate(spot,{'name':name,'pid':pid,'cssClass':cssClass,'price':price,'image':image});
