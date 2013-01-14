@@ -398,14 +398,27 @@ ul.cssDDMenu,
 #drawerCategories .prodlist li {
   width: auto;
   margin: 5px;
+  z-index: 1;
+  /*position: relative;*/
 }
 
-.dragIconContainer {
+#drawerCategories .dragIconContainer {
   /*display: inline-block;*/
-  float:right;
+  /*float:right;*/
+  margin: 0;
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  z-index: 102;
 }
 
 #drawerCategories .prodAttContainer {
 	height: 45px;
-	display: block;
+	/*display: block;*/
+	position: absolute;
+	left: 20px;
+	bottom: 0;
+	z-index: 102;
+	margin: 0;
+	padding-right: 10px;
 }
