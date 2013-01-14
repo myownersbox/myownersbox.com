@@ -7,14 +7,18 @@
 }
 
 #drawerCategories .prodlist {
-  width: 270px;
+  width: 285px;
   position: relative;
 }
 
 #drawerCategories .prodlist li {
-  width: 230px;
+  width: 245px;
 }
 
 #configuratorContainer h3 {
   background: #b42618;
+}
+
+#configuratorContainer h4 {
+  background: #020400;
 }
