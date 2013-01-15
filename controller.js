@@ -1175,42 +1175,40 @@ VALIDATION
 		isValidEmail : function(str) {
 			app.u.dump("BEGIN isValidEmail for: "+str);
 			var r = true; //what is returned.
-			if(!str || str == false){
+			if(!str || str == false)
 				r = false;
-			} else {
-				var at="@"
-				var dot="."
-				var lat=str.indexOf(at)
-				var lstr=str.length
-				var ldot=str.indexOf(dot)
-				if (str.indexOf(at)==-1){
-					app.u.dump(" -> email does not contain an @");
-					r = false
-					}
-				if (str.indexOf(at)==-1 || str.indexOf(at)==0 || str.indexOf(at)==lstr){
-					app.u.dump(" -> @ in email is in invalid location (first or last)");
-					r = false
-					}
-				if (str.indexOf(dot)==-1 || str.indexOf(dot)==0 || str.indexOf(dot)==lstr){
-					app.u.dump(" -> email does not have a period or it is in an invalid location (first or last)");
-					r = false
-					}
-				if (str.indexOf(at,(lat+1))!=-1){
-					app.u.dump(" -> email contains two @");
-					r = false
-					}
-				if (str.substring(lat-1,lat)==dot || str.substring(lat+1,lat+2)==dot){
-					app.u.dump(" -> email contains multiple periods");
-					r = false
-					}
-				if (str.indexOf(dot,(lat+2))==-1){
-					r = false
-					}
-				if (str.indexOf(" ")!=-1){
-					r = false
-					}
-				app.u.dump("u.isValidEmail: "+r);
-			}
+			var at="@"
+			var dot="."
+			var lat=str.indexOf(at)
+			var lstr=str.length
+			var ldot=str.indexOf(dot)
+			if (str.indexOf(at)==-1){
+				app.u.dump(" -> email does not contain an @");
+				r = false
+				}
+			if (str.indexOf(at)==-1 || str.indexOf(at)==0 || str.indexOf(at)==lstr){
+				app.u.dump(" -> @ in email is in invalid location (first or last)");
+				r = false
+				}
+			if (str.indexOf(dot)==-1 || str.indexOf(dot)==0 || str.indexOf(dot)==lstr){
+				app.u.dump(" -> email does not have a period or it is in an invalid location (first or last)");
+				r = false
+				}
+			if (str.indexOf(at,(lat+1))!=-1){
+				app.u.dump(" -> email contains two @");
+				r = false
+				}
+			if (str.substring(lat-1,lat)==dot || str.substring(lat+1,lat+2)==dot){
+				app.u.dump(" -> email contains multiple periods");
+				r = false
+				}
+			if (str.indexOf(dot,(lat+2))==-1){
+				r = false
+				}
+			if (str.indexOf(" ")!=-1){
+				r = false
+				}
+			app.u.dump("u.isValidEmail: "+r);
 			return r;					
 			}, //isValidEmail
 
