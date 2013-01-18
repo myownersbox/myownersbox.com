@@ -42,10 +42,17 @@ b. View CUBEITS™ Cube Organizers Below -->
 var _gaq = _gaq || {'push':function(){}} //here for testing. REPLACE BEFORE DEPLOYMENT!
  _gaq.push(['_setAccount', 'UA-31566065-1']);
  _gaq.push(['_trackPageview']);
+
+(function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
 var myCreole;
 
 var app = {vars:{
-	"release":"20130114154200",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
+	"release":"20130118103700",  //increment this with each change. should solve caching issues. format: YYYYMMDDHHMMSS
 	"_clientid":"zmvc",
 	"baseURL":"",
 	"httpsURL":"https://ssl.zoovy.com/s=www.myownersbox.com/",
