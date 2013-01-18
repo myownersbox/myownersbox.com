@@ -28,7 +28,7 @@ var google_adwords = function() {
 	var r= {
 		vars : {
 
-		}
+		},
 		
 		callbacks : {
 			init : {
@@ -44,6 +44,7 @@ var google_adwords = function() {
 			startExtension : {
 				onSuccess : function (){
 					app.ext.store_checkout.checkoutCompletes.push(function(P){
+						app.u.dump("BEGIN google_adwords code pushed on store_checkout.checkoutCompletes");
 						var order = app.data['order|'+P.orderID];
 						google_conversion_value = order.sum.items_total;
 						app.u.loadScript(('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.googleadservices.com/pagead/conversion.js');
