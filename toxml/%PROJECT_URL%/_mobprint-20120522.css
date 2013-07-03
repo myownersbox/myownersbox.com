@@ -1,7 +1,0 @@
-.noPrint	{display:none;}
-body, #bodyContainer	{background-image:none;}
-#contentWidth, #bodyContainer	{width:auto}
-#configuratorLeftColumn, #configuratorRightColumn {display:none; width:1px;}
-#configuratorMiddleColumn	{left:0;}
-
-.showInPrint	{display:block;}

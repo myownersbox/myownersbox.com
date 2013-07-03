@@ -1,2 +1,0 @@
-/* disable display of draggable 'helpers' in the left column of the configurator */
-#drawerCategories .draggable	{display:none;}

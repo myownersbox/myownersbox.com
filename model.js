@@ -81,7 +81,7 @@ app.globalAjax.lastDispatch - keeps track of when the last dispatch occurs. Not 
 function zoovyModel() {
 	var r = {
 	
-		version : "201248",
+		version : "201320",
 	// --------------------------- GENERAL USE FUNCTIONS --------------------------- \\
 	
 	//pass in a json object and the last item id is returned.
@@ -139,18 +139,29 @@ function zoovyModel() {
 	
 	
 		addDispatchToQ : function(dispatch,QID) {
-	//		app.u.dump('BEGIN: addDispatchToQ');
+//			app.u.dump('BEGIN: addDispatchToQ');
+//			app.u.dump(" -> QID: "+typeof QID);
+//** 201218 -> QID default needs to be before the string check (because a blank value typeof != string.
+			QID = (QID === undefined) ? 'mutable' : QID; //default to the mutable Q, but allow for PDQ to be passed in.
 			var r; // return value.
 			if(dispatch['_cmd'] == 'undefined')	{
 				r = false;
 	//			zSTdErr(' -> _cmd not set. return false');
 				}
+/** 201318 -> if QID was not a string, a catastropic JS error occured. could (and did) happen if call has bug in it. */				
+			else if(typeof QID != 'string') {
+				r = false;
+				app.u.dump("Unable to add dispatch to Queue. QID passed was not a string. dispatch and QID follow:","warn");
+				//the info below is meant to help troubleshoot where the error occured.
+				app.u.dump("dispatch: "); app.u.dump(dispatch);
+				app.u.dump("QID: "); app.u.dump(QID);
+				}
 			else	{
-				QID = QID === undefined ? 'mutable' : QID; //default to the mutable Q, but allow for PDQ to be passed in.
 				var uuid = app.model.fetchUUID() //uuid is obtained, not passed in.
 				dispatch["_uuid"] = uuid;
-				dispatch["status"] = 'queued';
-				dispatch["attempts"] = dispatch["attempts"] === undefined ? 0 : dispatch["attempts"];
+				dispatch._tag = dispatch._tag || {}; //the following line will error if tag is not an object. define as such if not already defined.
+				dispatch['_tag']["status"] = 'queued';
+//				dispatch["attempts"] = dispatch["attempts"] === undefined ? 0 : dispatch["attempts"];
 				app.q[QID][uuid] = dispatch;
 				r = uuid;
 				}
@@ -166,7 +177,7 @@ function zoovyModel() {
 				r = false;
 			else	{
 				STATUS = STATUS === undefined ? 'UNSET' : STATUS; //a default, mostly to help track down that this function was run without a status set.
-				app.q[QID][UUID].status = STATUS;
+				app.q[QID][UUID]._tag.status = STATUS;
 				}
 			return r;
 			},
@@ -182,17 +193,18 @@ function zoovyModel() {
 			
 			var c = 0; //used to count how many dispatches are going into q. allows a 'break' if too many are present. is also 'index' of most recently added item in myQ.
 			var myQ = new Array();
+			
 	//go through this backwards so that as items are removed, the changing .length is not impacting any items index that hasn't already been iterated through. 
 			for(var index in app.q[QID]) {
-//				app.u.dump(" -> CMD: "+app.q[QID][index]['_cmd']);
-				if(app.q[QID][index].status == 'queued')	{
-					app.q[QID][index]['status'] = "requesting";
+				
+				if(app.q[QID][index]._tag.status == 'queued')	{
+					app.q[QID][index]._tag.status = "requesting";
+//					app.u.dump(" -> new status: "+app.q[QID][index]._tag.status);
+					if(puuid){app.q[QID][index]._tag.pipeUUID = puuid}
 					myQ.push($.extend(true,{},app.q[QID][index])); //creates a copy so that myQ can be manipulated without impacting actual Q. allows for _tag to be removed.
-					if(puuid){app.q[QID][index]['pipeUUID'] = puuid}
+					
 //the following are blanked out because they're not 'supported' vars. eventually, we should move this all into _tag so only one field has to be blanked.
 					delete myQ[c]['_tag']; //blank out rtag to make requests smaller. handleResponse will check if it's set and re-add it to pass into callback.
-					delete myQ[c]['status'];
-					delete myQ[c]['attempts'];
 					c += 1;
 //added on 2012-02-23
 					if(c > app.globalAjax.numRequestsPerPipe){
@@ -201,10 +213,10 @@ function zoovyModel() {
 						}
 					}
 				}
-//			app.u.dump("//END: filterQ. myQ length = "+myQ.length+" c = "+c);
 			return myQ;
 			}, //filterQ
-		
+
+
 //execute this function in the app itself when a request is/may be in progrees and the user changes course.
 //for instance, if the user does a search for 'sho' then corrects to 'shoe' prior to the request being completed,
 //you'd want to abort the request in favor of the new command (you would not want a callback executed on 'sho', so cancel it).
@@ -225,6 +237,18 @@ function zoovyModel() {
 			return r;
 			},
 
+//Allows for the abort of a request.  Aborting a request will NOT trigger the error handler, as an abort is not an error.
+		abortRequest : function(QID,UUID)	{
+			if(QID && UUID && app.globalAjax.requests[QID][UUID])	{
+				app.u.dump("model.abortRequest run on QID "+QID+" for UUID "+UUID);
+				app.globalAjax.requests[QID][UUID].abort();
+				app.model.changeDispatchStatusInQ(QID,UUID,'aborted');
+				delete app.globalAjax.requests[QID][UUID];
+				}
+			else	{
+				app.u.throwGMessage("In model.abortRequest, either QID ["+QID+"] or UUID ["+UUID+"] blank or app.globalAjax.requests[QID][UUID] does not exist (request may have already completed)");
+				}
+			},
 
 
 //if a request is in progress and a immutable request is made, execute this function which will change the status's of the uuid(s) in question.
@@ -266,12 +290,12 @@ a successful request executes handleresponse (handleresponse executes the contro
 note - a successful request just means that contact with the server was made. it does not mean the request itself didn't return errors.
 
 QID = Queue ID.  Defaults to the general dispatchQ but allows for the PDQ to be used.
-
+either false (if no dispatch occurs) or the pipe uuid are returned. The pipe uuid can be used to cancel the request.
 */
 	
 		dispatchThis : function(QID)	{
 //			app.u.dump("'BEGIN model.dispatchThis ["+QID+"]");
-			var r = true; //set to false if no dispatch occurs. return value.
+			var r = true; //set to false if no dispatch occurs. set to pipeuuid if a dispatch occurs. this is the value returned.
 			QID = QID === undefined ? 'mutable' : QID; //default to the general Q, but allow for priorityQ to be passed in.
 //used as the uuid on the 'parent' request (the one containing the pipelines).
 //set this early so that it can be added to each request in the Q as pipeUUID for error handling.
@@ -279,6 +303,7 @@ QID = Queue ID.  Defaults to the general dispatchQ but allows for the PDQ to be 
 			var pipeUUID = app.model.fetchUUID(); 			
 			
 //			app.u.dump(' -> Focus Q = '+QID);
+//			app.u.dump(app.q[QID]);
 
 //by doing our filter first, we can see if there is even anything to BE dispatched before checking for conflicts.
 //this decreases the likelyhood well set a timeout when not needed.
@@ -287,7 +312,7 @@ QID = Queue ID.  Defaults to the general dispatchQ but allows for the PDQ to be 
 			
 			var immutableRequestInProgress = $.isEmptyObject(app.globalAjax.requests.immutable) ? false : true; //if empty, no request is in progress.
 			var L = Q.length; //size of Q.
-//			app.u.dump(" -> Q.length = "+Q.length);
+//			app.u.dump(" -> Q.length = "+Q.length); app.u.dump(Q);
 //			app.u.dump("QID = "+QID+" and L = "+L+" and aRequestIsInProgress = "+aRequestIsInProgress);
 			
 			if(L == 0)	{
@@ -342,12 +367,13 @@ can't be added to a 'complete' because the complete callback gets executed after
 		context : app,
 		async: true,
 		contentType : "text/json",
-//		beforeSend: app.model.setHeader, //
 		dataType:"json",
 //ok to pass admin vars on non-admin session. They'll be ignored.
-		data: JSON.stringify({"_uuid":pipeUUID,"_cartid": app.sessionId,"_cmd":"pipeline","@cmds":Q,"_clientid":app.vars._clientid,"_domain":app.vars.domain,"_userid":app.vars.userid,"_deviceid":app.vars.deviceid,"_authtoken":app.vars.authtoken,"_version":app.model.version})
+		data: JSON.stringify({"_uuid":pipeUUID,"_session":app.vars._session,"_cartid": app.vars.cartID,"_cmd":"pipeline","@cmds":Q,"_clientid":app.vars._clientid,"_domain":app.vars.domain,"_userid":app.vars.userid,"_deviceid":app.vars.deviceid,"_authtoken":app.vars.authtoken,"_version":app.model.version})
 		});
+
 	app.globalAjax.requests[QID][pipeUUID].error(function(j, textStatus, errorThrown)	{
+		app.u.dump("UH OH! got into ajaxRequest.error. either call was aborted or something went wrong.");
 		if(textStatus == 'abort')	{
 			delete app.globalAjax.requests[QID][pipeUUID];
 			for(var index in Q) {
@@ -357,15 +383,22 @@ can't be added to a 'complete' because the complete callback gets executed after
 			}
 		else	{
 			app.u.dump(' -> REQUEST FAILURE! Request returned high-level errors or did not request: textStatus = '+textStatus+' errorThrown = '+errorThrown);
+//			app.u.dump("pipeUUID: "+pipeUUID);
 			delete app.globalAjax.requests[QID][pipeUUID];
 			app.model.handleCancellations(Q,QID);
-			setTimeout("app.model.dispatchThis('"+QID+"')",1000); //try again. a dispatch is only attempted three times before it errors out.
+			if(typeof jQuery().hideLoading == 'function'){
+				$(".loading-indicator-overlay").hideLoading(); //kill all 'loading' gfx. otherwise, UI could become unusable.
+				}
+//			setTimeout("app.model.dispatchThis('"+QID+"')",1000); //try again. a dispatch is only attempted three times before it errors out.
 			}
 		});
+
 	app.globalAjax.requests[QID][pipeUUID].success(function(d)	{
 		delete app.globalAjax.requests[QID][pipeUUID];
-		app.model.handleResponse(d);}
+		app.model.handleResponse(d);
+			}
 		)
+	r = pipeUUID; //return the pipe uuid so that a request can be cancelled if need be.
 
 				}
 
@@ -384,6 +417,7 @@ handleReQ is used in a few places. Sometimes you want to adjust the attempts (q.
 set adjustAttempts to true to increment by 1.
 */
 		handleReQ : function(Q,QID,adjustAttempts)	{
+//			app.u.dump("BEGIN handleReQ");
 			var uuid;
 			for(var index in Q) {
 				uuid = Q[index]['_uuid'];
@@ -399,7 +433,15 @@ set adjustAttempts to true to increment by 1.
 				uuid = Q[index]['_uuid'];
 				app.model.changeDispatchStatusInQ(QID,uuid,'cancelledDueToErrors');
 //make sure a callback is defined.
-				this.handleErrorByUUID(uuid,QID,{'errid':'ISE','persistant':true,'errmsg':'It seems something went wrong. Please try again or contact the site administrator if error persists. Sorry for any inconvenience. (mvc error: most likely a request failure [uuid = '+uuid+'])'})
+				var msgDetails = "<ul>";
+				msgDetails += "<li>issue: API request failure (likely an ISE)<\/li>";
+				msgDetails += "<li>uri: "+document.location+"<\/li>";
+				msgDetails += "<li>_cmd: "+Q[index]['_cmd']+"<\/li>";
+				msgDetails += "<li>domain: "+app.vars.domain+"<\/li>";
+				msgDetails += "<li>release: "+app.model.version+"|"+app.vars.release+"<\/li>";
+				msgDetails += "<\/ul>";
+				
+				this.handleErrorByUUID(uuid,QID,{'errid':666,'errtype':'ISE','persistent':true,'errmsg':'The request has failed. The app may continue to operate normally.<br \/>Please try again or contact the site administrator with the following details:'+msgDetails})
 				}
 			},
 	
@@ -409,7 +451,7 @@ set adjustAttempts to true to increment by 1.
 	
 	
 	handleErrorByUUID : function(UUID,QID,responseData)	{
-		app.u.dump("BEGIN model.handleErrorByUUID ["+UUID+"]");
+//		app.u.dump("BEGIN model.handleErrorByUUID ["+UUID+"]");
 		if(QID && UUID && responseData)	{
 			responseData['_rtag'] = responseData['_rtag'] || this.getRequestTag(UUID); //_tag is stripped at dispatch and readded. make sure it's present.
 			if(responseData['_rtag'])	{
@@ -531,6 +573,7 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 //handle all the call specific handlers.
 					for (var i = 0, j = responseData['@rcmds'].length; i < j; i += 1) {
 						responseData['@rcmds'][i].ts = app.u.unixNow()  //set a timestamp on local data
+
 						if(typeof this['handleResponse_'+responseData['@rcmds'][i]['_rcmd']] == 'function')	{
 							this['handleResponse_'+responseData['@rcmds'][i]['_rcmd']](responseData['@rcmds'][i])	//executes a function called handleResponse_X where X = _cmd, if it exists.
 	//						app.u.dump("CUSTOM handleresponse defined for "+responseData['_rcmd']);
@@ -568,7 +611,10 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 //execute this on a field prior to a call when you want to ensure memory/local is not used (fresh data).
 //admittedly, this isn't the best way to handle this. for 2013XX we'll have something better. ###
 		destroy : function(key)	{
-			delete app.data[key];
+//			app.u.dump(" -> destroying "+key);
+			if(app.data[key])	{
+				delete app.data[key];
+				}
 			localStorage.removeItem(key);
 			},
 
@@ -589,9 +635,13 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 				if(this.thisGetsSavedToMemory(responseData['_rcmd']))	{
 					app.data[datapointer] = responseData;
 					}
+				else	{}
 				if(this.thisGetsSavedLocally(responseData['_rcmd']))	{
-					app.storageFunctions.writeLocal(datapointer,responseData); //save to local storage, if feature is available.
+					var obj4Save = $.extend(true,{},responseData); //this makes a copy so that the responseData object itself isn't impacted.
+					obj4Save._rtag = null; //make sure _rtag doesn't get saved to localstorage. may contiain a jquery object, function, etc.
+					app.storageFunctions.writeLocal(datapointer,obj4Save); //save to local storage, if feature is available.
 					}
+				else	{}
 				}
 			else	{
 //catch. not writing to local. Either not necessary or an error occured.
@@ -601,17 +651,41 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 
 		thisGetsSavedToMemory : function(cmd)	{
 			var r = true;
-			r = this.thisGetsSavedLocally(cmd); //anything not saved locally is automatically not saved to memory.
-//an appPageGet request extends the original page object. (in case two separate requests come in for different attributes for the same category.
-			if(cmd == 'appPageGet')	{r = false;}
+			switch(cmd)	{
+				case 'appPageGet': //saved into category object earlier in process. redundant here.
+				case 'cartSet': //changes are reflected in cart object.
+				case 'ping':
+				r = false
+				break;
+				}
 			return r;
 			},
 
-//some commands should not get saved locally.
+//some commands should not get saved locally, either because they contain sensitive data or because of the nature of the call.
 		thisGetsSavedLocally : function(cmd)	{
 			var r = true; //what is returned. is set to false if the cmd should not get saved to local storage.
-			if(cmd == 'cartSet')	{r = false} //changes to cart are saved in cart objects, not as individual changes.
-			else if(cmd == 'ping')	{r = false}
+			switch(cmd)	{
+				case 'adminCustomerUpdate': //may contain cc
+				case 'adminCustomerWalletPeek': //contains cc #
+				case 'adminOrderCreate': //may contain cc
+				case 'adminOrderDetail': //may contain cc
+				case 'adminOrderPaymentAction': //may contain cc
+				case 'adminOrderUpdate': //may contain cc
+				case 'adminTicketCreate':
+				case 'adminTicketUpdate':
+				case 'adminTicketDetail': //should be updated each visit.
+				case 'appBuyerLogin': //should be session specific. close/open will exec whoAmI which will put into memory if user is logged in.
+				case 'appPageGet': //
+				case 'buyerWalletList': //conains some cc info.
+				case 'cartItemsInventoryVerify': //these adjustments are never stored.
+				case 'cartOrderCreate': //may contain cc
+				case 'cartPaymentQ': //may contain cc
+				case 'cartSet': //changes are reflected in cart object.
+				case 'ping':
+				case 'whoAmI': //contains login info. needs to be session specific.
+				r = false
+				break;
+				}
 			return r;
 			},
 
@@ -624,7 +698,7 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 			var datapointer = null; //a callback can be set with no datapointer.
 			var status = null; //status of request. will get set to 'error' or 'completed' later. set to null by defualt to track cases when not set to error or completed.
 			var hasErrors = app.model.responseHasErrors(responseData);
-			
+//			app.u.dump(" -> handleresponse uuid: "+uuid);
 //			app.u.dump(" -> responseData:"); app.u.dump(responseData);
 
 			if(!$.isEmptyObject(responseData['_rtag']) && app.u.isSet(responseData['_rtag']['callback']))	{
@@ -658,8 +732,9 @@ QID is the dispatchQ ID (either passive, mutable or immutable. required for the 
 
 					}
 				else	{
-					app.data[datapointer] = responseData;
-					app.storageFunctions.writeLocal(datapointer,responseData); //save to local storage, if feature is available.
+					this.writeToMemoryAndLocal(responseData);
+//					app.data[datapointer] = responseData;
+//					app.storageFunctions.writeLocal(datapointer,responseData); //save to local storage, if feature is available.
 					}
 				}
 			else	{
@@ -710,7 +785,10 @@ uuid is more useful because on a high level error, rtag isn't passed back in res
 					app.u.dump(' -> successful response for uuid '+uuid+'. callback defined ('+callback+') but does not exist or is not valid type.')
 					}
 				}
-			app.q[app.model.whichQAmIFrom(uuid)][Number(uuid)]['status'] = status;
+			var fromQ = app.model.whichQAmIFrom(uuid);
+			if(fromQ && app.q[fromQ] && app.q[fromQ][Number(uuid)])	{
+				app.q[app.model.whichQAmIFrom(uuid)][Number(uuid)]._tag['status'] = status;
+				}
 			return status;
 		},
 	
@@ -719,11 +797,15 @@ uuid is more useful because on a high level error, rtag isn't passed back in res
 			this.handleResponse_cartOrderCreate(responseData); //share the same actions. append as needed.
 			},
 	
+		handleResponse_authNewAccountCreate : function(responseData)	{
+			app.model.handleResponse_authAdminLogin(responseData); //this will have the same response as a login if successful.
+			},
+
 	//this function gets executed upon a successful request for a create order.
 	//saves a copy of the old cart object to order|ORDERID in both local and memory for later reference (invoice, upsells, etc).
 		handleResponse_cartOrderCreate : function(responseData)	{
 	//currently, there are no errors at this level. If a connection or some other critical error occured, this point would not have been reached.
-			app.u.dump("BEGIN model.handleResponse_createOrder ["+responseData.orderid+"]");
+//			app.u.dump("BEGIN model.handleResponse_createOrder ["+responseData.orderid+"]");
 			var datapointer = "order|"+responseData.orderid;
 			app.storageFunctions.writeLocal(datapointer,app.data.cartDetail);  //save order locally to make it available for upselling et all.
 			app.data[datapointer] = app.data.cartDetail; //saved to object as well for easy access.
@@ -773,28 +855,27 @@ so to ensure saving to appPageGet|.safe doesn't save over previously requested d
 
 
 
-
+//this response is also executed by authNewAccoutnCreate
 		handleResponse_authAdminLogin: function(responseData)	{
 			app.u.dump("BEGIN model.handleResponse_authAdminLogin"); //app.u.dump(responseData);
-			app.vars.deviceid = responseData.deviceid;
-			app.vars.authtoken = responseData.authtoken;
-			app.vars.userid = responseData.userid.toLowerCase();
-			app.vars.username = responseData.username.toLowerCase();
-			app.vars.thisSessionIsAdmin = true;
+			if(app.model.responseHasErrors(responseData))	{} // do nothing. error handling handled in _default.
+//executing this code block if an error is present will cause a JS error.
+			else	{
+				app.vars.deviceid = responseData.deviceid;
+				app.vars.authtoken = responseData.authtoken;
+				app.vars.userid = responseData.userid.toLowerCase();
+				app.vars.username = responseData.username.toLowerCase();
+				app.vars.thisSessionIsAdmin = true;
+				}
 			app.model.handleResponse_defaultAction(responseData); //datapointer ommited because data already saved.
 			},
 
-		handleResponse_appCartExists : function(responseData)	{
+		handleResponse_adminUIExecuteCGI : function(responseData)	{
+			if(responseData.html)	{
+				app.ext.admin.u.uiHandleContentUpdate(responseData.uri,responseData,viewObj);
+				//app.ext.admin.u.uiHandleContentUpdate(path,data,viewObj)
+				}
 
-			if(responseData.exists >= 1)	{
-				this.handleResponse_appCartCreate(responseData); //saves session data locally and into control.
-				}
-			else	{
-/* nuke references to old, invalid session id. if this doesn't happen, the old session ID gets passed and will be re-issued. */				
-				app.sessionId = null;
-				app.storageFunctions.writeLocal('cartid',null);
-				app.model.handleResponse_defaultAction(responseData); //datapointer ommited because data already saved.
-				}
 			},
 
 //this function gets executed upon a successful request for a new session id.
@@ -805,20 +886,17 @@ so to ensure saving to appPageGet|.safe doesn't save over previously requested d
 //			app.u.dump("RESPONSE DATA:");
 //			app.u.dump(responseData);
 
-//ensure no cross-account data polution on shared domain. this only happens if cart is not valid. If valid, local data should be for account in focus.
-//the cart/session will immediately get added back to local storage below.
-			if(window.location.href.indexOf('ssl.zoovy') > -1)	{localStorage.clear();}
-
 //no error handling at this level. If a connection or some other critical error occured, this point would not have been reached.
 //save session id locally to maintain session id throughout user experience.	
-			app.storageFunctions.writeLocal('sessionId',responseData['_cartid']);
+			app.storageFunctions.writeLocal('cartID',responseData['_cartid']);
 //			app.storageFunctions.writeLocal(app.vars['username']+"-cartid",responseData['_cartid']);  
-			app.sessionId = responseData['_cartid']; //saved to object as well for easy access.
+			app.vars.cartID = responseData['_cartid']; //saved to object as well for easy access.
 			app.model.handleResponse_defaultAction(responseData); //datapointer ommited because data already saved.
-			app.u.dump("sessionID = "+responseData['_cartid']);
+			app.u.dump("cartID = "+responseData['_cartid']);
 			return responseData['_cartid'];
 			}, //handleResponse_appCartCreate
-	
+
+
 /*
 in most cases, the errors are handled well by the API and returned either as a single message (errmsg)
 or as a series of messages (_msg_X_id) where X is incremented depending on the number of errors.
@@ -829,7 +907,11 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 //at the time of this version, some requests don't have especially good warning/error in the response.
 //as response error handling is improved, this function may no longer be necessary.
 			var r = false; //defaults to no errors found.
-			if(responseData['_rtag'] && responseData['_rtag'].forceError == 1)	{r = true; responseData.errid = "MVC-M-000"; responseData.errtype = "intendedErr"; responseData.errmsg = "forceError is set to 1 on _tag. cmd = "+responseData['_rcmd']+" and uuid = "+responseData['_uuid'];
+			if(responseData['_rtag'] && responseData['_rtag'].forceError == 1)	{
+				r = true;
+				responseData.errid = "MVC-M-000";
+				responseData.errtype = "intendedErr";
+				responseData.errmsg = "forceError is set to 1 on _tag. cmd = "+responseData['_rcmd']+" and uuid = "+responseData['_uuid'];
 //			app.u.dump(responseData);
 				}
 			else	{
@@ -851,14 +933,12 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 							responseData['errmsg'] = "could not find category (may not exist)";
 							} //a response errid of zero 'may' mean no errors.
 						break;
-					case 'appPublicSearch':
-						//currently, there are no errors. I have a hunch this will change.
-						break;
 		
 					case 'addSerializedDataToCart': //no break is present here so that case addSerializedDataToCart and case addToCart execute the same code.
-					case 'cartItemsAdd':
-						if(responseData['_msgs'] > 0)	{r = true};
-						break;
+//call deprecated in 201311
+//					case 'cartItemsAdd':
+//						if(responseData['_msgs'] > 0)	{r = true};
+//						break;
 		
 					case 'cartOrderCreate':
 		//				app.u.dump(' -> case = createOrder');
@@ -868,8 +948,18 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 							}  
 						break;
 					default:
-						if(responseData['_msgs'] > 0 && responseData['_msg_1_id'] > 0)	{r = true} //chances are, this is an error. may need tuning later.
-						if(responseData['errid'] > 0) {r = true}
+						if(Number(responseData['errid']) > 0) {r = true}
+						else if(Number(responseData['_msgs']) > 0 && responseData['_msg_1_id'] > 0)	{r = true} //chances are, this is an error. may need tuning later.
+						else if(responseData['@RESPONSES'] && responseData['@RESPONSES'].length)	{
+							var L = responseData['@RESPONSES'].length;
+							for(var i = 0; i < L; i += 1)	{
+								if(responseData['@RESPONSES'][i]['msgtype'] == 'ERROR')	{
+									r = true;
+									break; //if we have an error, exit early.
+									}
+								}
+							}
+						else {}
 		//				app.u.dump('default case for error handling');
 						break;
 					}
@@ -959,11 +1049,11 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 			return r;
 			}, //whichQAmIFrom
 
-
+//returns an array of UUID's that use the 'pipe' uuid.
 		getUUIDsbyQIDandPipeUUID : function(QID,pipeUUID)	{
 			var r = new Array();
-			for(index in app.q[QID])	{
-				if(app.q[QID][index]['pipeUUID'] == pipeUUID)	{
+			for(var index in app.q[QID])	{
+				if(app.q[QID][index]._tag && app.q[QID][index]._tag['pipeUUID'] == pipeUUID)	{
 					r.push(app.q[QID][index]['_uuid']);
 					}
 				}
@@ -972,8 +1062,8 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 
 		checkForPipeUUIDInQID : function(QID,pipeUUID)	{
 			var r = false;
-			for(index in app.q[QID])	{
-				if(app.q[QID][index]['pipeUUID'] == pipeUUID)	{
+			for(var index in app.q[QID])	{
+				if(app.q[QID][index].tag &&app.q[QID][index].tag['pipeUUID'] == pipeUUID)	{
 					r = true;
 					break; //end once we have a match. pipeuuid is specific to one Q
 					}
@@ -1018,31 +1108,16 @@ or as a series of messages (_msg_X_id) where X is incremented depending on the n
 			return r;
 			},
 	
-	//gets session id. The session id is used a ton.  It is saved to app.sessionId as well as a cookie and, if supported, localStorage.
+	//gets session id. The session id is used a ton.  It is saved to app.vars.cartID as well as a cookie and, if supported, localStorage.
 	//Check to see if it's already set. If not, request a new session via ajax.
-		fetchSessionId : function(callback)	{
-//			app.u.dump('BEGIN: model.fetchSessionId');
+		fetchCartID : function(callback)	{
+//			app.u.dump('BEGIN: model.fetchCartID');
 			var s = false;
-			if(app.sessionId)	{
-//				app.u.dump(' -> sessionId is set in control');
-				s = app.sessionId
+			if(s = app.storageFunctions.readLocal('cartID'))	{
+//				app.u.dump(' -> cartID is set in local from previous ajax session');										 
 				}
-//sets s as part of else if so getLocal doesn't need to be run twice.
-			else if(s = app.storageFunctions.readLocal('sessionId'))	{
-//				app.u.dump(' -> sessionId is set in local from previous ajax session');										 
-				}
-//see note in handleResponse_appCartCreate to learn why this is commented out.
-//			else if(s = app.storageFunctions.readLocal(app['username']+"-cartid"))	{
-//				app.u.dump(' -> sessionId is set in local from cookie. possibly from storefront session (non-ajax)');
-//				}
-			else	{
-//catch all.  returns false.
-//				app.u.dump(' -> no session id in control or local.');
-				}
-	//		app.u.dump("//END: fetchSessionId. s = "+s);
-			
 			return s;
-			}, //fetchSessionId
+			}, //fetchCartID
 	
 /*
 Returns T or F.
@@ -1057,15 +1132,15 @@ will return false if datapointer isn't in app.data or local (or if it's too old)
 //			app.u.dump(" -> datapointer = "+datapointer);
 			var local;
 			var r = false;
-			var expires = datapointer == 'authAdminLogin' ? (60*60*24*7) : (60*60*24); //how old the data can be before we fetch new.
-	//checks to see if the request is already in 'this'.
+			var expires = datapointer == 'authAdminLogin' ? (60*60*24*6) : (60*60*24); //how old the data can be before we fetch new.
+//checks to see if the request is already in app.data. IMPORTANT to check if object is empty in case empty objects are put up for extending defaults (checkout)
 			if(app.data && !$.isEmptyObject(app.data[datapointer]))	{
-//				app.u.dump(' -> control already has data');
+//				app.u.dump(' -> data already in memory.');
 				r = true;
 				}
 //then check local storage and, if present, update the control object
 			else if (local = app.storageFunctions.readLocal(datapointer))	{
-//				app.u.dump(' -> local does have data.');
+//				app.u.dump(' -> data in localStorage');
 	//			app.u.dump(local);
 				if(local.ts)	{
 					if((app.u.unixNow() - local.ts) > expires)	{
@@ -1083,11 +1158,13 @@ will return false if datapointer isn't in app.data or local (or if it's too old)
 					}
 				}
 			else	{
+				r = false;
 //				app.u.dump(' -> data not in memory or local storage.');
 				}
 
 //set app.globalAjax.checkForLocalJSON to true and the app will look for local copies (not local storage) of the json
-			if(r === false && app.globalAjax.checkForLocalJSON)	{
+//Not in use at this time. left here for future use though.
+/*			if(r === false && app.globalAjax.checkForLocalJSON)	{
 				if(app.globalAjax.localJSONFolder)	{
 //				app.u.dump(" -> Data not in memory or local.");
 					if(datapointer.indexOf("appProductGet") > -1)	{
@@ -1114,6 +1191,7 @@ will return false if datapointer isn't in app.data or local (or if it's too old)
 					app.u.dump("WARNING! checkForLocalJSON enabled but localJSONFolder not set.");
 					}
 				}
+*/				
 //			app.u.dump("END fetchData for "+datapointer+". r = "+r);
 			return r;
 			}, //fetchData
@@ -1174,6 +1252,7 @@ will return false if datapointer isn't in app.data or local (or if it's too old)
 			var r = true; //what is returned. if a template is created, true is returned.
 			if(templateID && typeof $templateSpec == 'object')	{
 				app.templates[templateID] = $templateSpec.attr('data-templateid',templateID).clone();
+				app.templates[templateID].removeAttr('id'); //get rid of the ID to reduce likelyhood of duplicate ID's on the DOM.
 				$('#'+templateID).empty().remove(); //here for templates created from existing DOM elements. They're removed to ensure no duplicate ID's exist.
 				}
 			else	{
@@ -1205,6 +1284,10 @@ will return false if datapointer isn't in app.data or local (or if it's too old)
 					this.makeTemplate($templateSpec,templateID);
 					}
 				$templateSpec.empty(); //ensure previous spec isn't used on next iteration.
+				}
+// * 201320 -> consoles based error reporting to help track these down.
+			if(errors)	{
+				app.u.dump("Some templates were not found. "+errors,'error');
 				}
 			return errors;
 			},
@@ -1241,6 +1324,11 @@ will return false if datapointer isn't in app.data or local (or if it's too old)
 	//can't use append because it'll treat content as text not html
 	//so if the templateurl is /something/checkout/templates.html, the template id will be remoteTemplates_checkout
 				var templateContainerID = 'remoteTemplates_'+templateURL.split('/').splice(-2,1);
+//** 201320 -> in admin extensions, all templates were getting added to the same container element and nothing could be 'left' behind for adding later on the fly.
+				if(templateContainerID == 'remoteTemplates_admin')	{
+					templateContainerID += '_'+templateURL.split('/').splice(-1,1);
+					templateContainerID = templateContainerID.replace('.html','');
+					}
 				var $remoteTemps = $('#'+templateContainerID);
 				if($remoteTemps.length == 0)	{
 					$remoteTemps = $("<div />").attr('id',templateContainerID).hide().appendTo('body');
@@ -1248,7 +1336,8 @@ will return false if datapointer isn't in app.data or local (or if it's too old)
 				$remoteTemps.html(data);
 				var templateErrors = app.model.loadTemplates(templates);
 				if(templateErrors)	{
-					app.u.throwMessage(templateErrors,true);
+// * 201320 -> error messages were only displaying in appPreView.
+					$('.appMessaging').anymessage({'message':templateErrors,'persistent':true});
 	//				app.u.dump(templateErrors);
 					}
 				});
@@ -1260,6 +1349,7 @@ will return false if datapointer isn't in app.data or local (or if it's too old)
 				var url = extObjItem.filename;
 				var namespace = extObjItem.namespace; //for easy reference.
 				var errors = ""; // list of errors. what is returned
+				var initPassed;
 //the .js file for the extension contains a function matching the namespace used.
 //the following line executes that function and saves the object returned to the control.
 //this is essentially what makes the extension available for use.
@@ -1267,29 +1357,39 @@ will return false if datapointer isn't in app.data or local (or if it's too old)
 //data is saved to the control prior to template/view verification because we need access to the object.
 //yes, technically we could have saved it to a var, accessed the templates param, validated and NOT saved, but this is lighter.
 //it means that a developer could use an extension that didn't load properly, but that is their perogative, since we told them its broke.
-				app.ext[namespace] = eval(namespace+'()'); //keep this as early in the process as possible so it's done before the next extension loads.
 
-				var callback = extObjItem.callback; //for easy reference.
-//						app.u.dump(" -> typeof callback: "+typeof callback);
-				if(typeof app.ext[namespace].callbacks.init === 'object')	{
-//							app.u.dump(" typeof === object");
-					var initPassed = app.ext[namespace].callbacks.init.onSuccess(); //returns t/f
-//							app.u.dump(" -> "+namespace+" onSuccess response = "+initPassed);
+				if(typeof window[namespace] === 'function')	{
+					app.ext[namespace] = window[namespace](); //keep this as early in the process as possible so it's done before the next extension loads.
+
+
+					var callback = extObjItem.callback; //for easy reference.
+	//						app.u.dump(" -> typeof callback: "+typeof callback);
+					if(typeof app.ext[namespace].callbacks.init === 'object')	{
+	//							app.u.dump(" typeof === object");
+						initPassed = app.ext[namespace].callbacks.init.onSuccess(); //returns t/f
+	//							app.u.dump(" -> "+namespace+" onSuccess response = "+initPassed);
+						}
+					else	{
+	//no init was set in extension.  Init handles dependencies and should be present. For now, we'll trust that the developer had a good reason for not having an init and continue.
+						app.u.dump("WARNING: extension "+namespace+" did NOT have an init. This is very bad.");
+						errors += "<li>init not set for extension "+namespace;
+						}
+	//whether init passed or failed, load the templates. That way any errors that occur as a result of missing templates are also displayed.
+	//If the extension sets willfetchmyowntemplates, then no need to run template load code, the extension will handle adding it's own templates.
+	//						app.u.dump(" -> templates.length = "+app.ext[namespace].vars.templates.length);
+					if(app.ext[namespace].vars && app.ext[namespace].vars.templates && !app.ext[namespace].vars.willFetchMyOwnTemplates)	{
+						errors += app.model.loadTemplates(app.ext[namespace].vars.templates);
+						}
+					else	{
+	//							app.u.dump("WARNING: extension "+namespace+" did not define any templates. This 'may' valid, as some extensions may have no templates.");
+						}
+
 					}
 				else	{
-//no init was set in extension.  Init handles dependencies and should be present. For now, we'll trust that the developer had a good reason for not having an init and continue.
-					app.u.dump("WARNING: extension "+namespace+" did NOT have an init. This is very bad.");
-					errors += "<li>init not set for extension "+namespace;
+					initPassed = false;
+					errors += "window."+namespace+" does not exist, probably a mismatch between namespace declared in extension and init."
 					}
-//whether init passed or failed, load the templates. That way any errors that occur as a result of missing templates are also displayed.
-//If the extension sets willfetchmyowntemplates, then no need to run template load code, the extension will handle adding it's own templates.
-//						app.u.dump(" -> templates.length = "+app.ext[namespace].vars.templates.length);
-				if(app.ext[namespace].vars && app.ext[namespace].vars.templates && !app.ext[namespace].vars.willFetchMyOwnTemplates)	{
-					errors += app.model.loadTemplates(app.ext[namespace].vars.templates);
-					}
-				else	{
-//							app.u.dump("WARNING: extension "+namespace+" did not define any templates. This 'may' valid, as some extensions may have no templates.");
-					}
+
 
 /*
 now we know whether the extension properly loaded, had and executed an init and has a callback.
@@ -1297,7 +1397,7 @@ respond accordingly.
 */
 
 				if(initPassed == false)	{
-					app.u.throwMessage("Uh Oh! Something went wrong with our app. We apologize for any inconvenience. (err: "+namespace+" extension did not pass init)",true);
+					app.u.throwMessage("Uh Oh! Something went wrong with our app. We apologize for any inconvenience. (err: "+namespace+" extension did not pass init)<br><b>Error(s):<\/b><br>"+errors,true);
 					}
 //errors would be populated if, say, no init is set.
 				else if(errors)	{
@@ -1344,7 +1444,7 @@ only one extension was getting loaded, but it got loaded for each iteration in t
 		fetchExtension : function(extObjItem)	{
 //			app.u.dump('BEGIN model.fetchExtention ['+extObjItem.namespace+']');
 			var errors = '';
-			var url = extObjItem.filename;
+			var url = extObjItem.filename+"?_v="+app.vars.release;
 			var namespace = extObjItem.namespace; //for easy reference.
 //			app.u.dump(' -> url = '+url);
 		
@@ -1367,7 +1467,7 @@ only one extension was getting loaded, but it got loaded for each iteration in t
 					},
 				error: function(a,b,c) {
 					var msg = app.u.errMsgObject("Oops! It appears something went wrong with our app. If error persists, please contact the site administrator.<br \/>(error: ext "+extObjItem.namespace+" had error type "+b+")",123);
-					msg.persistant = true;
+					msg.persistent = true;
 					app.u.throwMessage(msg);
 					app.u.dump(" -> EXTCONTROL ("+namespace+")Got to error. error type = "+b+" c = ");
 					app.u.dump(c);
@@ -1377,14 +1477,15 @@ only one extension was getting loaded, but it got loaded for each iteration in t
 
 		executeExtensionCallback : function(namespace,callback)	{
 			if(namespace && callback)	{
-				if(typeof callback == 'function'){eval(callback)}
+				if(typeof callback == 'function'){window[callback]()}
 				else if(typeof callback == 'string' && typeof app.ext[namespace] == 'object' && typeof app.ext[namespace].callbacks[callback] == 'object')	{
 					app.ext[namespace].callbacks[callback].onSuccess()
 					}
 				else if(typeof callback == 'string')	{
-					app.u.dump("WARNING! callback ["+callback+"] defined for namespace: "+namespace+" but something went wrong");
-					app.u.dump(" -> typeof app.ext[namespace]: "+typeof app.ext[namespace]);
-					if(typeof app.ext[namespace] == 'object')	{app.u.dump(app.ext[namespace].callbacks[callback]);}
+					$('#globalMessaging').anymessage("A callback was defined for extension "+namespace+" but it could not be loaded.<br \/>Dev: see console for details");
+					app.u.dump("Callback ["+callback+"] defined for namespace: "+namespace+" but something went wrong",'warn');
+					app.u.dump(" -> typeof app.ext[namespace]: "+typeof app.ext[namespace]+" (should be object)");
+					if(typeof app.ext[namespace] == 'object')	{app.u.dump(" -> typeof app.ext[namespace].callbacks[callback]"+typeof app.ext[namespace].callbacks[callback])+" (should be function)"}
 					}
 				else	{app.u.dump("!Unknown type ["+typeof callback+"] for extension callback ");}
 				}
@@ -1434,7 +1535,9 @@ This is checks for two things:
 						}
 					}
 				else	{
-					app.u.dump(' -> waiting on: '+namespace);
+					if(app.vars.debug == 'init')	{
+						app.u.dump(' -> waiting on: '+namespace);
+						}
 					r = false;
 					break;
 					}
@@ -1461,9 +1564,9 @@ This is checks for two things:
 						}
 					} // end loop.				
 				}
-			else if(attempts > 40)	{
+			else if(attempts > 100)	{
 				//that is a lot of tries.
-				throwGMessage(" some extensions took at least ten seconds to load. That's no good");
+				throwMessage(app.u.errMsgObject("It appears that some files were unable to load. This could be a problem with the app OR due to a slow PC or internet connection."));
 				}
 			else	{
 				setTimeout(function(){app.model.executeCallbacksWhenExtensionsAreReady(extObj,attempts)},250);
@@ -1473,10 +1576,12 @@ This is checks for two things:
 		
 //setHeader always gets run, but the admin headers are only added if the global admin var is true.
 // if set to true and in a non-admin mode, won't hurt anything, but is less clean.
+//these are whitelisted server side. add anything non supported and comatibility mode calls will die a most horrible death.
 		setHeader : function(xhr){
 //			xhr.setRequestHeader('x-auth','sporks');
 			if(app.vars.thisSessionIsAdmin)	{
 				xhr.setRequestHeader('x-clientid',app.vars._clientid); //set by app
+				xhr.setRequestHeader('x-session',app.vars._session); //set by app. 
 				xhr.setRequestHeader('x-domain',app.vars.domain); //what domain is in focus. set by app or user
 				xhr.setRequestHeader('x-userid',app.vars.userid); //what account is in focus. provided by user/ stored locally.
 				xhr.setRequestHeader('x-deviceid',app.vars.deviceid); //the specific device making the requests. stored locally.
@@ -1501,9 +1606,10 @@ ADMIN/USER INTERFACE
 			var pathParts = path.split('?'); //pathParts[0] = /biz/setup and pathParts[1] = key=value&anotherkey=anothervalue (uri params);
 //make sure to pass data2pass last so that the contents of it get preference (duplicate vars will be overwritten by whats in data)
 //this is important because data is typically a form input and may have a verb or action set that is different than what's in the pathParts URI params
-			var data = $.extend(app.u.getParametersAsObject("?"+pathParts[1]),data2Pass); //getParamsfunction wants ? in string.
-			
-			var URL = 'https://www.zoovy.com'+pathParts[0]; //once live, won't need the full path, but necessary for testing purposes.
+			var data = $.extend(app.u.kvp2Array(pathParts[1]),data2Pass); //getParamsfunction wants ? in string.
+
+			var URL = (document.domain.indexOf('anycommerce') > -1) ?  "https://www.anycommerce.com" : "https://www.zoovy.com";
+			URL += pathParts[0]; //once live, won't need the full path, but necessary for testing purposes.
 			
 			if(!$.isEmptyObject(app.ext.admin.vars.uiRequest))	{
 				app.u.dump("request in progress. Aborting.");
@@ -1520,7 +1626,18 @@ ADMIN/USER INTERFACE
 						}
 					else	{
 						$('#'+app.ext.admin.u.getTabFromPath(pathParts[0])+'Content').empty(); ///empty out loading div and any template placeholder.
-						app.u.throwGMessage("Error details = UI request failure: "+b);
+
+//make sure a callback is defined.
+				var msgDetails = "A request failure occured. Please try again or if the error persists, please report the following information: <ul>";
+				msgDetails += "<li>issue: API request failure (likely an ISE)<\/li>";
+				msgDetails += "<li>uri: "+document.location+"<\/li>";
+				msgDetails += "<li>domain: "+app.vars.domain+"<\/li>";
+				msgDetails += "<li>release: "+app.model.version+"|"+app.vars.release+"<\/li>";
+				msgDetails += "<\/ul>";
+				
+				app.u.throwMessage({'errid':'ISE','errmsg':msgDetails,'errtype':'ISE','uiIcon':'alert','uiClass':'error'});
+
+
 						if(typeof viewObj.error == 'function'){viewObj.error()}
 						}
 					app.ext.admin.vars.uiRequest = {} //reset request container to easily determine if another request is in progress

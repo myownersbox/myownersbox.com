@@ -66,8 +66,8 @@ a callback was also added which just executes this call, so that checkout COULD 
 				app.model.addDispatchToQ({
 					"_cmd":"cartGoogleCheckoutURL",
 					"analyticsdata":"", //must be set, even if blank.
-					"edit_cart_url" : zGlobals.appSettings.https_app_url+"#cart?show=cart&sessionId="+app.sessionId,
-					"continue_shopping_url" : zGlobals.appSettings.https_app_url+"?sessionId="+app.sessionId,
+					"edit_cart_url" : (app.vars._clientid == '1pc') ? zGlobals.appSettings.https_app_url+"c="+app.vars.cartID+"/cart.cgis" : zGlobals.appSettings.https_app_url+"?cartID="+app.vars.cartID+"#cart?show=cart",
+					"continue_shopping_url" : (app.vars._clientid == '1pc') ? zGlobals.appSettings.https_app_url+"c="+app.vars.cartID+"/" : zGlobals.appSettings.https_app_url+"?cartID="+app.vars.cartID,
 					'_tag':{'callback':'proceedToGoogleCheckout','extension':'store_checkout','datapointer':'cartGoogleCheckoutURL'}
 					},'immutable');
 				}
@@ -78,7 +78,7 @@ a callback was also added which just executes this call, so that checkout COULD 
 		cartPaymentQ : 	{
 			init : function(cmdObj,tagObj)	{
 //make sure id is set for inserts.
-				if(cmdObj.cmd == 'insert' && !cmdObj.ID)	{cmdObj.ID = "201210"+app.u.guidGenerator().substring(0,8)}
+				if(cmdObj.cmd == 'insert' && !cmdObj.ID)	{cmdObj.ID = app.model.version+app.u.guidGenerator().substring(0,8)}
 				cmdObj['_cmd'] = "cartPaymentQ";
 				cmdObj['_tag'] = tagObj;
 				this.dispatch(cmdObj);
@@ -99,7 +99,12 @@ a callback was also added which just executes this call, so that checkout COULD 
 				},
 			dispatch : function(getBuyerAddress)	{
 				var tagObj = {'callback':'handleCartPaypalSetECResponse',"datapointer":"cartPaypalSetExpressCheckout","extension":"convertSessionToOrder"}
-				app.model.addDispatchToQ({"_cmd":"cartPaypalSetExpressCheckout","cancelURL":zGlobals.appSettings.https_app_url+"#cart?show=cart&sessionId="+app.sessionId,"returnURL":zGlobals.appSettings.https_app_url+"#checkout?show=checkout&sessionId="+app.sessionId,"getBuyerAddress":getBuyerAddress,'_tag':tagObj},'immutable');
+				app.model.addDispatchToQ({
+					"_cmd":"cartPaypalSetExpressCheckout",
+					"cancelURL":(app.vars._clientid == '1pc') ? zGlobals.appSettings.https_app_url+"c="+app.vars.cartID+"/cart.cgis" : zGlobals.appSettings.https_app_url+"?cartID="+app.vars.cartID+"#cart?show=cart",
+					"returnURL": (app.vars._clientid == '1pc') ? zGlobals.appSettings.https_app_url+"c="+app.vars.cartID+"/checkout.cgis" : zGlobals.appSettings.https_app_url+"?cartID="+app.vars.cartID+"#checkout?show=checkout",
+					"getBuyerAddress":getBuyerAddress,'_tag':tagObj
+					},'immutable');
 				}
 			}, //cartPaypalSetExpressCheckout	
 
@@ -246,7 +251,7 @@ _gaq.push(['_trackEvent','Checkout','App Event','Attempting to create order']);
 
 	callbacks : {
 //callbacks.init need to return either a true or a false, depending on whether or not the file will execute properly based on store account configuration.
-//no templates or significant checks should occur in this init. templates are app specific (checkout_nice has different templates than checkout_passive)
+//no templates or significant checks should occur in this init. templates are app specific (checkout_active has different templates than checkout_passive)
 		init : {
 			onSuccess : function()	{
 				var r; //returns false if checkout can't load due to account config conflict.
@@ -294,7 +299,7 @@ _gaq.push(['_trackEvent','Checkout','App Event','Attempting to create order']);
 /*
 Parameters included are as follows:
 P.orderID
-P.sessionID (this would be the sessionID associated w/ the order, not the newly generated session/cart id - reset immediately after checkout )
+P.cartID (this would be the cartID associated w/ the order, not the newly generated cart id - reset immediately after checkout )
 P.datapointer - pointer to cartOrderCreate
 
 note - the order object is available at app.data['order|'+P.orderID]
@@ -309,12 +314,19 @@ note - the order object is available at app.data['order|'+P.orderID]
 		validate : {
 			
 			CREDIT : function(vars)	{
-				var errors = new Array(); // what is returned. an array of the payment fields that are not correct. 
-				if(vars.CC && app.u.isValidCC(vars.CC))	{} else	{errors.push("CC");}
-				if(vars.MM && app.u.isValidMonth(vars.MM))	{} else {errors.push("MM");}
-				if(vars.YY && app.u.isValidCCYear(vars.YY))	{} else {errors.push("YY");}
-				if(vars.CV && vars.CV.length > 2){} else {errors.push("CV")}
-				return (errors.length) ? errors : false;
+				if(vars && typeof vars == 'object')	{
+					var errors = new Array(); // what is returned. an array of the payment fields that are not correct.
+					if(vars['payment/CC'] && app.u.isValidCC(vars['payment/CC']))	{} else	{errors.push("payment/CC");}
+					if(vars['payment/MM'] && app.u.isValidMonth(vars['payment/MM']))	{} else {errors.push("payment/MM");}
+					if(vars['payment/YY'] && app.u.isValidCCYear(vars['payment/YY']))	{} else {errors.push("payment/YY");}
+					if(vars['payment/CV'] && vars['payment/CV'].length > 2){} else {errors.push("payment/CV")}
+					return (errors.length) ? errors : false;
+					}
+				else	{
+					app.u.throwGMessage("in store_checkout.u.validate.CREDIT, vars is empty or not an object.");
+					return false;
+					}
+				
 				},
 			
 			ECHECK : function(vars) {
@@ -329,7 +341,8 @@ note - the order object is available at app.data['order|'+P.orderID]
 			
 			PO : function(vars)	{
 				var errors = new Array(); // what is returned. an array of the payment fields that are not correct. 
-				if(vars.PO){} else	{errors.push("PO")}
+				if(vars['payment/PO']){}
+				else	{errors.push("payment/PO")}
 				return (errors.length) ? errors : false;
 				}
 			
@@ -540,7 +553,7 @@ _gaq.push(['_trackEvent','Checkout','App Event','Payment failure']);
 						o += "<li>"+responseData['@issues'][i][3]+"<\/li>";
 						}
 					o += "<\/ul>";
-					$errorDiv.append(app.u.formatMessage({"message":o,"uiClass":"error","uiIcon":"alert"})).toggle(true);
+					$errorDiv.anymessage({"message":o,"uiClass":"error","uiIcon":"alert"}).toggle(true);
 					}
 				else	{
 					app.u.throwMessage(responseData);
@@ -606,7 +619,9 @@ this function closely mirrors core logic.
 
 //copy the billing address from the ID into the form fields.
 				app.ext.store_checkout.u.setAddressFormFromPredefined(addressClass,$x.attr('data-addressId'));
-				$('#data-bill_email').val() == app.data.cartDetail['bill/email']; //for passive, need to make sure email is updated too.
+				if(app.data.cartDetail)	{
+					$('#data-bill_email').val() == app.data.cartDetail['bill/email']; //for passive, need to make sure email is updated too.
+					}
 //copy all the billing address fields to the shipping address fields, if appropriate.
 				if($('#want-bill_to_ship').val() == '1') {
 					app.ext.store_checkout.u.setShipAddressToBillAddress();
@@ -651,15 +666,18 @@ _gaq.push(['_trackEvent','Checkout','User Event','Pre-defined address selected (
 				},
 
 
+
+
 //allows for setting of 'ship' address when 'ship to bill' is clicked and a predefined address is selected.
 			setAddressFormFromPredefined : function(addressType,addressId)	{
 //				app.u.dump('BEGIN store_checkout.u.setAddressFormFromPredefined');
 //				app.u.dump(' -> address type = '+addressType);
 //				app.u.dump(' -> address id = '+addressId);
 				
-				var L = app.data.buyerAddressList['@'+addressType].length
-				var a;
-				var r = false;
+				var L = app.data.buyerAddressList['@'+addressType].length,
+				a, //shortcut to address object.
+				r = false; //what is returned.
+
 //looks through predefined addresses till it finds a match for the address id. sets a to address object.
 				for(var i = 0; i < L; i += 1)	{
 					if(app.data.buyerAddressList['@'+addressType][i]['_id'] == addressId){
@@ -667,10 +685,14 @@ _gaq.push(['_trackEvent','Checkout','User Event','Pre-defined address selected (
 						r = true;
 						break;
 						}
+					else {}// no match. carry on.
 					}
-				
-//				app.u.dump(' -> a = ');
-//				app.u.dump(a);
+
+//app.u.dump(" -> a[addressType+'_region']: "+a[addressType+'_region']);
+//app.u.dump(" -> a[addressType+'_postal']: "+a[addressType+'_postal']);
+//app.u.dump(" -> $('#data-'+addressType+'_zip').length: "+$('#data-'+addressType+'_zip').length);
+//app.u.dump(" -> $('#data-'+addressType+'_state').length: "+$('#data-'+addressType+'_state').length);
+
 				$('#data-'+addressType+'_address1').val(a[addressType+'_address1']);
 				if(app.u.isSet(a[addressType+'_address2'])){$('#data-'+addressType+'_address2').val(a[addressType+'_address2'])};
 				$('#data-'+addressType+'_city').val(a[addressType+'_city']);
@@ -723,6 +745,7 @@ _gaq.push(['_trackEvent','Checkout','App Event','Payment failure']);
 
 //This will tell if there's a paypal tender in the paymentQ. doesn't check validity or anything like that. a quick function to be used when re-rendering panels.
 			thisSessionIsPayPal : function()	{
+				app.u.dump("BEGIN store_checkout.u.thisSessionIsPayPal.");
 				return (this.modifyPaymentQbyTender('PAYPALEC',null)) ? true : false;
 				},
 //Will check the payment q for a valid paypal transaction. Used when a buyer leaves checkout and returns during the checkout init process.
@@ -739,11 +762,12 @@ payment methods or they may add something new to the cart. If they do, execute t
 note - dispatch isn't IN the function to give more control to developer. (you may want to execute w/ a group of updates)
 */
 			nukePayPalEC : function() {
-//				app.u.dump("BEGIN store_checkout.u.nukePayPalEC");
+				app.u.dump("BEGIN store_checkout.u.nukePayPalEC");
 				$('#returnFromThirdPartyPayment').hide(); //used to display a 'welcome back' message. should be hidden if paypal is no longer active payment.
 				app.ext.convertSessionToOrder.vars['payment-pt'] = null;
 				app.ext.convertSessionToOrder.vars['payment-pi'] = null;
 				return this.modifyPaymentQbyTender('PAYPALEC',function(PQI){
+//					app.u.dump(" -> got into anonymous function. PQI: "); app.u.dump(PQI);
 					app.ext.store_checkout.calls.cartPaymentQ.init({'cmd':'delete','ID':PQI.ID},{'callback':'suppressErrors'}); //This kill process should be silent.
 					});
 				},
@@ -754,18 +778,18 @@ note - dispatch isn't IN the function to give more control to developer. (you ma
 //the value returned gets added to an array, which is returned by this function.
 //the entire lineitem in the paymentQ is passed in to someFunction.
 			modifyPaymentQbyTender : function(tender,someFunction){
-//				app.u.dump("BEGIN store_checkout.u.modifyPaymentQbyTender");
+				app.u.dump("BEGIN store_checkout.u.modifyPaymentQbyTender");
 				var inc = 0; //what is returned if someFunction not present or returns nothing. # of items in paymentQ affected.
 				var r = new Array(); //what is returned if someFunction returns anything.
 				if(tender && app.data.cartDetail && app.data.cartDetail['@PAYMENTQ'])	{
-//					app.u.dump(" -> all vars present. tender: "+tender+" and typeof someFunction: "+typeof someFunction);
+					app.u.dump(" -> all vars present. tender: "+tender+" and typeof someFunction: "+typeof someFunction);
 					var L = app.data.cartDetail['@PAYMENTQ'].length;
-//					app.u.dump(" -> paymentQ.length: "+L);
+					app.u.dump(" -> paymentQ.length: "+L);
 					for(var i = 0; i < L; i += 1)	{
-//						app.u.dump(" -> "+i+" TN: "+app.data.cartDetail['@PAYMENTQ'][i].TN);
+						app.u.dump(" -> "+i+" TN: "+app.data.cartDetail['@PAYMENTQ'][i].TN);
 						if(app.data.cartDetail['@PAYMENTQ'][i].TN == tender)	{
 							inc += 1;
-							if(typeof someFunction == 'function')	{
+							if(typeof someFunction === 'function')	{
 								r.push(someFunction(app.data.cartDetail['@PAYMENTQ'][i]))
 								}
 							}
@@ -856,8 +880,9 @@ note - dispatch isn't IN the function to give more control to developer. (you ma
 //				app.u.dump(" -> number of countries = "+L);
 				for(var i = 0; i < L; i += 1)	{
 					r += "<option value='"+app.data.appCheckoutDestinations['@destinations'][i].ISO+"' ";
-					if(data.value == app.data.appCheckoutDestinations['@destinations'][i].Z)
+					if(data.value == app.data.appCheckoutDestinations['@destinations'][i].ISO)	{
 						r += " selected='selected' ";
+						}
 					r += ">"+app.data.appCheckoutDestinations['@destinations'][i].Z+"</option>";
 					}
 				
