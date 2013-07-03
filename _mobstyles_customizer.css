@@ -96,7 +96,7 @@ ul.prodlist li	{list-style:none;}
 /* step 1 */
 
 /* holder for dropdown menu. */
-#storageContainerCatContainer	{margin-bottom:5px; margin-left:8px; width:252px; line-height:26px; background:url(images/mbo_conf_contcatbg-252x26.png) no-repeat #ffffff; position:relative; z-index:1000; font-size:11px; font-weight:normal;}
+#storageContainerCatContainer	{margin-bottom:5px; margin-left:8px; width:252px; line-height:26px; background:url(images/mbo_conf_contcatbg-252x26.png) no-repeat #ffffff; position:relative; z-index:10; font-size:11px; font-weight:normal;}
 
 
 
