@@ -919,9 +919,9 @@ var mob_customizer = function() {
           
         }
         else  {
-          app.ext.mob_customizer.calls.cartItemsAdd.init({"product_id":$('#storageContainerProdlist .selected').attr('data-pid'),"quantity":1});
+          app.calls.cartItemAppend.init({"sku":$('#storageContainerProdlist .selected').attr('data-pid'),"qty":1});
           for(var index in obj) {
-            app.ext.mob_customizer.calls.cartItemsAdd.init({"product_id":index,"quantity":obj[index]});
+            app.calls.cartItemAppend.init({"sku":index,"qty":obj[index]});
           }
           app.calls.refreshCart.init({'callback':'displayCart','extension':'store_cart','parentID':'modalCartContents'},'immutable');
           app.model.dispatchThis('immutable');
