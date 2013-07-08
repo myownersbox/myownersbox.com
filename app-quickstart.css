@@ -139,7 +139,7 @@ and offMenu is toggle off, hiding the change button.
 /* messaging css. some error css is defined in the jqueryui styles */
 
 .appMessage P	{padding:0; margin:0;} /* used in app messaging for warnings, alerts, successes, etc */
-.zMessage	{margin:6px; 0}
+.zMessage	{margin:6px;}
 
 .appMessage	{margin-bottom:12px; position:relative;}
 .appMessage .stdMargin {padding:5px;}
