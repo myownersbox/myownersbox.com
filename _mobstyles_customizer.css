@@ -11,6 +11,10 @@ If you edit it, don't version it and break the app... use your imagination here.
 
 */
 
+img.empty {
+	display: none;
+}
+
 .displayNone	{display:none;}
 
 #configuratorAddThis	{height:16px;}

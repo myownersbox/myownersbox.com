@@ -845,7 +845,7 @@ var mob_customizer = function() {
         if(!P.pid)
           o += " disabled='disabled' ";
         o += ">X<\/button><\/div><div onClick=\"app.ext.mob_customizer.u.drawerClicked('"+P.pid+"','selectedDrawerLoc_"+spot+"')\">";
-        o += app.u.makeImage({"h":"35","w":"35","b":"tttttt","name":P.image,"tag":1});
+        o += app.u.makeImage({"h":"35","w":"35","b":"tttttt","name":P.image,"class":P.cssClass,"tag":1});
         o += "<div>"+P.name+"<br />"+P.price+"<\/div>";
         return o;
       },
