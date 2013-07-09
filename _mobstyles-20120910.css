@@ -982,10 +982,6 @@ and offMenu is toggle off, hiding the change button.
   float: left;
 }
 
-.sideline li {
-  line-height: 2em;
-}
-
 #leftCol .sideline nav li a {
   display: inline;
   margin: 0;
