@@ -126,10 +126,12 @@ app.rq.push(['templateFunction','categoryTemplate','onCompletes', function(P) {
     app.model.abortQ('mutable'); //will kill existing process to stop default cat layout info from loading.
     app.ext.mob_customizer.actions.initConfigurator(P);
   }
+  /*
   if (/\.ncaa-.+/.test(getCategory(P.navcat, 1))) {
     // app.u.dump('on ncaa');
     $('#' + P.parentID + ' ' + '.categoryImage').html("<img src='images/banner_college.jpg' alt='Category Image' />").show();
   }
+  */
   
 
 }]);
