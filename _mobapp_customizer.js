@@ -464,7 +464,8 @@ var mob_customizer = function() {
 
           // app.u.dump(" -> before containerSizeSelected function executed. uriParams follow: ");
           // app.u.dump([app.ext.mob_customizer.vars.uriParams]);
-
+			
+			$('#storageContainerProdlist').empty();
           numRequests = app.ext.store_prodlist.u.buildProductList({"templateID":"mobStorageContainerProductSpec","parentID":"storageContainerProdlist","loadsTemplate":"mobStorageContainerProductSpec","csv":app.data['appCategoryDetail|'+catSafeID]['@products'], 'hide_summary':'true'});
           if(numRequests){
             app.calls.ping.init({"callback":"containerSizeSelected","extension":"mob_customizer","datapointer":"appProductGet|"+app.ext.mob_customizer.vars.uriParams.s2});
@@ -509,6 +510,7 @@ var mob_customizer = function() {
           $('#globalMessaging').append(app.u.getResponseErrors('Error! product '+pid+' does not have a size set.'));
         }
         else  {
+			size = size.toLowerCase();
           var spots = app.ext.mob_customizer.u.getSpotCountFromDimensions(size); // the # of spots available based on dimensions.
 
           //          app.u.dump(" -> size: "+size);
@@ -547,7 +549,7 @@ var mob_customizer = function() {
             //            app.u.dump(" -> removing class for ID "+$(this).attr('id'));
             $(this).removeClass('selected');
           });
-          $('#storageContainerProdlist_'+pid).addClass('selected');
+          $('#storageContainerProdlist_'+app.u.makeSafeHTMLId(pid)).addClass('selected');
           this.updateTotals();
           //adjustment to 'page'-specific addthis code for addThis.  pinterest requires an image and url to be passed.
           if(typeof addthis_share == 'object')  {
@@ -822,6 +824,7 @@ var mob_customizer = function() {
       //multiple H x W for # of spots
       //dim is dimensions, passed in as WxH format (2x3)
       getSpotCountFromDimensions : function(dim)  {
+		dim = dim.toLowerCase();
         var r;
         var ints = dim.split('x');
         r = Number(ints[0])*Number(ints[1]);
