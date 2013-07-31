@@ -468,7 +468,7 @@ if no parentID is set, then this function gets the data into memory for later us
 						}
 
 					for(var i = 0; i < L; i += 1)	{
-						app.u.dump("Queueing data fetch for "+pageCSV[i]);
+						//app.u.dump("Queueing data fetch for "+pageCSV[i]);
 						var _tag = {};
 						if(plObj.isWizard)	{
 							_tag = {'callback':'translateTemplate','extension':'store_prodlist','jqObj':magic.inspect('#'+this.getSkuSafeIdForList(plObj.parentID,pageCSV[i]))}
