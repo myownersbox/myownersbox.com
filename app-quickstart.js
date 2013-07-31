@@ -91,6 +91,7 @@ var myRIA = function() {
 				var r = true; //return false if extension won't load for some reason (account config, dependencies, etc).
 //This will create the arrays for the template[templateID].onCompletes and onInits
 				app.ext.myRIA.u.createTemplateFunctions(); //should happen early so that the myRIA.template object exists, specifically for app.u..appInitComplete
+				app.ext.myRIA.u.createPageHandlers(); //should happen early so that the myRIA.template object exists, specifically for app.u..appInitComplete
 				return r;
 				},
 			onError : function()	{
@@ -1431,7 +1432,7 @@ P.listID (buyer list id)
 
 
 		u : {
-
+			
 //executed when the app loads.  
 //sets a default behavior of loading homepage. Can be overridden by passing in infoObj.
 			handleAppInit : function(infoObj)	{
@@ -2712,6 +2713,9 @@ buyer to 'take with them' as they move between  pages.
 					else if(catSafeID == zGlobals.appSettings.rootcat || infoObj.pageType == 'homepage')	{
 						infoObj.templateID = 'homepageTemplate'
 						}
+					else if(app.ext.myRIA.u.queryPageHandlers('category',catSafeID)){
+						infoObj.templateID = 'categoryTemplate';
+						}
 					else	{
 						infoObj.templateID = 'categoryTemplate'
 						}
@@ -3051,6 +3055,151 @@ else	{
 				$('.cartTotal',$appView).text(app.u.formatMoney(total,'$',2,false));
 
 				//no error for cart data not being present. It's a passive function.
+				return r;
+				},
+
+			handleResource : function(arr){
+				if(arr[1] == 'templateFunction'){
+					app.ext.myRIA.template[arr[2]][arr[3]].push(arr[4]);
+					}
+				else if(arr[1] == 'pageHandler'){
+					//expected syntax:
+					//['myRIA', 'pageHandler', pagetype, pattern, templateID, tag, priority]
+					//TODO error handling for undef values? in addPageHandler?
+					this.addPageHandler(arr[2],arr[3],arr[4],arr[5],arr[6] || 0);
+					}
+				},
+			
+			addPageHandler : function(pagetype, pattern, templateID, tag, priority){
+				//pattern syntax: 
+				//	For Products and Categories:
+				//	+	.path.to.category || PID
+				//		An exact match to a catsafeID or productID
+				//	Categories only:
+				//	+	.parent.*
+				//		A shortcut representing all subcategories of a category
+				//		DOES NOT INCLUDE PARENT CATEGORY
+				//	+	/regex/
+				//		A custom regex-
+				//		NOTE: MODIFIERS (i, g, m) ARE NOT SUPPORTED
+				//		you are responsible for testing your own regex!
+				app.u.dump("Adding page handler: ");
+				app.u.dump(pagetype);
+				app.u.dump(pattern);
+				app.u.dump(templateID);
+				app.u.dump(tag);
+				app.u.dump(priority);
+				if(app.ext.myRIA.pageHandlers[pagetype]){
+					if(pagetype == "category"){
+						if(pattern.charAt(0) === "/" && pattern.charAt(pattern.length-1) === "/"){
+							// case: /regex/
+							pagetype += "|regex";
+							//strip slashes
+							pattern = pattern.substring(1,pattern.length-1);
+							}
+						else if(pattern.indexOf(".*") == pattern.length-2){
+							//case: .parent.*
+							pagetype += "|regex";
+							//convert pattern to regex syntax
+							pattern = pattern.replace(/\./g,"\\.");
+							pattern = pattern.replace("*",".*");
+							}
+						else {
+							//Unknown case, assume exact match
+							}
+						}
+					
+					//check priority level of previously assigned handlers to the same pattern, delete if their are less than
+					//also delete if they are equal, but complain about it
+					if(app.ext.myRIA.pageHandlers[pagetype][pattern]){
+						if(app.ext.myRIA.pageHandlers[pagetype][pattern].priority > priority){
+							//We are late to the party, do nothing
+							//console messge?
+							}
+						else {
+							if(app.ext.myRIA.pageHandlers[pagetype][pattern].priority == priority){
+								//We're going to overwrite you, but we're not happy about it
+								app.u.throwMessage(app.u.errMsgObject("WARNING: Overwriting previous page handler with same priority-- \n"+
+									"PAGETYPE: "+pagetype+"\n"+
+									"PATTERN: "+pattern+"\n"+
+									"PRIORITY: "+priority+"\n"+
+									"OLD TEMPLATEID: "+app.ext.myRIA.pageHandlers[pagetype][pattern].templateID+"\n"+
+									"NEW TEMPLATEID: "+templateID+"\n"+
+									"OLD TAG: "+app.ext.myRIA.pageHandlers[pagetype][pattern].tag+"\n"+
+									"NEW TAG: "+app.ext.myRIA.pageHandlers[pagetype][pattern].tag));
+								}
+							delete app.ext.myRIA.pageHandlers[pagetype][pattern]
+							}
+						}
+					
+					//after above conditional, if a handler has been left behind, we're not overwriting it
+					if(!app.ext.myRIA.pageHandlers[pagetype][pattern]){
+						app.ext.myRIA.pageHandlers[pagetype][pattern] = {
+							"templateID":templateID,
+							"tag":tag,
+							"priority" : priority
+							};
+						}
+						
+					}
+				else {
+					app.u.throwMessage(app.u.errMsgObject("ERROR: pagetype:"+pagetype+" is not supported by app.ext.myRIA.u.addPageHandler",9463));
+					}
+				},
+			
+			createPageHandlers : function(){
+				app.ext.myRIA.pageHandlers = {
+					"category":{},
+					"category|regex":{},
+					"product":{}
+					};
+				},
+			
+			queryPageHandlers : function(pagetype, key){
+				var r = false;
+				
+				if(app.ext.myRIA.pageHandlers[pagetype] && app.ext.myRIA.pageHandlers[pagetype][key]){
+					r = app.ext.myRIA.pageHandlers[pagetype][key];
+					app.u.dump("Exact Match Found: "+key);
+					}
+				else if(pagetype == "category"){
+					//Check regex only if exact match fails, regardless of priority
+					for(var pattern in app.ext.myRIA.pageHandlers["category|regex"]){
+						var regex = new RegExp(pattern);
+						if(regex.exec(key) == key){
+							match = app.ext.myRIA.pageHandlers["category|regex"][pattern];
+							if(!r){
+								app.u.dump("Regex Match Found: "+key+".."+pattern);
+								r = match
+								}
+							else{
+								if(r.priority > match.priority){
+									//You win this round, previous match...
+									}
+								else{
+									if(r.priority == match.priority){
+										//We're going to override you, but we're not happy about it
+										app.u.throwMessage(app.u.errMsgObject("WARNING: Overwriting previous page handler with same priority-- \n"+
+											"PAGETYPE: category|regex\n"+
+											"KEY: "+key+"\n"+
+											"PRIORITY: "+r.priority+"\n"+
+											"NEW PATTERN: "+pattern+"\n"+
+											"OLD TEMPLATEID: "+r.templateID+"\n"+
+											"NEW TEMPLATEID: "+match.templateID+"\n"+
+											"OLD TAG: "+r.tag+"\n"+
+											"NEW TAG: "+match.tag));
+										}
+									app.u.dump("Regex Match Found: "+key+".."+pattern);
+									r = match;
+									}
+								}
+							}
+						}
+					}
+				else {
+					//Just because your mommy says you're special doesn't mean you have a custom template.
+					}
+					
 				return r;
 				},
 

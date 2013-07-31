@@ -34,7 +34,9 @@ app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.showloading-v1.0.jt.j
 app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.ui.anyplugins.js']); //in zero pass in case product page is first page.
 
 
-
+app.rq.push(['myRIA', 'pageHandler', 'category', '.drawers', 'categoryTemplate', 'init', 0]);
+app.rq.push(['myRIA', 'pageHandler', 'category', '/\.drawers/', 'categoryTemplate', 'init', 1]);
+app.rq.push(['myRIA', 'pageHandler', 'category', '.drawers.*', 'categoryTemplate', 'init', 1]);
 
 //add tabs to product data.
 //tabs are handled this way because jquery UI tabs REALLY wants an id and this ensures unique id's between product

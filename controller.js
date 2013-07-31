@@ -1211,8 +1211,11 @@ css : type, pass, path, id (id should be unique per css - allows for not loading
 			else if(arr[0] == 'css')	{
 				app.u.loadCSSFile(arr[2],arr[3] || null);
 				}
-			else	{
-	//currently, this function is intended for pass 0 only, so if an item isn't pass 0,do nothing with it.
+			else if(app.ext[arr[0]]){
+				app.ext[arr[0]].u.handleResource(arr);
+				}
+			else{
+				app.u.dump("-> WARNING unknown resource passed in:"); app.u.dump(r);
 				}
 
 			
