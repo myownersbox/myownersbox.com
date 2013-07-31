@@ -359,7 +359,7 @@ renderOptionNUMBER: function(pog) {
 	if(pog['max'])
 		$textbox.attr('max',pog['max']);
 	if(pog['min'])
-		$textbox.attr('max',pog['max']);
+		$textbox.attr('min',pog['min']);
 		
 	$parentDiv.append($textbox);
 	if(pog['ghint']) {$parentDiv.append(pogs.showHintIcon(pogid,pog['ghint']))}
@@ -479,7 +479,7 @@ renderOption: function(pog,pid) {
 //	$displayObject.append($formFieldDiv);   /// NOTE the form ID on this should probably be auto-generated from the element ID.
 
     if (this.handlers["pogid."+pogid]) {
-      $optionObj = eval("this."+this.handlers["pogid."+pogid]+"(pog)");
+      $optionObj = eval("this."+this.handlers["pogid."+pogid]+"(pog)");  // this[this.handlers["pogid."+pogid]](pog)
       }
     else if (this.handlers["type."+pog.type]) {
       $optionObj = eval("this."+this.handlers["type."+pog.type]+"(pog)");
@@ -1155,11 +1155,27 @@ $.fn.serializeJSON = function(options){
 
 	$form.find('input, select, textarea, datalist, keygen, output').each(function(){
 		var val;
+//		app.u.dump(" -> this.type: "+this.type);
 		if(!this.name){return}; //early exit if name not set, which is required.
 
 		if ('radio' === this.type) {
 			if(json[this.name]) { return; } //value already set, exit early.
 			json[this.name] = this.checked ? this.value : '';
+			}
+		else if('select-multiple' === this.type)	{
+			if(!this.value)	{}
+			else	{
+//multiple select is saved as an array.  If you need it flattened, either write a param to change the behavior or flatten it outside.
+				var optionsArr = new Array(); // 'this' loses meaning in the option loop, so a var is created and set after.
+				$('option',$(this)).each(function(){
+					var $option = $(this);
+	//				app.u.dump(" -> $option.prop('selected'): "+$option.prop('selected'));
+					if($option.prop('selected'))	{
+						optionsArr.push($option.val());
+						}
+					})
+				json[this.name] = optionsArr;
+				}
 			}
 		else if ('checkbox' === this.type) {
 			if(options.cb)	{

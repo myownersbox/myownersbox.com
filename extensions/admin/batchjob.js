@@ -48,8 +48,8 @@ var admin_batchJob = function() {
 				if(tagObj.parentID)	{
 					$(app.u.jqSelector('#',tagObj.parentID)).hideLoading();
 					}
-				else if(tagObj.jqObj && typeof tabgbj.jqObj === 'object')	{
-					tabgbj.jqObj.hideLoading();
+				else if(tagObj.jqObj && typeof tagObj.jqObj === 'object')	{
+					tagObj.jqObj.hideLoading();
 					}
 				else	{} //nothing to hideloading on.
 //error handling for no jobid is handled inside this function.
@@ -81,7 +81,8 @@ var admin_batchJob = function() {
 						}
 					else	{
 						$tabContent.anycontent({'templateID':'batchJobManagerPageTemplate','dataAttribs':{'id':'batchJobManagerContent'},'datapointer':rd.datapointer});
-						$(".gridTable",$tabContent).anytable();
+						$(".gridTable",$tabContent).anytable({'inverse':true}); //inverse will sort high to low.
+						$(".gridTable",$tabContent).find('th').first().trigger('click'); //sort by batch job.
 						app.u.handleAppEvents($tabContent);
 						}
 					}},'mutable');
@@ -133,16 +134,34 @@ var admin_batchJob = function() {
 							
 							if(app.data[rd.datapointer]['@BODY'] && app.data[rd.datapointer]['@BODY'].length)	{
 //google visualization will error badly if the # of columns in the each body row doesn't match the # of columns in the head.
-app.u.dump(" -> app.data[rd.datapointer]['@BODY'][0].length: "+app.data[rd.datapointer]['@BODY'][0].length);
-app.u.dump(" -> app.data[rd.datapointer]['@HEAD'][0].length: "+app.data[rd.datapointer]['@HEAD'][0].length);
+//								app.u.dump(" -> app.data[rd.datapointer]['@BODY'][0].length: "+app.data[rd.datapointer]['@BODY'][0].length);
+//								app.u.dump(" -> app.data[rd.datapointer]['@HEAD'][0].length: "+app.data[rd.datapointer]['@HEAD'][0].length);
 								if(app.data[rd.datapointer]['@BODY'][0].length == app.data[rd.datapointer]['@HEAD'].length)	{
 //@HEAD is returned with each item as an object. google visualization wants a simple array. this handles the conversion.							
 									for(var i = 0; i < L; i += 1)	{
 										tableHeads.push(app.data[rd.datapointer]['@HEAD'][i].name);
 										}
 
-									var $expBtn = $("<button \/>").text('Export Page to CSV').button().on('click',function(){
-										$('.google-visualization-table-table').toCSV();
+									var $expBtn = $("<button \/>").text('Export to CSV').button().addClass('floatRight').on('click',function(){
+//										$('.google-visualization-table-table').toCSV();  //exports just the page in focus.
+										var L = app.data[rd.datapointer]['@BODY'].length;
+										//first row of CSV is the headers.
+										var csv = $.map(app.data[rd.datapointer]['@HEAD'],function(val){
+												return '"'+val.name+'"';
+												})
+
+										for(var i = 0; i < L; i += 1)	{
+											csv += "\n"+$.map(app.data[rd.datapointer]['@BODY'][i],function(val){
+//												return '"'+((val == null) ? '' : escape(val))+'"';
+												return '"'+((val == null) ? '' : val.replace(/"/g,'""'))+'"'; //don't return 'null' into report.
+												})
+											}
+										
+										app.ext.admin.u.fileDownloadInModal({
+											'skipDecode':true,
+											'filename':app.data[rd.datapointer].title+'.csv',
+											'mime_type':'text/csv',
+											'body':csv});
 										}).appendTo($target);
 
 
@@ -221,6 +240,31 @@ app.u.dump(" -> app.data[rd.datapointer]['@HEAD'][0].length: "+app.data[rd.datap
 								$table.stickytab('close');
 								})
 							})
+						});
+					}
+				else	{
+//btn hidden by default. no action needed.
+					}
+				},
+
+
+			showDownload : function($btn)	{
+				if($btn.closest('tr').data('batch_exec') == 'EXPORT' && $btn.closest('tr').data('status').indexOf('END-SUCCESS') >= 0)	{
+					$btn.button({text: false,icons: {primary: "ui-icon-arrowthickstop-1-s"}}).show();
+					$btn.off('click.showReport').on('click.showReport',function(event){
+						event.preventDefault();
+app.model.addDispatchToQ({
+	'_cmd':'adminBatchJobDownload',
+	'guid':$btn.closest('tr').data('guid'),
+	'base64' : '1',
+	'_tag':	{
+		'datapointer' : 'adminBatchJobDownload', //big dataset returned. only keep on in memory.
+		'callback' : 'fileDownloadInModal',
+		'extension' : 'admin'
+		}
+	},'mutable');
+app.model.dispatchThis('mutable');
+						
 						});
 					}
 				else	{

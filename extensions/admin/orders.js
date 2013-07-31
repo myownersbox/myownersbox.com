@@ -1086,54 +1086,18 @@ else	{
 		handleOrderListTab : function(process)	{
 //			app.u.dump("BEGIN admin_orders.u.handleOrderListTab");
 			var $target = $('#orderListTab');
+			var $table = $('#orderListTable');
 			if($target.length)	{
-//init should be run when the extension is loaded. adds click events and whatnot.
-				if(process == 'init')	{
-//					app.u.dump(" -> process = init");
-					$target.hide();  //make sure it's invisible.
-					$('.tab',$target).on('click.showOrderListTab',function(){
-						if($target.css('left') == '0px')	{
-							app.ext.admin_orders.u.handleOrderListTab('collapse');
-							}
-						else	{
-							app.ext.admin_orders.u.handleOrderListTab('expand');
-							}
-						});
-					}
-				else if(process == 'activate')	{
-					$target.css('left',0).show(); //make tab/contents visible.
-					$( "#orderListTableBody" ).selectable( "disable" ); //remove the selectable functionality.
-					var $tbody = $('tbody',$target);
-					$('thead tr',$target).empty().append($('th','#orderListTable').clone());
-					$tbody.empty().append($('#orderListTableBody').children()); //clear old orders first then copy rows over.
-//remove click event to move the orders over to the tab, since they're already in the tab.
-					$("[data-app-event='admin_orders|orderUpdateShowEditor']",$tbody).off('click.moveOrdersToTab').on('click.hideOrderTab',function(){
-						app.ext.admin_orders.u.handleOrderListTab('collapse');
-						});
-					$("table",$target).anytable();
-					$('td .orderid',$target).addClass('lookLikeLink').on('click.orderLink',function(){
-						$(this).closest('tr').find("[data-app-event='admin_orders|orderUpdateShowEditor']").trigger('click');
-						})
-//pause for just a moment, then shrink the panel. Lets user see what happened.
-					setTimeout(function(){
-						app.ext.admin_orders.u.handleOrderListTab('collapse');
-						},1500);
-					}
-				else if(process == 'collapse')	{
-					$target.animate({left: -($target.outerWidth())}, 'slow');
-					}
-				else if(process == 'expand')	{
-					$target.animate({left: 0}, 'fast');
-					}
-				else if(process == 'deactivate')	{
-					$target.hide();
-					}
-				else	{
-					$('#globalMessaging').anymessage({'message':'In admin_orders.u.handleOrderListTab, unrecognized process ['+process+']','gMessage':true});
-					}
+				//tab already exists. don't create a duplicate.
 				}
 			else	{
-				app.u.dump("admin_orders.u.handleOrderListTab function executed, but orderListTab not on DOM."); //noncritical error. do not show to user.
+				$table.stickytab({'tabtext':'order results','tabID':'productListTab'});
+//make sure buttons and links in the stickytab content area close the sticktab on click. good usability.
+				$('button, a',$table).each(function(){
+					$(this).off('close.stickytab').on('click.closeStickytab',function(){
+						$table.stickytab('close');
+						})
+					})
 				}
 			},
 
@@ -1752,6 +1716,7 @@ $('.editable',$container).each(function(){
 					if(orderID && app.data['adminOrderDetail|'+orderID] && app.data['adminOrderDetail|'+orderID].customer && app.data['adminOrderDetail|'+orderID].customer.cid)	{
 						var $D = app.ext.admin.i.dialogCreate({title:'Edit Customer: '+app.data['adminOrderDetail|'+orderID].customer.cid});
 						app.ext.admin_customer.a.showCustomerEditor($D,{'CID':app.data['adminOrderDetail|'+orderID].customer.cid});
+						$D.dialog('open');
 						}
 					else	{
 						app.u.throwGMessage("in admin_orders.buttonActions.orderCustomerEdit, unable to determine orderID ["+orderID+"]");
@@ -2014,7 +1979,7 @@ else	{
 	}
 							}});
 //						app.u.dump(" -> frmObj.updateSystemMessage: "+frmObj.updateSystemMessage);
-						if(frmObj.updateSystemMessage.toLowerCase() == 'on' && frmObj.MSGID != 'BLANK')	{
+						if(frmObj.updateSystemMessage && frmObj.updateSystemMessage.toLowerCase() == 'on' && frmObj.MSGID != 'BLANK')	{
 //							app.u.dump(" -> updating default system messaging");
 							frmObj.PRT = partition;
 							frmObj.TYPE = 'ORDER'; //Don't pass a blank FORMAT, must be set to correct type.
@@ -2091,7 +2056,7 @@ else	{
 
 				}, //orderEmailShowMessageList
 
-			"orderTicketCreate" : function($btn)	{
+/*			"orderTicketCreate" : function($btn)	{
 				$btn.button();
 				$btn.off('click.customerUpdateNotes').on('click.customerUpdateNotes',function(event){
 					event.preventDefault();
@@ -2105,7 +2070,7 @@ else	{
 						}
 					});
 				}, //orderTicketCreate
-
+*/
 			"orderListUpdateSelectAll" : function($btn)	{
 				$btn.button();
 				$btn.off('click.orderListUpdateSelectAll').on('click.orderListUpdateSelectAll',function(event){

@@ -52,16 +52,14 @@ var admin = function() {
 		
 		'pageTemplateSites',
 		'domainListTemplate',
-		'partitionListTemplate',
+		'partitionListTemplate'
+
+//		'projectsListTemplate',
+//		'projectDetailTemplate',
+//		'projectCreateTemplate',
 		
-		'projectsPageTemplate',
-		'projectsListTemplate',
-		'projectDetailTemplate',
-		'projectCreateTemplate',
-		
-		'rssAddUpdateTemplate',
-		'rssPageTemplate',
-		'rssListTemplate'		
+//		'rssAddUpdateTemplate',
+//		'rssListTemplate'		
 		
 		); 
 	var r = {
@@ -112,91 +110,6 @@ if no handler is in place, then the app would use legacy compatibility mode.
 
 
 	calls : {
-
-
-
-//filter is required
-		adminAppTicketList : {
-			init : function(status,_tag,Q)	{
-				var r = 0;
-				if(status)	{
-					r = 1;
-					_tag = _tag || {};
-					_tag.datapointer = "adminAppTicketList|"+status;
-					this.dispatch(status,_tag,Q);
-					}
-				else	{
-					$('#globalMessaging').anymessage({"message":"In admin.calls.adminAppTicketList, status is required.",'gMessage':true});
-					}
-				return r;
-				},
-			dispatch : function(status,_tag,Q)	{
-				app.model.addDispatchToQ({"_cmd":"adminAppTicketList","STATUS":status,"_tag":_tag},Q || 'mutable');	
-				}
-			}, //adminAppTicketList
-
-		adminAppTicketSearch : {
-			init : function(obj,_tag,Q)	{
-				var r = 0;
-				obj = obj || {};
-				if(obj)	{
-					r = 1;
-					_tag = _tag || {};
-					_tag.datapointer = "adminAppTicketSearch";
-					this.dispatch(obj,_tag,Q);
-					}
-				else	{
-					$('#globalMessaging').anymessage({"message":"In admin.calls.adminAppTicketList, filter is required.",'gMessage':true});
-					}
-				return r;
-				},
-			dispatch : function(obj,_tag,Q)	{
-				obj._cmd = "adminAppTicketSearch";
-				obj._tag = _tag;
-				app.model.addDispatchToQ(obj,Q || 'mutable');	
-				}
-			}, //adminAppTicketSearch
-
-		adminAppTicketDetail : {
-			init : function(tktcode,_tag,Q)	{
-				var r = 0;
-				if(tktcode)	{
-					r = 1;
-					_tag = _tag || {};
-					_tag.datapointer = "adminAppTicketDetail|"+tktcode;
-					this.dispatch(tktcode,_tag,Q);
-					}
-				else	{
-					$('#globalMessaging').anymessage({"message":"In admin.calls.adminAppTicketDetail, tktcode is required.",'gMessage':true});
-					}
-				return r;
-				},
-			dispatch : function(tktcode,_tag,Q)	{
-				app.model.addDispatchToQ({"_cmd":"adminAppTicketDetail","TKTCODE":tktcode,"_tag":_tag},Q || 'mutable');	
-				}
-			}, //adminAppTicketDetail
-
-		adminAppTicketCreate : {
-			init : function(obj,_tag,Q)	{
-				var r = 0;
-				obj = obj || {};
-				if(!$.isEmptyObject(obj))	{
-					r = 1;
-					_tag = _tag || {};
-					_tag.datapointer = "adminAppTicketCreate";
-					this.dispatch(obj,_tag,Q);
-					}
-				else	{
-					$('.appMessaging').anymessage({"message":"In admin.calls.adminAppTicketCreate, form params were empty.",'gMessage':true});
-					}
-				return r;
-				},
-			dispatch : function(obj,_tag,Q)	{
-				obj._cmd = 'adminAppTicketCreate';
-				obj._tag = _tag;
-				app.model.addDispatchToQ(obj,Q || 'immutable');	
-				}
-			}, //adminAppTicketCreate
 
 		adminAppTicketMacro : {
 			init : function(tktcode,macros,_tag,Q)	{
@@ -617,6 +530,37 @@ if no handler is in place, then the app would use legacy compatibility mode.
 				}			
 			}, //adminDomainList
 
+
+//* 201324 -> though moving towards a non-defined call based approach, for calls that need/want local storage, we'll still declare them (like this one)
+		adminEBAYCategory :  {
+			init : function(obj,_tag,Q)	{
+				obj = obj || {}
+				_tag = _tag || {};
+				_tag.datapointer = (obj.pid) ? "adminEBAYCategory|"+app.model.version+"|"+obj.pid+"|"+obj.categoryid : "adminEBAYCategory|"+app.model.version+"|"+obj.categoryid;
+				var r = 0;
+//if xsl is set, localstorage is NOT used.
+				if(obj.xsl)	{
+					app.u.dump(" -> XSL is set, do NOT use what is in memory or local storage");
+					r = 1;
+					this.dispatch(obj,_tag,Q);
+					}
+				else if(app.model.fetchData(_tag.datapointer) == false)	{
+					r = 1;
+					this.dispatch(obj,_tag,Q);
+					}
+				else	{
+					app.u.handleCallback(_tag);
+					}
+				return r; 
+				},
+			dispatch : function(obj,_tag,Q)	{
+				obj._cmd = 'adminEBAYCategory';
+				obj._tag = _tag;
+				app.model.addDispatchToQ(obj,Q || 'mutable');
+				}			
+			}, //adminDomainList
+
+
 //PRT and TYPE (ex: ORDER) are required params
 		adminEmailList : {
 			init : function(obj,_tag,Q)	{
@@ -645,6 +589,7 @@ if no handler is in place, then the app would use legacy compatibility mode.
 				app.model.addDispatchToQ(obj,Q || 'mutable');
 				}			
 			}, //adminEmailList
+
 		adminEmailSave : {
 			init : function(obj,_tag,Q)	{
 				var r = 0;
@@ -662,50 +607,6 @@ if no handler is in place, then the app would use legacy compatibility mode.
 				}
 			}, //adminDataQuery
 
-
-//obj requires title and uuid, priority and @GRAPHS are optional.
-		adminGiftcardSearch : {
-			init : function(obj,_tag,Q)	{
-				_tag = _tag || {}; 
-				_tag.datapointer = "adminGiftcardSearch"
-				this.dispatch(obj,_tag,Q);
-				return 1;
-				},
-			dispatch : function(obj,_tag,Q)	{
-				obj._cmd = 'adminGiftcardSearch'
-				obj._tag = _tag;
-				app.model.addDispatchToQ(obj,Q || 'mutable');	
-				}
-			}, //adminGiftcardSearch
-//obj requires title and uuid, priority and @GRAPHS are optional.
-		adminGiftcardDetail : {
-			init : function(GCID,_tag,Q)	{
-				var r = 0;
-				if(GCID)	{
-					_tag = _tag || {}; 
-					_tag.datapointer = "adminGiftcardDetail|"+GCID;
-					if(app.model.fetchData(_tag.datapointer) == false)	{
-						r = 1;
-						this.dispatch(GCID,_tag,Q);
-						}
-					else	{
-						app.u.handleCallback(_tag);
-						}
-					}
-				else	{
-					$('#globalMessaging').anymessage({"message":"In admin.calls.adminGiftcardDetail, GCID not passed","gMessage":true});
-					}
-				return r;
-				},
-			dispatch : function(GCID,_tag,Q)	{
-				var obj = {};
-				obj.GCID = GCID;
-				obj._cmd = 'adminGiftcardDetail'
-				obj._tag = _tag;
-				app.model.addDispatchToQ(obj,Q || 'mutable');	
-				}
-			}, //adminGiftcardSearch
-		
 
 //obj requires title and uuid, priority and @GRAPHS are optional.
 		adminKPIDBCollectionCreate : {
@@ -874,22 +775,6 @@ if no handler is in place, then the app would use legacy compatibility mode.
 
 
 
-		adminProductReviewList : {
-			init : function(obj,_tag,Q)	{
-				_tag = _tag || {}; 
-				_tag.datapointer = "adminProductReviewList"
-				this.dispatch(obj,_tag,Q);
-				return 1;
-				},
-			dispatch : function(obj,_tag,Q)	{
-				obj._cmd ="adminProductReviewList";
-				obj._tag = _tag
-				app.model.addDispatchToQ(obj,Q || 'mutable');	
-				}
-			}, //adminKPIDBCollectionList	
-
-
-
 //@head and @body in the response is the data I should use.
 //guid comes from batch list.
 		adminReportDownload : {
@@ -915,53 +800,6 @@ if no handler is in place, then the app would use legacy compatibility mode.
 			},
 
 
-
-
-
-
-
-		adminRSSList : {
-			init : function(_tag,Q)	{
-				var r = 0;
-				_tag = _tag || {}; 
-				_tag.datapointer = "adminRSSList|"+app.vars.partition;
-				if(app.model.fetchData(_tag.datapointer) == false)	{
-					r = 1;
-					this.dispatch(_tag,Q);
-					}
-				else	{
-					app.u.handleCallback(_tag);
-					}
-				return r;
-				},
-			dispatch : function(_tag,Q)	{
-				app.model.addDispatchToQ({"_cmd":"adminRSSList","_tag" : _tag},Q || 'mutable');	
-				}
-			}, //adminRSSList
-
-
-//obj requires title and uuid, priority and @GRAPHS are optional.
-		adminRSSCreate : {
-			init : function(obj,_tag,Q)	{
-				var r = 0;
-				_tag = _tag || {}; 
-				_tag.datapointer = "adminRSSCreate"
-				obj = obj || {};
-				if(obj.CPG)	{ // !!! this validation needs updating.
-					r = 1;
-					this.dispatch(obj,_tag,Q);
-					}
-				else	{
-					$('.appMessaging').anymessage({"message":"In admin.calls.adminRSSCreate, uuid or title not passed","gMessage":true})
-					}
-				return r;
-				},
-			dispatch : function(obj,_tag,Q)	{
-				obj._cmd = 'adminRSSCreate'
-				obj._tag = _tag;
-				app.model.addDispatchToQ(obj,Q || 'immutable');	
-				}
-			}, //adminRSSCreate
 //obj requires title and uuid, priority and @GRAPHS are optional.
 		adminRSSRemove : {
 			init : function(listID,_tag,Q)	{
@@ -980,7 +818,7 @@ if no handler is in place, then the app would use legacy compatibility mode.
 			dispatch : function(listID,_tag,Q)	{
 				app.model.addDispatchToQ({"_cmd":"adminRSSRemove","_tag":_tag,"ID":listID},Q || 'immutable');	
 				}
-			}, //adminRSSCreate
+			}, //adminRSSRemove
 
 		adminRSSUpdate : {
 			init : function(obj,_tag,Q)	{
@@ -1002,7 +840,7 @@ if no handler is in place, then the app would use legacy compatibility mode.
 				obj._tag = _tag;
 				app.model.addDispatchToQ(obj,Q || 'immutable');	
 				}
-			}, //adminRSSCreate
+			}, //adminRSSUpdate
 
 		adminRSSDetail : {
 			init : function(cpg,_tag,Q)	{
@@ -1026,7 +864,7 @@ if no handler is in place, then the app would use legacy compatibility mode.
 			dispatch : function(cpg,_tag,Q)	{
 				app.model.addDispatchToQ({"_cmd":"adminRSSDetail","CPG":cpg,"_tag" : _tag},Q || 'mutable');
 				}
-			}, //adminRSSList
+			}, //adminRSSDetail
 
 
 		adminMessagesList : {
@@ -1320,165 +1158,13 @@ if giftcard is on there, no paypal will appear.
 				app.model.addDispatchToQ({"_cmd":"adminProductManagementCategoriesComplete","_tag":_tag},Q);	
 				}
 			}, //adminProductManagementCategoryList
-		adminProductUpdate : {
-			init : function(pid,attribs,_tag)	{
-				var r = 0;
-				if(pid && !$.isEmptyObject(attribs))	{
-					this.dispatch(pid,attribs,_tag)
-					r = 1;
-					}
-				else	{
-					app.u.throwGMessage("In admin.calls.adminProductUpdate, either pid ["+pid+"] not set of attribs is empty.");
-					app.u.dump(attribs);
-					}
-				return r;
-				},
-			dispatch : function(pid,attribs,_tag)	{
-				var obj = {};
-				obj._cmd = "adminProductUpdate";
-				obj._tag = _tag || {};
-				obj.pid = pid;
-				obj['%attribs'] = attribs;
-				app.model.addDispatchToQ(obj,'immutable');
-				}
-			}, //adminProductUpdate
 
-		adminSupplierCreate	: {
-			
-			init : function(obj,_tag,Q)	{
-				this.dispatch(obj,_tag,Q);
-				return 1;
-				},
-			
-			dispatch : function(obj,_tag,Q){
-				obj._cmd = 'adminSupplierCreate';
-				obj._tag = _tag || {};
-				obj._tag.datapointer = 'adminSupplierCreate';
-				app.model.addDispatchToQ(obj,Q || 'immutable');
-				}
-			
-			}, //adminSupplierCreate
-
-		adminSupplierItemList : {
-			init : function(vendorid,_tag,Q)	{
-				var r = 0;
-				if(vendorid)	{
-					_tag = _tag || {};
-					_tag.datapointer = "adminSupplierItemList|"+vendorid;
-					if(app.model.fetchData(_tag.datapointer) == false)	{
-						r = 1;
-						this.dispatch(vendorid,_tag,Q);
-						}
-					else	{
-						app.u.handleCallback(_tag);
-						}
-					}
-				else	{
-					$('#globalMessaging').anymessage({"message":"In admin.calls.adminSupplierItemList, vendorid not passed","gMessage":true})
-					}
-				return r;
-				},
-			dispatch : function(vendorid,_tag,Q)	{
-				app.model.addDispatchToQ({_cmd : "adminSupplierItemList",_tag:_tag,"VENDORID":vendorid},Q || mutable);
-				}
-			}, //adminSupplierItemList
-
-
-		adminSupplierOrderList : {
-			init : function(obj,_tag,Q)	{
-				var r = 0;
-				if(obj && obj.VENDORID && obj.FILTER)	{
-					_tag = _tag || {};
-					_tag.datapointer = "adminSupplierOrderList|"+obj.VENDORID+"|"+obj.FILTER;
-					if(app.model.fetchData(_tag.datapointer) == false)	{
-						r = 1;
-						this.dispatch(obj,_tag,Q);
-						}
-					else	{
-						app.u.handleCallback(_tag);
-						}
-					}
-				else	{
-					$('#globalMessaging').anymessage({"message":"In admin.calls.adminSupplierOrderList, either FILTER or VENDORID not passed in param object","gMessage":true})
-					}
-				return r;
-				},
-			dispatch : function(obj,_tag,Q)	{
-				obj._cmd = "adminSupplierOrderList";
-				obj._tag = _tag || {};
-				app.model.addDispatchToQ(obj,Q || mutable);
-				}
-			}, //adminSupplierOrderList
-
-		adminSupplierList : {
-			init : function(_tag,Q)	{
-				var r = 0;
-				_tag = _tag || {};
-				_tag.datapointer = "adminSupplierList";
-				if(app.model.fetchData(_tag.datapointer) == false)	{
-					r = 1;
-					this.dispatch(_tag,Q);
-					}
-				else	{
-					app.u.handleCallback(_tag);
-					}
-				return r;
-				},
-			dispatch : function(_tag,Q)	{
-				app.model.addDispatchToQ({_cmd : "adminSupplierList",_tag:_tag},Q || mutable);
-				}
-			}, //adminSupplierList
-
-//VENDORID = supplier id (CODE)
-		adminSupplierDetail : {
-			init : function(vendorid,_tag,Q)	{
-				var r = 0;
-				_tag = _tag || {};
-				_tag.datapointer = "adminSupplierDetail|"+vendorid;
-				if(app.model.fetchData(_tag.datapointer) == false)	{
-					r = 1;
-					this.dispatch(vendorid,_tag,Q);
-					}
-				else	{
-					app.u.handleCallback(_tag);
-					}
-				return r;
-				},
-			dispatch : function(vendorid,_tag,Q)	{
-				app.model.addDispatchToQ({_cmd : "adminSupplierDetail","VENDORID":vendorid,_tag:_tag},Q || mutable);
-				}
-			}, //adminSupplierList
-
-			
-// !!! not done. 
-		adminSupplierUpdate	: {
-			init : function(vendorid, updateObj,_tag,Q)	{
-				var r = 0;
-				if(vendorid && typeof updateObj == 'object')	{
-					r = 1;
-					this.dispatch(vendorid,updateObj,_tag,Q);
-					}
-				else	{
-					$('#globalMessaging').anymessage({"message":"In admin.calls.adminSupplierCreate, either vendorid ["+vendorid+"] or updateObj ["+typeof updateObj+"] not passed","gMessage":true});
-					}
-				return r;
-				},
-			
-			dispatch : function(vendorid,updateObj,_tag,Q){
-				obj._cmd = 'adminSupplierUpdate';
-				obj.VENDORID = vendorid;
-				obj._tag = _tag || {};
-				obj._tag.datapointer = 'adminSupplierUpdate';
-				app.model.addDispatchToQ(obj,Q || 'immutable');
-				}
-			
-			}, //adminSupplierCreate
 
 
 		adminSyndicationDetail : {
 			init : function(DST,_tag,Q)	{
 				_tag = _tag || {};
-				_tag.datapointer = "adminSyndicationDetail";
+				_tag.datapointer = "adminSyndicationDetail|"+DST;
 				this.dispatch(DST,_tag,Q);
 				return 1;
 				},
@@ -1651,27 +1337,7 @@ if giftcard is on there, no paypal will appear.
 				app.model.addDispatchToQ(obj,Q || 'immutable');	
 				}
 			}, //adminTicketCreate
-		adminTicketDetail : {
-			init : function(ticketid,_tag,Q)	{
-				var r = 0;
-				if(ticketid)	{
-					this.dispatch(ticketid,_tag,Q);
-					}
-				else	{
-					r = 0;
-					$('#globalMessaging').anymessage({"message":"In admin.calls.adminTicketDetail, no ticketID passed","gMessage":true});
-					}
-				return r;
-				},
-			dispatch : function(ticketid,_tag,Q)	{
-				obj = {};
-				obj._tag = _tag || {};
-				obj._tag.datapointer = "adminTicketDetail|"+ticketid;
-				obj._cmd = "adminTicketDetail";
-				obj.ticketid = ticketid;
-				app.model.addDispatchToQ(obj,Q || 'mutable');	
-				}
-			}, //adminTicketDetail
+
 
 // @updates holds the macros.
 // CLOSE -> no params
@@ -1834,11 +1500,11 @@ if giftcard is on there, no paypal will appear.
 
 
 
-		adminWholesaleScheduleList : {
+		adminPriceScheduleList : {
 			init : function(_tag,q)	{
 				var r = 0; //what is returned. a 1 or a 0 based on # of dispatched entered into q.
 				_tag = _tag || {};
-				_tag.datapointer = "adminWholesaleScheduleList";
+				_tag.datapointer = "adminPriceScheduleList";
 				if(app.model.fetchData(_tag.datapointer) == false)	{
 					r = 1;
 					this.dispatch(_tag,q);
@@ -1849,9 +1515,9 @@ if giftcard is on there, no paypal will appear.
 				return r;
 				},
 			dispatch : function(_tag,q)	{
-				app.model.addDispatchToQ({"_cmd":"adminWholesaleScheduleList","_tag":_tag},q);	
+				app.model.addDispatchToQ({"_cmd":"adminPriceScheduleList","_tag":_tag},q);	
 				}
-			}, //adminWholesaleScheduleList
+			}, //adminPriceScheduleList
 		adminWholesaleScheduleDetail : {
 			init : function(scheduleID,_tag,q)	{
 				var r = 0; //what is returned. a 1 or a 0 based on # of dispatched entered into q.
@@ -1869,7 +1535,7 @@ if giftcard is on there, no paypal will appear.
 			dispatch : function(scheduleID,_tag,q)	{
 				app.model.addDispatchToQ({"_cmd":"adminWholesaleScheduleDetail","schedule":scheduleID,"_tag":_tag},q);	
 				}
-			}, //adminWholesaleScheduleList
+			}, //adminPriceScheduleList
 
 
 
@@ -2260,7 +1926,7 @@ if giftcard is on there, no paypal will appear.
 //				app.u.dump('BEGIN app.ext.admin.init.onSuccess ');
 				var r = true; //return false if extension can't load. (no permissions, wrong type of session, etc)
 //app.u.dump("DEBUG - template url is changed for local testing. add: ");
-$('title').append(" - release: "+app.vars.release);
+$('title').append(" - release: "+app.vars.release).prepend(document.domain+' - ');
 app.model.fetchNLoadTemplates(app.vars.baseURL+'extensions/admin/templates.html',theseTemplates);
 
 
@@ -2276,7 +1942,7 @@ app.rq.push(['css',0,app.vars.baseURL+'extensions/admin/resources/jHtmlArea-0.7.
 //note - the editor.css file that comes with jhtmlarea is NOT needed. just sets the page bgcolor to black.
 
 // colorpicker isn't loaded until jhtmlarea is done to avoid a js error due to load order.
-app.rq.push(['script',0,app.vars.baseURL+'extensions/admin/resources/jHtmlArea-0.7.5.ExamplePlusSource/scripts/jHtmlArea-0.7.5.min.js',function(){
+app.rq.push(['script',0,app.vars.baseURL+'extensions/admin/resources/jHtmlArea-0.7.5.ExamplePlusSource/scripts/jHtmlArea-0.7.5.js',function(){
 	app.rq.push(['script',0,app.vars.baseURL+'extensions/admin/resources/jHtmlArea-0.7.5.ExamplePlusSource/scripts/jHtmlArea.ColorPickerMenu-0.7.0.min.js'])
 	}]);
 
@@ -2471,11 +2137,13 @@ Function does NOT dispatch.
 						bindData = app.renderFunctions.parseDataBind($tbody.data('bind')), //creates an object of the data-bind params.
 						listpointer = app.renderFunctions.parseDataVar(bindData['var']),
 						data = app.data[_rtag.datapointer]; //shortcut.
-	
+					app.u.dump('listpointer: '+listpointer);
+					app.u.dump('_rtag.datapointer: '+_rtag.datapointer);
+					app.u.dump('data[listpointer]: '); app.u.dump(data[listpointer]);
 					$DMI.hideLoading();
 					$tbody.empty();
-					
-					if(listpointer && !$.isEmptyObject(data)  && data[listpointer] && data[listpointer].length)	{
+					//data[listpointer] check needs to be a !isemptyobject and NOT a .length check because value could be a hash OR an array.
+					if(listpointer && data && data[listpointer] && !$.isEmptyObject(data[listpointer]))	{
 						//no errors have occured and results are present.
 						$tbody.anycontent({'data':data});
 						app.u.handleAppEvents($tbody);
@@ -2489,9 +2157,19 @@ Function does NOT dispatch.
 					else if(!listpointer)	{
 						$('.dualModeListMessaging',$DMI).anymessage({"message":"In admin.callbacks.DMIUpdateResults.onSuccess, unable to ascertain listpointer.","gMessage":true});
 						}
+					else if(typeof data[listpointer] !== 'object')	{
+						$('.dualModeListMessaging',$DMI).anymessage({"message":"In admin.callbacks.DMIUpdateResults.onSuccess, data[listpointer] is NOT an object.","gMessage":true});
+						}
 					else 	{
 						//should never get here.
-						$('.dualModeListMessaging',$DMI).anymessage({"message":"In admin.callbacks.DMIUpdateResults.onSuccess, an unknown error occured.","gMessage":true});
+						$('.dualModeListMessaging',$DMI).anymessage({"message":"In admin.callbacks.DMIUpdateResults.onSuccess, an unknown error occured. DEV: see console for details.","gMessage":true});
+						app.u.dump("$DMI.length: "+$DMI.length);
+						app.u.dump("$DMI instanceof jQuery: "+($DMI instanceof jQuery));
+						app.u.dump("$tbody.length: "+$tbody.length);
+						app.u.dump("listpointer: "+listpointer);
+						app.u.dump("typeof data: "+typeof data);
+						app.u.dump("bindData: "); app.u.dump(bindData);
+//						app.u.dump("_rtag.jqObj"); app.u.dump(_rtag.jqObj);
 						}
 
 
@@ -2501,6 +2179,24 @@ Function does NOT dispatch.
 					}
 				}
 			},
+
+
+
+
+		fileDownloadInModal : {
+			onSuccess : function(_rtag)	{
+				app.ext.admin.u.fileDownloadInModal({
+					'filename':app.data[_rtag.datapointer].FILENAME || _rtag.filename,
+					'mime_type':app.data[_rtag.datapointer].MIMETYPE,
+					'body':app.data[_rtag.datapointer].body,
+					'skipDecode':_rtag.skipDecode || false
+					});
+				if(_rtag.jqObj && _rtag.jqObj instanceof jQuery)	{
+					_rtag.jqObj.hideLoading();
+					}
+				}
+			},
+
 
 
 //very similar to the original translate selector in the control and intented to replace it. 
@@ -2824,10 +2520,10 @@ app.ext.admin.u.changeFinderButtonsState('enable'); //make buttons clickable
 			onSuccess : function(_rtag)	{
 //				app.u.dump("BEGIN admin.callbacks.handleMessaging");
 				if(app.data[_rtag.datapointer] && app.data[_rtag.datapointer]['@MSGS'] && app.data[_rtag.datapointer]['@MSGS'].length)	{
-					
+
 					var L = app.data[_rtag.datapointer]['@MSGS'].length,
 					$tbody = $("[data-app-role='messagesContainer']",'#messagesContent');
-					
+
 					for(var i = 0; i < L; i += 1)	{
 						$tbody.anycontent({
 							'templateID':'messageListTemplate',
@@ -2876,6 +2572,15 @@ app.ext.admin.u.changeFinderButtonsState('enable'); //make buttons clickable
 			$tag.append(lookupTable[data.value] || data.value); //if no translation, display report id.
 			},
 
+		graphicURL : function($tag,data)	{
+			$tag.attr('src',"https://"+app.vars.https_domain+data.value);
+			$tag.wrap("<a href='https://"+app.vars.https_domain+data.value+"' data-gallery='gallery'>");
+			},
+
+		publicURL : function($tag,data)	{
+			$tag.attr('src',"http://"+app.vars.domain+"/media/merchant/"+app.vars.username+"/"+data.value);
+			$tag.wrap("<a href='http://"+app.vars.domain+"/media/merchant/"+app.vars.username+"/"+data.value+"' data-gallery='gallery'>");
+			},
 
 //used for adding email message types to a select menu.
 //designed for use with the vars object returned by a adminEmailList _cmd
@@ -2904,6 +2609,7 @@ app.ext.admin.u.changeFinderButtonsState('enable'); //make buttons clickable
 		showTrueIfSet : function($tag,data)	{
 			$tag.text('true') //won't get into renderFormat if not populated.
 			},
+
 
 //a value, such as media library folder name, may be a path (my/folder/name) and a specific value from that string may be needed.
 //set bindData.splitter and the value gets split on that character.
@@ -2955,6 +2661,8 @@ app.ext.admin.u.changeFinderButtonsState('enable'); //make buttons clickable
 
 //app.u.dump(" -> mode: "+mode);
 //app.u.dump(" -> path: "+path);
+//app.u.dump(" -> opts: "); app.u.dump(opts);
+
 
 var reloadTab = 0; //used in conjunction with #: to determine if new or old contens should be displayed.
 var $target = undefined; //jquery object of content destination
@@ -2999,15 +2707,7 @@ else if(opts.tab)	{
 	$target = $(app.u.jqSelector('#',opts.targetID));
 
 //this is for the left side tab that appears in the orders/product interface after perfoming a search and navigating to a result.
-	if(opts.tab != 'orders')	{
-		app.ext.admin_orders.u.handleOrderListTab('deactivate');
-		}
-	if(opts.tab != 'product')	{
-		app.ext.admin_prodEdit.u.handleProductListTab('deactivate');
-		}
-	if(opts.tab != 'reports')	{
-		$('#batchJobsStickyTab').stickytab('destroy');
-		}
+$('#stickytabs').empty(); //clear all the sticky tabs.
 	
 	}
 //no tab was specified. use the open tab, if it's set.
@@ -3029,7 +2729,7 @@ if($target && $target.length)	{
 	else	{
 		app.ext.admin.u.bringTabContentIntoFocus($target); //will make sure $target is visible. if already visible, no harm.
 		if(mode == 'app')	{
-			app.ext.admin.u.loadNativeApp(path,opts);
+			app.ext.admin.u.loadNativeApp(path,opts,$target);
 			}
 		else if(mode == 'legacy')	{
 			app.ext.admin.u.handleShowSection(path,opts,$target);
@@ -3067,56 +2767,76 @@ else	{
 			navigateTo : function(path,$t)	{
 				return this.showUI(path,$t ? $t : {});
 				},
-
+//data needs to include a templateID and a mode [product,customer]
 			getPicker : function(data)	{
+var r = false;  //what is returned. either false of a jquery object.
 data = data || {};
-var $D = $("<div \/>"); //container for the template. It's children() are what's returned.
-$D.anycontent({'templateID':'pickerTemplate','showLoading':'false',data:data});
-$("[data-app-role='accordionContainer']",$D).first().accordion({
-	heightStyle: "content",
-	activate : function(event,ui)	{
-		app.u.dump("ui.newHeader.data('pickmethod'): "+ui.newHeader.data('pickmethod'));
-		app.u.dump("ui.newPanel.data('contentloaded'): "+ui.newPanel.data('contentloaded'));
-
-		if(!ui.newPanel.data('contentloaded'))	{
-			var _tag = {}
-			_tag.callback = function(rd)	{
-				app.u.dump('got into callback');
-				if(app.model.responseHasErrors(rd)){
-					$target.anymessage({'message':rd})
+if(data.templateID && (data.mode == 'product' || data.mode == 'customer'))	{
+	var $D = $("<div \/>"); //container for the template. It's children() are what's returned.
+	$D.anycontent({'templateID':data.templateID,'showLoading':'false',data:data});
+	$D.data('pickermode',data.mode);
+	$("[data-app-role='accordionContainer']",$D).first().accordion({
+		heightStyle: "content",
+		activate : function(event,ui)	{
+			app.u.dump("ui.newHeader.data('pickmethod'): "+ui.newHeader.data('pickmethod'));
+			app.u.dump("ui.newPanel.data('contentloaded'): "+ui.newPanel.data('contentloaded'));
+//static panels do NOT need to be declared here. just add data-contentloaded='true' to the content element.	
+			if(!ui.newPanel.data('contentloaded'))	{
+				ui.newPanel.showLoading({'message':'Fetching List'});
+				var _tag = {}
+				_tag.callback = function(rd)	{
+					if(app.model.responseHasErrors(rd)){
+						$target.anymessage({'message':rd})
+						}
+					else	{
+						ui.newPanel.anycontent(rd).data('contentloaded',true);
+						}
+					}
+				if(ui.newHeader.data('pickmethod') == 'LIST')	{
+					app.ext.admin.calls.appCategoryList.init({'root':'.','filter':'lists'},_tag,'mutable');
+					}
+				else if(ui.newHeader.data('pickmethod') == 'NAVCAT')	{
+					app.ext.admin.calls.appCategoryList.init({'root':'.','filter':''},_tag,'mutable');
+					}
+				else if(ui.newHeader.data('pickmethod') == 'CUSTOMER_SUBSCRIBERLISTS')	{
+					app.ext.admin.calls.adminNewsletterList.init(_tag,'mutable');
+					}
+				else if(ui.newHeader.data('pickmethod') == 'PROFILE')	{
+					_tag.datapointer = 'adminEBAYProfileList'
+					app.model.addDispatchToQ({'_cmd':'adminEBAYProfileList','_tag': _tag},'mutable');
+					}
+				else if(ui.newHeader.data('pickmethod') == 'SUPPLIER')	{
+					_tag.datapointer = 'adminSupplierList'
+//when this all gets changed to use the dispatch Q, use the if/else if to set a cmdObj instead of just _tag, and use the localStorage check just once at the end.
+					if(app.model.fetchData(_tag.datapointer) == false)	{
+						app.model.addDispatchToQ({'_cmd':'adminSupplierList','_tag':_tag},'immutable');
+						}
+					else	{
+						app.u.handleCallback(_tag);
+						}
+					}
+				else if(ui.newHeader.data('pickmethod') == 'MCAT')	{
+					app.ext.admin.calls.adminProductManagementCategoryList.init(_tag,'mutable');
 					}
 				else	{
-					ui.newPanel.anycontent(rd).data('contentloaded',true);
+					//ERROR! unrecognized pick method. !!!
+					ui.newPanel.hideLoading();
+					ui.newPanel.anymessage({"message":"In admin.u.showPicker, unrecognized pickmethod ["+ui.newHeader.data('pickmethod')+"] on accordion header.","gMessage":true});
 					}
+				app.model.dispatchThis('mutable');
 				}
-			if(ui.newHeader.data('pickmethod') == 'LIST')	{
-				app.ext.admin.calls.appCategoryList.init({'root':'.','filter':'lists'},_tag,'mutable');
-				}
-			else if(ui.newHeader.data('pickmethod') == 'NAVCAT')	{
-				app.ext.admin.calls.appCategoryList.init({'root':'.','filter':''},_tag,'mutable');
-				}
-			else if(ui.newHeader.data('pickmethod') == 'PROFILE')	{
-				// !!! profiles?
-				}
-			else if(ui.newHeader.data('pickmethod') == 'SUPPLIER')	{
-				app.ext.admin.calls.adminSupplierList.init(_tag,'mutable');
-				}
-			else if(ui.newHeader.data('pickmethod') == 'MCAT')	{
-				app.ext.admin.calls.adminProductManagementCategoryList.init(_tag,'mutable');
-				}
-			else	{
-				//ERROR! unrecognized pick method. !!!
-				}
-			app.model.dispatchThis('mutable');
+			else	{}
 			}
-		else	{}
-		}
-	
-	});
-
+		
+		});
+	r = $D.children();
+	}
+else	{
+	$('#globalMessaging').anymessage({"message":"In admin.u.getPicker, either templateID ["+data.templateID+"] not set or mode blank/invalid ["+data.mode+"]. Mode accepts customer or product.","gMessage":true});
+	}
 //use this to disable the accordion if 'select all' is checked.	
 //$( ".selector" ).accordion( "option", "disabled", true );
-				return $D.children();
+				return r;
 				},
 
 			showSitesTab : function($target)	{
@@ -3303,9 +3023,12 @@ set as onSubmit="app.ext.admin.a.processForm($(this)); app.model.dispatchThis('m
  -> if data-q is set to passive or immutable, change the value of dispatchThis to match.
 */
 			processForm : function($form,q,_tag)	{
+//				app.u.dump("BEGIN admin.a.processForm");
 				var r = true;  //what is returned.
-				var obj = $form.serializeJSON() || {};
+				var obj = $form.serializeJSON({'cb':$form.data('cb_tf')}) || {};
 				_tag = _tag || {};
+				
+//				app.u.dump(" -> obj: "); app.u.dump(obj);
 				
 				if($form.length && (obj._cmd || obj.call || obj._macrobuilder))	{
 //build the _tag obj.
@@ -3313,34 +3036,63 @@ set as onSubmit="app.ext.admin.a.processForm($(this)); app.model.dispatchThis('m
 					_tag.jqObj = _tag.jqObj || $form;
 //					app.u.dump(" -> _tag in processForm: "); app.u.dump(_tag);
 					
+					
+					
 					if(obj._macrobuilder)	{
+//						app.u.dump(" -> is a macrobuilder.");
 						var mbArr = obj._macrobuilder.split('|');
 						obj._tag = _tag; //when adding straight to Q, _tag should be a param in the cmd object.
 						if(mbArr.length > 1 && app.ext[mbArr[0]] && app.ext[mbArr[0]].macrobuilders &&  typeof app.ext[mbArr[0]].macrobuilders[mbArr[1]] == 'function')	{
-							app.model.addDispatchToQ(app.ext[mbArr[0]].macrobuilders[mbArr[1]](obj),q);
+							app.model.addDispatchToQ(app.ext[mbArr[0]].macrobuilders[mbArr[1]](obj,$form),q);
 							}
 						else	{
+							app.u.dump(" -> UNABLE to build macro.");
 							r = false;
-							$form.closest('.appMessaging').anymessage({'message':'In admin.a.processForm, macrobuilder was passed ['+obj.macrobuilder+'] but does not map to a valid macrobuilder. should be extension|functionname where functionname is a function residing in macrobuilders of specified extension.','gMessage':true});
+							$form.anymessage({'message':'In admin.a.processForm, macrobuilder was passed ['+obj.macrobuilder+'] but does not map to a valid macrobuilder. should be extension|functionname where functionname is a function residing in macrobuilders of specified extension.','gMessage':true});
 							}
 						}
 					else if(obj._cmd)	{
+						app.u.dump(" -> is a command.");
 						obj._tag = _tag; //when adding straight to Q, _tag should be a param in the cmd object.
-						app.model.addDispatchToQ(obj,q);
+//had an issue w/ adding directly to the Q where if an error was present in the response and 'save' was pushed again, the original dispatch would re-send, not this one. odd. using extend solved problem.
+						app.model.addDispatchToQ($.extend(true,{},obj),q);
 						}
 					else if(obj.call)	{
+						app.u.dump(" -> is a call.");
 						var call = obj.call; //save to another var. obj.call needs to be deleted so it isn't passed in dispatch.
 						delete obj.call;
 						app.u.dump(" -> call: "+call);
 						app.ext.admin.calls[call.split('/')[1]].init(obj,_tag,q)
 						}
 					else{} //can't get here. either cmd or call are set by now.
+
+					if(_tag.updateDMIList)	{
+						var $DMI = $(app.u.jqSelector('#',_tag.updateDMIList));
+						if($DMI.length)	{
+							var cmdVars = $DMI.data('cmdVars');
+							if(cmdVars && cmdVars._cmd)	{
+								cmdVars._tag = cmdVars._tag || {};
+								cmdVars._tag.callback = 'DMIUpdateResults';
+								cmdVars._tag.extension = 'admin';
+								cmdVars._tag.jqObj = $DMI;
+								app.model.addDispatchToQ(cmdVars,q);
+								}
+							else	{
+								$form.anymessage({'message':'In admin.a.processForm, _tag/updateDMIList passed but DMI.data("cmdVars") is empty or has no _cmd set. cmdVars should be set at DMICreate and _cmd is required so that the appropriate _cmd can be run.','gMessage':true});
+								}
+							}
+						else	{
+							$form.anymessage({'message':'In admin.a.processForm, _tag/updateDMIList passed but #'+_tag.updateDMIList+' has no length (is not on DOM).','gMessage':true});
+							} //
+						}
 					
 					}
 				else	{
 					r = false;
 					app.u.throwGMessage("Warning! $form was empty or _cmd or call not present within $form in admin.a.processForm");
 					}
+//				app.u.dump("END processForm");
+
 				return r;
 				}, //processForm
 
@@ -3348,6 +3100,7 @@ set as onSubmit="app.ext.admin.a.processForm($(this)); app.model.dispatchThis('m
 
 			showDomainConfig : function(){
 				$(app.u.jqSelector('#',app.ext.admin.vars.tab+"Content")).empty().showLoading({"message":"Requesting up to date list of domains."});
+				app.model.destroy('adminDomainList');
 				app.ext.admin.calls.adminDomainList.init({'callback':'showDomainConfig','extension':'admin'},'immutable');
 				app.model.dispatchThis('immutable')
 				},
@@ -3545,40 +3298,42 @@ once multiple instances of the finder can be opened at one time, this will get u
 
 
 			showProjects : function($target)	{
-				$target.empty().showLoading({'message':'Fetching project list'});
-//				app.model.destroy('adminProjectList');
-				app.ext.admin.calls.adminProjectList.init({'callback':function(rd){
 
-$target.hideLoading();
-if(app.model.responseHasErrors(rd)){
-	app.u.throwMessage(rd);
-	}
-else	{
-	$target.anycontent({'templateID':'projectsPageTemplate','datapointer':rd.datapointer});
-	
-	$('.gridTable',$target).anytable();
-	app.u.handleAppEvents($target);
-	}
-					}},'mutable');
+				$target.empty();
+				var $table = app.ext.admin.i.DMICreate($target,{
+					'header' : 'Projects',
+					'className' : 'projects',
+					'controls' : "",
+					'buttons' : ["<button data-app-event='admin|openDialog' data-templateid='projectCreateTemplate' title='Create a new project' data-update-list='true'>New Project</button>"],
+					'thead' : ['ID','Title','Type','Created','Updated',''],
+					'tbodyDatabind' : "var: projects(@PROJECTS); format:processList; loadsTemplate:projectsListTemplate;"
+					});
+
+				if($table)	{
+					app.model.addDispatchToQ({'_cmd':'adminProjectList','_tag': {'datapointer':'adminProjectList','callback':'anycontent','jqObj':$table}},'mutable');
 					app.model.dispatchThis('mutable');
+					}
+				else	{} //buildDualMode will handle the error display.
+
 				},
 
 			showRSS : function($target)	{
-				$target.empty().showLoading({'message':'Fetching project list'});
-				app.ext.admin.calls.adminRSSList.init({'callback':function(rd){
+				
+				$target.empty();
+				var $table = app.ext.admin.i.DMICreate($target,{
+					'header' : 'RSS Feeds',
+					'className' : 'rssFeeds',
+					'controls' : "",
+					'buttons' : ["<button class='floatRight' data-app-event='admin|adminRSSCreateShow' >New RSS Feed</button>"],
+					'thead' : ['ID','Title','Status','Profile','Schedule',''],
+					'tbodyDatabind' : "var: projects(@RSSFEEDS); format:processList; loadsTemplate:rssListTemplate;"
+					});
 
-$target.hideLoading();
-if(app.model.responseHasErrors(rd)){
-	app.u.throwMessage(rd);
-	}
-else	{
-	$target.anycontent({'templateID':'rssPageTemplate','datapointer':rd.datapointer});
-	
-	$('.gridTable',$target).anytable();
-	app.u.handleAppEvents($target);
-	}
-					}},'mutable');
+				if($table)	{
+					app.model.addDispatchToQ({'_cmd':'adminRSSList','_tag': {'datapointer':'adminRSSList','callback':'anycontent','jqObj':$table}},'mutable');
 					app.model.dispatchThis('mutable');
+					}
+				else	{} //buildDualMode will handle the error display.			
 				},
 
 //opens a dialog with a list of domains for selection.
@@ -3634,7 +3389,13 @@ else	{
 
 
 
+
+
 ////////////////////////////////////   UTIL [u]   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+
+
 
 
 		u : {
@@ -3700,9 +3461,14 @@ app.ext.admin.calls.appResource.init('shipcodes.json',{},'immutable'); //get thi
 						}
 					else	{
 						app.ext.admin.a.showUI(app.ext.admin.u.whatPageToShow('#!dashboard'));
+						if(document.URL.indexOf("/future/") > 0)	{
+							$('#globalMessaging').anymessage({"message":"<h5>Welcome to the future!<\/h5><p>You are currently using a future (experimental) version of our interface. Here you'll find links labeled as 'alpha' and 'beta' which are a work in progress.<\/p>Alpha: here for your viewing pleasure. These links may have little or no working parts.<br \/>Beta: These are features in the testing phase. These you can use, but may experience some errors.<br \/><h6 class='marginTop'>Enjoy!<\/h6>","persistent":true});
+							}
 						}
 					}
 				app.model.dispatchThis('immutable');
+
+
 				}, //showHeader
 
 //used to determine what page to show when app inits and after the user changes the domain.
@@ -3724,6 +3490,10 @@ app.ext.admin.calls.appResource.init('shipcodes.json',{},'immutable'); //get thi
 				return page;
 				}, //whatPageToShow
 
+			
+			messageAdd : function()	{
+				
+				},
 			
 			updateMessageCount : function()	{
 				var messageCount = $("[data-app-role='messagesContainer']",'#messagesContent').children().length,
@@ -3770,49 +3540,134 @@ app.ext.admin.calls.appResource.init('shipcodes.json',{},'immutable'); //get thi
 
 
 
-//used to determine what domain should be used. mostly in init, but could be used elsewhere.
-/*
-// * 201320 -> this function is no longer used.
-			getDomain : function(){
-				var domain = false;
-				var localVars = {};
-				
-				if(app.model.fetchData('authAdminLogin'))	{
-					localVars = app.data['authAdminLogin'];
-					}
-//will use the domain auto-created by a recently created account.
-				else if(app.model.fetchData('authNewAccountCreate'))	{
-					localVars = app.data['authNewAccountCreate'].domain;
-					}
-				else	{} //no other local lookup 
+//vars requires MIME_TYPE and body.
+//vars.filename is optional
+			fileDownloadInModal : function(vars)	{
+				vars = vars || {};
+				if(vars.mime_type && vars.body)	{
+					var filename = vars.filename || 'file';
+					const MIME_TYPE = vars.mime_type;
+	
+					var $D = $("<div \/>",{'title':'File Ready for Download'}).html("Your file is ready for download: <br />");
+					$D.dialog({
+						'modal' : true,
+						'width' : 300,
+						'height' : 200
+						});
 
-				if(domain = app.u.getParameterByName('domain')) {} //the single = here is intentional. sets the val during the if so the function doesn't have to be run twice.
-				else if(app.vars.domain)	{domain = app.vars.domain}
-				else if(localVars.domain){domain = localVars.domain}
-				else {} //at this time, no other options.
-				return domain;
-				}, //getDomain
+	// this worked, but not an ideal solution. we like blob better.
+//			var uri = 'data:'+MIME_TYPE+',' + encodeURIComponent(vars.body);
+//			var $a = $('<a>',{'download':filename || 'file',"href":uri}).text('download me data style').appendTo($D);
+//			$("<br \/>").appendTo($D);
+	
+//if atob causes issues later, explore 	b64toBlob	 (found here: http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript); //201324		
+//content returned on an API call will be base 64 encoded. app-generated content (report csv's) will not.
+//app.u.dump("vars.skipdecode: "+vars.skipDecode);
 
-*/
+					var	file = (vars.skipDecode) ? vars.body : atob(vars.body);
+//					if(MIME_TYPE.toLowerCase().indexOf('image') >= 0)	{
+						// Use typed arrays to convert the binary data to a Blob
+						//http://stackoverflow.com/questions/10473932/browser-html-force-download-of-image-from-src-dataimage-jpegbase64
+						var arraybuffer = new ArrayBuffer(file.length);
+						var L = file.length;
+						var view = new Uint8Array(arraybuffer);
+						for (var i=0; i < L; i++) {
+							view[i] = file.charCodeAt(i) & 0xff;
+							}
+						var bb = new Blob([arraybuffer], {type: 'application/octet-stream'});
+//						}
+//					else	{
+//						var bb = new Blob(new Array(file), {type: vars.MIME_TYPE});
+//						}
+					
+					var $a = $('<a>',{'download':filename,"href":window.URL.createObjectURL(bb)});
+
+					$a.addClass('dragout').attr('data-downloadurl',[MIME_TYPE, $a.attr('download'), $a.attr('href')].join(':')).text('download ready').on('click',function(){
+						var a = this;
+						a.textContent = 'Downloaded';
+						a.dataset.disabled = true;
+						$D.dialog('close');
+						// Need a small delay for the revokeObjectURL to work properly.
+						//revokeObjectURL causes browser to drop reference to the file.
+						setTimeout(function() {
+							window.URL.revokeObjectURL(a.href);
+							$D.empty().remove(); //nuke dialog.
+							}, 1500);
+						});
+
+					
+					$a.appendTo($D);
+					}
+				else	{
+					$('#globalMessaging').anymessage({"message":"In admin.u.fileDownloadInModal, either mime_type ["+vars.mime_type+"] or body ["+typeof vars.body+"] not passed.","gMessage":true});
+					}
+
+				},
+
+
+//used in ebay and campaign to generate toolbar for html editor.
+//buttons is optional. if passed, should be an array. [{'css':'','text':'','action':function(){}},{'css':'','text':'','action':function(){}}]
+			buildToolbarForEditor : function(buttons)	{
+				buttons = buttons || [];
+				var r = new Array(); //what is returned. an array that gets turned into buttons in the html editor.
+				r.push("html");
+				r.push("bold", "italic","strikethrough");
+				r.push("p","h1", "h2", "h3", "h4", "h5", "h6");
+				r.push("orderedList","unorderedList","|","indent","outdent");
+				r.push("horizontalrule");
+				r.push("justifyleft","justifycenter","justifyright");
+				r.push("link", "unlink");
+				var L = buttons.length;
+				if(L)	{
+					for(var i = 0; i < L; i += 1)	{
+						r.push(buttons[i])
+						}
+					}
+				return r;
+				},
 
 
 
 //used in conjunctions with applyEditTrackingToInputs. it's a separate function so it can be called independantly.
 // .edited is used with no element qualifier (such as input) so that it can be applied to non inputs, like table rows, when tables are updated (shipmethods)
+//ui-button class is used to determine if the button has had button() run on it. otherwise it'll cause a js error.
 			handleSaveButtonByEditedClass : function($context)	{
 				var $button = $("[data-app-role='saveButton']",$context);
-				app.u.dump(" -> button.length: "+$button.length);
+//				app.u.dump(" -> button.length: "+$button.length);
 				if($('.edited',$context).length)	{
-					$('.numChanges',$button).text($('.edited',$context).length)
-					$button.button("enable").addClass('ui-state-highlight');
+					$('.numChanges',$button).text($('.edited',$context).length);
+					$button.addClass('ui-state-highlight');
+					if($button.hasClass('ui-button'))	{
+						$button.button("enable");
+						}
+					else	{
+						$button.attr('disabled','').removeAttr('disabled');
+						}
 					}
 				else	{
-					$('.numChanges',$button).text("")
-					$button.button("disable").removeClass('ui-state-highlight');
+					$('.numChanges',$button).text("");
+					$button.removeClass('ui-state-highlight');
+					if($button.hasClass('ui-button'))	{
+						$button.button("disable")
+						}
+					else	{
+						$button.attr('disabled','disabled');
+						}
 					}
 				},
-
-
+//run this after a form that uses 'applyuEditTrackingToInputs' is saved to revert to normal.
+			restoreInputsFromTrackingState : function($context)	{
+				$('.edited',$context).removeClass('edited');
+				var $button = $("[data-app-role='saveButton']",$context);
+				$('.numChanges',$button).text("");
+				$button.removeClass('ui-state-highlight');
+				if($button.hasClass('ui-button'))	{
+					$button.button("disable")
+					}
+				else	{
+					$button.attr('disabled','disabled');
+					}
+				},
 
 //pass in a form and this will apply some events to add a 'edited' class any time the field is edited.
 //will also update a .numChanges selector with the number of elements within the context that have edited on them.
@@ -3846,6 +3701,7 @@ app.ext.admin.calls.appResource.init('shipcodes.json',{},'immutable'); //get thi
 				}, //applyEditTrackingToInputs
 
 
+// ### time permittting, replace use of function below with getWhitlestedObject
 //used when converting a tr.data() into a kvp array. used in amazon thesaurus and shipments.
 			getSanitizedKVPFromObject : function(obj)	{
 				var newObj = $.extend(true,{},obj); //extend will create a duplicate so original object is unmodified.
@@ -3862,7 +3718,7 @@ app.ext.admin.calls.appResource.init('shipcodes.json',{},'immutable'); //get thi
 			getTagObjFromSFO : function(sfo)	{
 				var r = {}; //what is returned.
 				if(!$.isEmptyObject(sfo))	{
-					app.u.dump('not empty object');
+//					app.u.dump('not empty object');
 					for(var key in sfo)	{
 						if(key.substring(0,5) == "_tag/")	{
 							r[key.substring(5)] = sfo[key];//_tag/ must be stripped from key.
@@ -3875,7 +3731,7 @@ app.ext.admin.calls.appResource.init('shipcodes.json',{},'immutable'); //get thi
 				},
 
 
-			loadNativeApp : function(path,opts){
+			loadNativeApp : function(path,opts,$target){
 //				app.u.dump("BEGIN loadNativeApp");
 				app.ext.admin.u.uiHandleBreadcrumb({}); //make sure previous breadcrumb does not show up.
 				app.ext.admin.u.uiHandleNavTabs({}); //make sure previous navtabs not show up.
@@ -3911,7 +3767,11 @@ app.ext.admin.calls.appResource.init('shipcodes.json',{},'immutable'); //get thi
 					this.bringTabContentIntoFocus($('#utilitiesContent'));
 					app.ext.admin_batchJob.a.showBatchJobManager($('#utilitiesContent'));
 					}
-				else if(path == '#!customerManager')	{app.ext.admin_customer.a.showCustomerManager();}
+				else if(path == '#!customerManager')	{app.ext.admin_customer.a.showCustomerManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));}
+				else if(path == '#!variationsManager')	{
+//					app.u.dump("$target: "); app.u.dump($target);
+					app.ext.admin_prodEdit.a.showStoreVariationsManager($target || $(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
 				else if(path == '#!help')	{
 					$('#supportContent').empty(); //here just for testing. won't need at deployment.
 					this.bringTabIntoFocus('support');
@@ -3933,11 +3793,51 @@ app.ext.admin.calls.appResource.init('shipcodes.json',{},'immutable'); //get thi
 				else if(path == '#!giftcardManager')	{
 					app.ext.admin_customer.a.showGiftcardManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
 					}
-				else if(path == '#!promotionsManager')	{
-					app.ext.admin_config.a.showPromotionsManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+
+				else if(path == '#!globalSettings')	{
+					app.ext.admin_config.a.showGlobalSettings($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
+
+
+				else if(path == '#!productManager')	{
+					app.ext.admin_prodEdit.a.showProductManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
+
+				else if(path == '#!partitionManager')	{
+					app.ext.admin_config.a.showPartitionManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
+
+				else if(path == '#!privateFiles')	{
+					app.ext.admin_tools.a.showPrivateFiles($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
+
+				else if(path == '#!manageFlexedit')	{
+					app.ext.admin_tools.a.showManageFlexedit($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
+
+				else if(path == '#!pluginManager')	{
+					app.ext.admin_config.a.showPluginManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
+				else if(path == '#!campaignManager')	{
+					app.ext.admin_customer.a.showCampaignManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
+				else if(path == '#!ciEngineAgentManager')	{
+					app.ext.admin_tools.a.showciEngineAgentManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
+				else if(path == '#!couponManager')	{
+					app.ext.admin_config.a.showCouponManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
+				else if(path == '#!priceSchedules')	{
+					app.ext.admin_wholesale.a.showPriceSchedules($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
+				else if(path == '#!accountUtilities')	{
+					app.ext.admin_tools.a.showAccountUtilities($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
 					}
 				else if(path == '#!productPowerTool')	{
 					app.ext.admin_tools.a.showPPT($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
+					}
+				else if(path == '#!productExport')	{
+					app.ext.admin_tools.a.showProductExport($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
 					}
 				else if(path == '#!warehouseManager')	{
 					app.ext.admin_wholesale.a.showWarehouseManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')));
@@ -4425,7 +4325,13 @@ for a category, each sku added or removed is a separate request.
 					var attribObj = {};
 					attribObj[attribute] = list;
 					app.model.destroy('appProductGet|'+sku); //remove product from memory and localStorage
-					app.ext.admin.calls.adminProductUpdate.init(sku,attribObj,{'callback':'pidFinderChangesSaved','extension':'admin'});
+//					app.ext.admin.calls.adminProductUpdate.init(sku,attribObj,{'callback':'pidFinderChangesSaved','extension':'admin'});
+					app.model.addDispatchToQ({
+						'pid':sku,
+						'%attribs':attribObj,
+						'_cmd': 'adminProductUpdate',
+						'_tag' : {'callback':'pidFinderChangesSaved','extension':'admin'}
+						},'immutable');					
 					app.calls.appProductGet.init(sku,{},'immutable');
 					}
 				else if (findertype == 'NAVCAT')	{
@@ -4868,6 +4774,9 @@ else	{
 				var dps = app.ext.admin.u.dpsGet(); //all 'session' vars
 				localStorage.clear();
 				app.storageFunctions.writeLocal('authAdminLogin',admin);
+// * 201320 -> domain and partition were persitent between sessions. bad for multi-account users and also support.
+				dps.admin.domain = '';
+				dps.admin.partition = '';
 				app.storageFunctions.writeLocal('session',dps);
 				},
 
@@ -5083,7 +4992,7 @@ just lose the back button feature.
 			fetchRSSDataSources : function(Q)	{
 				var numRequests = 0;
 				Q = Q || 'mutable';
-				numRequests += app.ext.admin.calls.adminWholesaleScheduleList.init({},Q); //need this for add and edit.
+				numRequests += app.ext.admin.calls.adminPriceScheduleList.init({},Q); //need this for add and edit.
 				numRequests += app.ext.admin.calls.adminDomainList.init({},Q); //need this for add and edit.
 				numRequests += app.ext.admin.calls.appCategoryList.init({'root':'.','filter':'lists'},{},Q); //need this for add and edit.
 				return numRequests;
@@ -5111,7 +5020,7 @@ var
 				}
 			}
 		
-		$target.anycontent({'templateID':'rssAddUpdateTemplate','data':$.extend(true,{'@lists':lists},app.data['adminDomainList'],app.data['adminWholesaleScheduleList'])});
+		$target.anycontent({'templateID':'rssAddUpdateTemplate','data':$.extend(true,{'@lists':lists},app.data['adminDomainList'],app.data['adminPriceScheduleList'])});
 		if($button)	{
 			$('.buttonbar',$target).first().append($button)
 			}
@@ -5135,8 +5044,50 @@ else	{
 	}
 
 				
+				},
+//used on an array of objects. [{some:value},{some:othervalue}]
+//in ex above, pass in 'some and 'other value' and 1 will be returned.
+		getIndexInArrayByObjValue : function(array,objkey,objvalue)	{
+//			app.u.dump("BEGIN admin.u.getIndexInArrayByObjValue");
+			var r = false;  //what is returned. the variation index if a match is found.
+			if(array && objkey && objvalue)	{
+//				app.u.dump(" -> all required params are present.");
+				var L = array.length;
+				for(var i = 0; i < L; i+=1)	{
+					if(array[i][objkey] == objvalue)	{
+						r = i;
+						break; //exit early once a match is found.
+						}
+					}
 				}
-
+			else	{
+				$('#globalMessaging').anymessage({"message":"In admin_prodEdit.u.getProductVariationByID, either array or objkey ["+objkey+"] or objvalue ["+objvalue+"] not passed.","gMessage":true});
+				}
+//			app.u.dump(" -> getIndexInArrayByObjValue r:"+r);
+			return r;
+			},			
+			
+			
+			getValueByKeyFromArray : function(obj,key,value)	{
+//				app.u.dump("BEGIN admin.u.getValueByKeyFromArray");
+//				app.u.dump("key: "+key);
+//				app.u.dump("value: "+value);
+//				app.u.dump("obj: "); app.u.dump(obj);
+				var r = false; //what is returned. false or the object isf a match is found.
+				if(key && value && !$.isEmptyObject(obj))	{
+					for(var index in obj)	{
+						if(obj[index][key] == value)	{
+							r = obj[index];
+							break; //once a match is found, exit early.
+							}
+						}
+//					app.u.dump("getValueByKeyFromArray r: "); app.u.dump(r);
+					}
+				else	{
+					$('#globalMessaging').anymessage({'message':'In admin.u.getValueByKeyFromArray, either obj is empty or key ['+key+'] and/or value ['+value+'] is not set.','gMessage':true});
+					}
+				return r;
+				}
 
 			},	//util
 			
@@ -5160,20 +5111,27 @@ vars:
 	showLoadingMessage: if set, will add showLoading to $target.
 */
 			DMICreate : function($target,vars)	{
-				app.u.dump("BEGIN admin.u.buildDualModeInterface");
+//				app.u.dump("BEGIN admin.u.buildDualModeInterface");
+//				app.u.dump(" -> vars: "); app.u.dump(vars);
 				var r = false; //what is returned. will be the results table element if able to create dualModeInterface
 				vars = vars || {};
 				if($target instanceof jQuery && vars.tbodyDatabind)	{
 //set up the defaults.
-					vars.showLoading = vars.showLoading || true; //to be consistent, default this to on.
+					vars.showLoading = (vars.showLoading === false) ? false  : true; //to be consistent, default this to on.
 					vars.showLoadingMessage = vars.showLoadingMessage || "Fetching Content...";
-					vars.anytable = vars.anytable || true;
-					vars.handleAppEvents = vars.handleAppEvents || true;
+					vars.anytable = (vars.anytable === false) ? false  : true;
+					vars.handleAppEvents = (vars.handleAppEvents === false) ? false  : true;
 
 					var $DM = $("<div \/>"); //used as a holder for the content. It's children are appended to $target. Allows DOM to only be updated once.
 
 					$DM.anycontent({'templateID':'dualModeTemplate','showLoading':false}); //showloading disabled so it can be added AFTER content added toDOM (works better)
-
+					var
+						$DMI = $("[data-app-role='dualModeContainer']",$DM),
+						$tbody = $("[data-app-role='dualModeListTbody']:first",$DM),
+						$table = $(".dualModeListTable:first",$DM);
+					
+					$DMI.attr('id','DMI_'+app.u.guidGenerator()); //apply an ID. this allows for content in a dialog to easily reference it's parent DMI.
+					
 //if set, build thead.
 					if(vars.thead && typeof vars.thead == 'object')	{
 //find and get a copy of the template used in the loadsTemplate. use it to determine which headers should be hidden in midetail mode.
@@ -5202,10 +5160,20 @@ vars:
 						}
 					else	{} //no thead. that's fine.
 
-					if(vars.className)	{$('.dualModeContainer:first').addClass(vars.className)}
+					if(vars.className)	{$DMI.addClass(vars.className)}
+					
 					if(vars.tbodyDatabind)	{
-						$("[data-app-role='dualModeListTbody']:first",$DM).attr('data-bind',vars.tbodyDatabind);
+						$tbody.attr('data-bind',vars.tbodyDatabind);
 						}
+
+					if(vars.cmdVars && vars.cmdVars._cmd)	{
+						$DMI.data('cmdVars',vars.cmdVars);
+						vars.cmdVars._tag = vars.cmdVars._tag || {};
+						vars.cmdVars._tag.callback = 'anycontent';
+						vars.cmdVars._tag.jqObj = $table;
+						app.model.addDispatchToQ(vars.cmdVars,'mutable');
+						}
+
 						
 					if(vars.header)	{
 						$("[data-app-role='dualModeListHeader']:first",$DM).text(vars.header);
@@ -5235,15 +5203,16 @@ vars:
 						}
 
 					$DM.children().appendTo($target);
-					r = $(".dualModeListTable:first",$target) //the table gets returned
 //showLoading is applied to the table, not the parent, because that's what is rturned and what anycontent is going to be run on (which will run hideLoading).
 					if(vars.showLoading)	{
-						r.showLoading({"message":vars.showLoadingMessage || undefined});
+						$table.showLoading({"message":vars.showLoadingMessage || undefined});
 						}
 					//needs to be done after table added to DOM.
 					if(vars.anytable)	{
-						r.anytable();
+						$table.anytable();
 						}
+
+					r = $table //the table gets returned
 
 					}
 				else	{
@@ -5270,7 +5239,7 @@ dataAttribs -> an object that will be set as data- on the panel.
 				vars = vars || {};
 				var $DMI = $btn.closest("[data-app-role='dualModeContainer']");
 				
-				vars.panelID = vars.panelID || 'panel_'+app.u.generateGUID();
+				vars.panelID = vars.panelID || 'panel_'+app.u.guidGenerator();
 				vars.data = vars.data || undefined;
 				
 				var $panel = $("<div\/>").anypanel(vars);
@@ -5299,15 +5268,15 @@ dataAttribs -> an object that will be set as data- on the panel.
 				vars.message = vars.message || "Are you sure you want to remove this? There is no undo for this action."
 				vars.title = vars.title || "Please Confirm";
 				vars.removeButtonText = vars.removeButtonText || "Remove";
-				
+				var $D;
 				if(typeof vars.removeFunction == 'function')	{
-					var $D = this.dialogCreate(vars)
+					$D = this.dialogCreate(vars)
 					$D.append("<p>"+vars.message+"<\/p>");
 					$D.dialog("option", "width", 300);
 					$D.dialog({ buttons: [
 						{ text: "Cancel", click: function() { $( this ).dialog( "close" ); } },
 						{ text: vars.removeButtonText, click: function() {
-							vars.removeFunction(vars);
+							vars.removeFunction(vars,$(this));
 							}}
 						] });
 					$D.dialog('open');
@@ -5315,7 +5284,7 @@ dataAttribs -> an object that will be set as data- on the panel.
 				else	{
 					
 					}
-				
+				return $D;
 				}, //dialogConfirmRemove
 
 //used for creating a disposable dialog. returns dialog.
@@ -5326,8 +5295,10 @@ dataAttribs -> an object that will be set as data- on the panel.
 				vars.anycontent = vars.anycontent || true; //default to runing anycontent. if no templateID specified, won't run.
 				vars.handleAppEvents = vars.handleAppEvents || true; //default to runing anycontent. if no templateID specified, won't run.
 
+
 				var $D = $("<div \/>").attr('title',vars.title);
 				if(vars.anycontent && vars.templateID)	{
+//					app.u.dump(" -> vars: "); app.u.dump(vars);
 					$D.anycontent(vars);
 					}
 				$D.dialog({
@@ -5335,11 +5306,15 @@ dataAttribs -> an object that will be set as data- on the panel.
 					width : '90%',
 					autoOpen : false,
 					close: function(event, ui)	{
+						$('body').css({'height':'auto','overflow':'auto'}) //bring browser scrollbars back.
+//						app.u.dump('got into dialog.close - destroy.');
 						$(this).dialog('destroy');
+						$(this).intervaledEmpty(1000,1);
 						}, //will remove from dom on close
 //'open' event will reposition modal to center upon open. handy for when content added between create and open.
 //timeout is to have it happen after content is populated.
 					open : function(event,ui)	{
+						$('body').css({'height':'100%','overflow':'hidden'}) //get rid of browser scrollbars.
 						setTimeout(function(){
 							//make sure dialog is smaller than window. do this BEFORE reposition so new position takes into account new height.
 							if($D.closest('.ui-dialog').height() > $(window).height())	{
@@ -5363,15 +5338,26 @@ dataAttribs -> an object that will be set as data- on the panel.
 				} //dialogCreate
 
 			},
-			
-			
+
+
+
+
+
+
+
+//////////////////////////////////// EVENTS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+
+
+
+
 
 		e : {
 //used for loading a simple dialog w/ no data translation.
 //if translation is needed, use a custom app-event, but use the dialogCreate function and pass in data. see admin_customer.e.giftcardCreateShow for an example
 //set data-templateid on the button to specify a template.
 			openDialog : function($btn,vars)	{
-
 				$btn.button();
 				$btn.off('click.openDialog').on('click.openDialog',function(){
 					vars = vars || {};
@@ -5386,20 +5372,19 @@ dataAttribs -> an object that will be set as data- on the panel.
 						$('#globalMessaging').anymessage({'message':'In admin.e.openDialog, expected button to have a data-templateid.','gMessage':true});
 						}
 					});
-				
-				},
+				}, //openDialog
 			
 //used in conjuction with the new interface (i) functions.
-//won't currently work for macro based commands.
 			processForm : function($btn,vars)	{
 				$btn.button();
-				$btn.off('click.processForm').on('click.processForm',function(){
+				$btn.off('click.processForm').on('click.processForm',function(event){
+					event.preventDefault();
 //					app.u.dump("trying to process the form");
 					var $form = $btn.closest('form');
 					
-					if(app.u.validateForm($form))	{
-						$form.showLoading({'message':'Updating...'});						
+					if(app.u.validateForm($form))	{					
 						if(app.ext.admin.a.processForm($form,'immutable',vars))	{
+							$form.showLoading({'message':'Updating...'});	
 							app.model.dispatchThis('immutable');
 							}
 						else	{
@@ -5431,12 +5416,43 @@ dataAttribs -> an object that will be set as data- on the panel.
 					});
 				},
 
+			refreshDMI : function($btn)	{
+				$btn.button({icons: {primary: "ui-icon-arrowrefresh-1-s"},text: false});
+				var $DMI = $btn.closest("[data-app-role='dualModeContainer']");
+
+				if($DMI.length && !$.isEmptyObject($DMI.data('cmdVars')) && $DMI.data('cmdVars')._cmd)	{
+					$btn.off('click.refreshDMI').on('click.refreshDMI',function(event){
+						event.preventDefault();
+						$DMI.showLoading({'message' : 'Refreshing list...' });
+						
+						var cmdVars = {};
+						if($btn.data('serializeform'))	{
+							$.extend(true,cmdVars,$DMI.data('cmdVars'),$btn.closest('form').serializeJSON({'cb':true})); //serialized form is last so it can overwrite anything in data.cmdvars
+							}
+						else	{
+							cmdVars = $DMI.data('cmdVars');
+							}
+
+						cmdVars._tag = cmdVars._tag || {};
+						cmdVars._tag.callback = 'DMIUpdateResults';
+						cmdVars._tag.extension = 'admin';
+						cmdVars._tag.jqObj = $DMI;
+						app.model.addDispatchToQ(cmdVars,'mutable');
+						app.model.dispatchThis('mutable');
+						});
+					}
+				else	{
+					$btn.hide(); //required params are not set.
+					app.u.dump("A refreshDMI app event was set, however either no parent DMI found [$DMI.length: "+$DMI.length+"] or $DMI.data.cmdVars was empty (these are required for this feature and should be set as part of DMICreate).",'warn');
+					}
+				},
 
 			lockAccordionIfChecked : function($cb)	{
-
 				$cb.off('click.lockAccordionIfChecked').on('click.lockAccordionIfChecked',function(event){
 					if($cb.is(':checked'))	{
-						$cb.closest('.ui-accordion').accordion( "disable" );
+						$cb.closest('.ui-accordion').find('.ui-accordion-header').each(function(){
+							$(this).addClass("ui-state-disabled");
+							}) //.accordion( "disable" ); //disable works, but the aesthetic of what it does isn't great.
 						}
 					else	{
 						$cb.closest('.ui-accordion').accordion( "enable" );
@@ -5451,7 +5467,8 @@ dataAttribs -> an object that will be set as data- on the panel.
 					return app.u.alphaNumeric(event);
 					})
 				},
-
+/*
+not in use
 			achievementDetail : function($row)	{
 				$row.on('mouseover.achievementDetail',function(){
 					$(this).addClass("ui-state-highlight").css({'border':'none','cursor':'pointer'});
@@ -5470,7 +5487,7 @@ dataAttribs -> an object that will be set as data- on the panel.
 							}
 						});
 				},
-
+*/
 /* app chooser */
 
 			appChooserAppChoose : function($btn)	{
@@ -5719,14 +5736,16 @@ dataAttribs -> an object that will be set as data- on the panel.
 //if this class is already present, the button is set for delete already. unset the delete.
 //added to the tr since that's where all the data() is, used in the save. If class destination changes, update customerEditorSave app event function.
 					if($btn.hasClass('ui-state-error'))	{
-						$btn.removeClass('ui-state-error').parents('tr').removeClass('edited').removeClass('rowTaggedForRemove').find('button').each(function(){
+// ** 201324 -> changed the selector in the 'find' to only run on elments that have been through button(). avoids a JS error
+						$btn.removeClass('ui-state-error').parents('tr').removeClass('edited').removeClass('rowTaggedForRemove').find("button[role='button']").each(function(){
 							$(this).button('enable');
 							}); //enable the other buttons
 						$btn.button('enable');
 						}
 					else	{
 //adding the 'edited' class does NOT change the row, but does let the save changes button record the accurate # of updates.
-						$btn.addClass('ui-state-error').parents('tr').addClass('edited').addClass('rowTaggedForRemove').find('button').each(function(){
+						$btn.addClass('ui-state-error').closest('tr').addClass('edited').addClass('rowTaggedForRemove').find("button[role='button']").each(function(){
+//							app.u.dump(" -> $(this).text(): "+$(this).text());
 							$(this).button('disable')
 							}); //disable the other buttons
 						$btn.button('enable');
@@ -5751,6 +5770,7 @@ dataAttribs -> an object that will be set as data- on the panel.
 					});
 				$ele.trigger('change'); //trigger the change so that if a databind has selected the field, the related fieldset is displayed.
 				}, //showConnectorFieldset
+
 
 
 			domainPutInFocus : function($btn)	{
@@ -5817,31 +5837,31 @@ dataAttribs -> an object that will be set as data- on the panel.
 				else	{
 					$btn.hide();
 					}
-				},			
+				},
 			projectUpdateShow : function($btn)	{
-				$btn.button({icons: {primary: "ui-icon-info"},text: false});
-				$btn.off('click.projectUpdateShow').on('click.projectUpdateShow',function(){
-
-					var
-						$container = $btn.closest("[data-app-role='dualModeContainer']"),
-						data = $btn.closest('tr').data(),
-						$target = $("[data-app-role='dualModeDetail']",$container)
-						panelID = app.u.jqSelector('','project_'+data.id);
+				$btn.button({icons: {primary: "ui-icon-pencil"},text: false});
+				$btn.off('click.projectUpdateShow').on('click.projectUpdateShow',function(event){
+					event.preventDefault();
+					var	projectUUID = $btn.closest('tr').data('uuid');
 					
-					
-					var $panel = $("<div\/>").hide().anypanel({
-						'header':'Edit: '+data.title || data.id,
-						data : {},
-						'templateID':'projectDetailTemplate'
-						}).prependTo($target);
-					
-					app.ext.admin.u.toggleDualMode($container,'detail');
-					$panel.slideDown('fast');
-					
-					app.model.destroy('adminProjectDetail|'+data.uuid);
-					app.ext.admin.calls.adminProjectDetail.init(data.uuid,{'callback':'anycontent',jqObj:$panel},'mutable');
+					var $panel = app.ext.admin.i.DMIPanelOpen($btn,{
+						'templateID' : 'projectDetailTemplate', //not currently editable. just more details.
+						'panelID' : 'project_'+projectUUID,
+						'header' : 'Edit Project: '+$btn.closest('tr').data('title') || projectUUID,
+						'handleAppEvents' : true,
+						showLoading : true
+						});
+//files are not currently fetched. slows things down and not really necessary since we link to github. set files=true in dispatch to get files.
+					app.model.addDispatchToQ({
+						"_cmd":"adminProjectDetail",
+						"UUID":projectUUID,
+						"_tag": {
+							'callback':'anycontent',
+							jqObj:$panel,
+							'datapointer' : 'adminProjectDetail|'+projectUUID
+							}
+						},'mutable');
 					app.model.dispatchThis('mutable');
-
 					});
 				},
 			
@@ -5855,7 +5875,7 @@ dataAttribs -> an object that will be set as data- on the panel.
 					
 					
 					if(app.u.validateForm($form))	{
-						$form.showLoading({'message':'Adding New Project'});
+						$form.showLoading({'message':'Adding your new project. This may take a few moments as the repository is imported.'});
 						app.model.destroy('adminProjectList');
 						sfo.UUID = app.u.guidGenerator();
 						app.ext.admin.calls.adminProjectCreate.init(sfo,{'callback':function(rd){
@@ -5881,32 +5901,6 @@ dataAttribs -> an object that will be set as data- on the panel.
 					})
 				},
 			
-			projectCreateShow : function($btn)	{
-				$btn.button();
-				$btn.off('click.projectCreateShow').on('click.projectCreateShow',function(){
-
-
-					var $D = $("<div \/>").attr('title',"Add a new project");
-					$D.addClass('displayNone').appendTo('body'); 
-					$D.dialog({
-						width : '70%',
-						modal: true,
-						autoOpen: false,
-						close: function(event, ui)	{
-							$(this).dialog('destroy').remove();
-							},
-						buttons: [ 
-							{text: 'Cancel', click: function(){
-								$D.dialog('close');
-								if(typeof vars.closeFunction === 'function')	{
-									vars.closeFunction($(this));
-									}
-								}}	
-							]
-						});
-					$D.dialog('open');
-					});
-				},
 			
 			projectGitRepoOpen : function($btn)	{
 				if($btn.closest('tr').data('github_repo'))	{
@@ -5936,7 +5930,6 @@ buttons: {
 	"Delete Feed": function() {
 		$D.dialog('close');
 		$('body').showLoading({'message':'Deleting Feed'});
-		app.model.destroy('adminRSSList|'+app.vars.partition); //clear local so a dispatch occurs.
 		app.ext.admin.calls.adminRSSRemove.init(data.id,{'callback':function(rd){
 			if(app.model.responseHasErrors(rd)){
 				$('body').hideLoading();
@@ -5946,7 +5939,15 @@ buttons: {
 				app.ext.admin.a.showRSS($(app.u.jqSelector('#',app.ext.admin.vars.tab+"Content")));
 				}
 			}},'immutable');
-		app.ext.admin.calls.adminRSSList.init({},'immutable');
+
+		app.model.addDispatchToQ({
+			"_cmd":"adminRSSList",
+			"_tag" : {
+				'datapointer' : 'adminRSSList|'+app.vars.partition
+				}
+			},'immutable');
+
+
 		app.model.dispatchThis('immutable');
 		},
 	Cancel: function() {$( this ).dialog( "close" ).empty().remove();}
@@ -5984,76 +5985,58 @@ else	{} //validateForm handles error display
 
 		//to render the addUpdate template for rss, the following data sources are necessary:  schedules, domains, navcat 'lists' and the detail for the rss feed itself.			
 			adminRSSUpdateShow : function($btn){
+
 				$btn.button({icons: {primary: "ui-icon-pencil"},text: false});
-				$btn.off('click.adminRSSUpdateShow').on('click.adminRSSUpdateShow',function(){
+				$btn.off('click.adminRSSUpdateShow').on('click.adminRSSUpdateShow',function(event){
+					event.preventDefault();
+					app.ext.admin.u.fetchRSSDataSources('mutable')
 
-var
-	$container = $btn.closest("[data-app-role='dualModeContainer']"),
-	data = $btn.closest('tr').data(),
-	$target = $("[data-app-role='dualModeDetail']",$container),
-	$div = $("<div \/>"), //used for the content in anypanel. a varso it can easily be passed into the handleRSScontent func.
-	panelID = app.u.jqSelector('','ruleBuilder_'+data.provider),
-	numRequests = app.ext.admin.u.fetchRSSDataSources('mutable')
+					var data = $btn.closest('tr').data();
+					var $panel = app.ext.admin.i.DMIPanelOpen($btn,{
+						'templateID' : 'rssAddUpdateTemplate', //not currently editable. just more details.
+						'panelID' : 'rss'+data.cpg,
+						'header' : 'Edit Project: '+data.cpg,
+						'handleAppEvents' : false, //handled later.
+						showLoading : true
+						});
 
-
-numRequests += app.ext.admin.calls.adminRSSDetail.init(data.cpg,{},'mutable');
-
-var $panel = $("<div\/>").hide().anypanel({
-	'header':'Edit: '+data.provider,
-	content : $div,
-	}).prependTo($target);
-app.ext.admin.u.toggleDualMode($container,'detail');
-$panel.slideDown('fast'); //,function(){$panel.showLoading({'message':'loading...'})}
-
-
-var	callback = function(rd){
-	$target.hideLoading();
-	if(app.model.responseHasErrors(rd)){
-		$target.anymessage({'message':rd})
-		}
-	else	{
-
-		$div.anycontent({'templateID':'rssAddUpdateTemplate','data':$.extend(true,{},app.data["appCategoryList|"+app.vars.partition+"|lists|."],app.data['adminDomainList'],app.data['adminWholesaleScheduleList'],app.data['adminRSSDetail|'+data.cpg])});
-		$('.buttonbar',$target).first().append($("<button \/>").attr('data-app-event','admin|adminRSSUpdateExec').text('Save').addClass('floatRight')); //template is shared w/ add, so button is added after the fact.
-		$('.toolTip',$target).tooltip();
-		$("[name='CPG']",$target).attr('readonly','readonly').css('border','none');
-
-//schedule, domain and source list don't pre-select by renderformat. the code below handles that.
-		if(app.data['adminRSSDetail|'+data.cpg].feed_link)	{
-			$("[name='feed_link']",$target).val(app.data['adminRSSDetail|'+data.cpg].feed_link);
-			}
-		
-		if(app.data['adminRSSDetail|'+data.cpg].schedule)	{
-			$("[name='schedule']",$target).val(app.data['adminRSSDetail|'+data.cpg].schedule);
-			}
-		
-		if(app.data['adminRSSDetail|'+data.cpg].list)	{
-			$("[name='list']",$target).val(app.data['adminRSSDetail|'+data.cpg].list);
-			}
-		
-
-		app.u.handleAppEvents($target);
-		}
-	}
-
-
-if(numRequests)	{
-	app.calls.ping.init({'callback':callback},'mutable');
-	app.model.dispatchThis('mutable');
-	}
-else	{
-	callback({});
-	}
-
-
-
-
-
-
-
-
-					
+//files are not currently fetched. slows things down and not really necessary since we link to github. set files=true in dispatch to get files.
+					app.model.addDispatchToQ({
+						"_cmd":"adminRSSDetail",
+						"CPG":data.cpg,
+						"_tag": {
+							'callback':function(rd){
+								if(app.model.responseHasErrors(rd)){
+									$('#globalMessaging').anymessage({'message':rd});
+									}
+								else	{
+									//success content goes here.
+									$panel.anycontent({'data':$.extend(true,{},app.data["appCategoryList|"+app.vars.partition+"|lists|."],app.data['adminDomainList'],app.data['adminPriceScheduleList'],app.data['adminRSSDetail|'+data.cpg])});
+									$('.buttonbar',$panel).first().append($("<button \/>").attr('data-app-event','admin|adminRSSUpdateExec').text('Save').addClass('floatRight')); //template is shared w/ add, so button is added after the fact.
+									$('.toolTip',$panel).tooltip();
+									$("[name='CPG']",$panel).attr('readonly','readonly').css('border','none');
+								
+								//schedule, domain and source list don't pre-select by renderformat. the code below handles that.
+									if(app.data['adminRSSDetail|'+data.cpg].feed_link)	{
+										$("[name='feed_link']",$panel).val(app.data['adminRSSDetail|'+data.cpg].feed_link);
+										}
+									
+									if(app.data['adminRSSDetail|'+data.cpg].schedule)	{
+										$("[name='schedule']",$panel).val(app.data['adminRSSDetail|'+data.cpg].schedule);
+										}
+									
+									if(app.data['adminRSSDetail|'+data.cpg].list)	{
+										$("[name='list']",$panel).val(app.data['adminRSSDetail|'+data.cpg].list);
+										}
+									app.u.handleAppEvents($panel);
+									}
+								},
+							'datapointer' : 'adminRSSDetail|'+data.cpg
+							}
+						},'mutable');
+					app.model.dispatchThis('mutable');
 					});
+
 				}, //adminRSSUpdateShow
 
 			adminRSSCreateExec : function($btn,vars)	{
@@ -6065,19 +6048,23 @@ var
 
 if(app.u.validateForm($form))	{
 	$form.showLoading({'message':'Creating RSS Feed'});
-	app.ext.admin.calls.adminRSSCreate.init(sfo,{'callback':function(rd){
-		$form.hideLoading();
-		if(app.model.responseHasErrors(rd)){
-			$form.anymessage({'message':rd})
+	
+	app.model.addDispatchToQ($.extend(true,{},sfo,{
+		"_cmd":"adminRSSCreate",
+		"_tag" : {
+			'callback':function(rd){
+				$form.hideLoading();
+				if(app.model.responseHasErrors(rd)){
+					$form.anymessage({'message':rd})
+					}
+				else	{
+					vars['$dialog'].empty().anymessage(app.u.successMsgObject('Thank you, your feed has been created.'));
+					app.ext.admin.a.showRSS($(app.u.jqSelector('#',app.ext.admin.vars.tab+"Content")));
+					}
+				}
 			}
-		else	{
-			vars['$dialog'].empty().anymessage(app.u.successMsgObject('Thank you, your feed has been updated.'));
-			app.ext.admin.a.showRSS($(app.u.jqSelector('#',app.ext.admin.vars.tab+"Content")));
-			}
-		}},'immutable');
-//get a clean copy of the list for the manager.
-	app.model.destroy('adminRSSList|'+app.vars.partition);
-	app.ext.admin.calls.adminRSSList.init({},'immutable');
+		}),'immutable');
+
 	app.model.dispatchThis('immutable');
 	}
 else	{} //validateForm handles error display
@@ -6112,7 +6099,7 @@ var
 			}
 		else	{
 	
-			$D.anycontent({'templateID':'rssAddUpdateTemplate','data':$.extend(true,{},app.data["appCategoryList|"+app.vars.partition+"|lists|."],app.data['adminDomainList'],app.data['adminWholesaleScheduleList'])});
+			$D.anycontent({'templateID':'rssAddUpdateTemplate','data':$.extend(true,{},app.data["appCategoryList|"+app.vars.partition+"|lists|."],app.data['adminDomainList'],app.data['adminPriceScheduleList'])});
 			$('.buttonbar',$D).first().append($("<button \/>").attr('data-app-event','admin|adminRSSCreateExec').text('Save').addClass('floatRight')); //template is shared w/ add, so button is added after the fact.
 			$('.toolTip',$D).tooltip();
 			app.u.handleAppEvents($D,{'$dialog':$D});
@@ -6132,6 +6119,18 @@ else	{
 
 
 
+					});
+				},
+			
+			linkOffSite : function($btn)	{
+				$btn.button();
+				$btn.off('click.linkOffSite').on('click.linkOffSite',function(){
+					if($btn.data('url'))	{
+						linkOffSite($btn.data('url'));
+						}
+					else	{
+						$btn.button('disable');
+						}
 					});
 				}
 			

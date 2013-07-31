@@ -10,6 +10,7 @@
 			
 			<h3 class='heading'>Customer Search</h3>
 		</div>
+
 		<div class='ui-state-default smallPadding alignRight'>
 		<form action='#' data-app-role='customerSearch' onSubmit='return false'>
 		<select name='scope'>
@@ -20,6 +21,9 @@
 			<option value='NOTES'>notes</option>
 			<option value='ORDER'>order</option>
 			<option value='PHONE'>phone</option>
+			<option value='SCHEDULE'>schedule (org)</option>
+			<option value='ACCOUNT_MANAGER'>account manager (org)</option>
+			<option value='ACCOUNT_TYPE'>account type (org)</option>
 		</select>
 		<input type='search' name='searchfor' placeholder='keyword' size='30'  />
 		<button data-app-event='admin_customer|execCustomerSearch'>Search</button>
@@ -80,8 +84,7 @@ if the data attrib is changed or any changes are made to the values (especially 
 	<div class='buttonBar clearfix marginBottom ui-widget ui-widget-content ui-corner-all smallPadding'>
 		<h2 class='floatLeft ui-widget-header-padding'>
 User: <span data-bind="var:customer(_EMAIL); format:text;"></span> <span data-bind="var:customer(_CID); format:text; pretext:[; posttext:];" class='paddingRight'></span>
-Prt: <span data-bind="var:customer(_PRT); format:text; hideZero:false;" class='paddingRight'></span>
-Created: <span data-bind="var:customer(INFO.CREATED_GMT); format:unix2mdy;"></span>	
+
 		</h2>
 		<button class='floatRight' disabled='disabled' data-app-event='admin_customer|execCustomerEditorSave' data-app-role='saveButton'>Save <span class='numChanges'></span> Changes</button>
 		<button class='floatRight' name="reset_hint" data-app-event='admin_customer|execHintReset'>Remove Password Hint</button>
@@ -97,11 +100,13 @@ Created: <span data-bind="var:customer(INFO.CREATED_GMT); format:unix2mdy;"></sp
 	<h2>General</h2>
 	<div>
 	<fieldset>
+		<div class='label'>Prt: <span data-bind="var:customer(_PRT); format:text; hideZero:false;" class='paddingRight'></span></div>
+		<div class='label'>Created: <span data-bind="var:customer(INFO.CREATED_GMT); format:unix2mdy;"></span>	</div>
 		<label><span>Email:</span><input size='20' type="email" name="email" data-bind="var:customer(INFO.EMAIL); format:popVal;" /></label>
 		<label><span>First Name:</span><input size="20" type="text" name="firstname"  data-bind="var:customer(INFO.FIRSTNAME); format:popVal;" /></label>
 		<label><span>Last Name:</span><input size="20" type="text" name="lastname"  data-bind="var:customer(INFO.LASTNAME); format:popVal;" /></label>
 		<label><span>Password: </span><input size='20' type='text' name='password' data-bind="var:customer(INFO.PASSWORD); format:popVal;" /></label>
-		<label><input type="checkbox" name="is_locked" data-bind="var:customer(INFO.IS_LOCKED); format:popCheckbox;"> Lock customer account</label>
+		<label><input type="checkbox" name="is_locked" data-bind="var:customer(INFO.IS_LOCKED); format:popVal;"> Lock customer account</label>
 	</fieldset>
 	</div>
 </div>
@@ -224,8 +229,8 @@ Created: <span data-bind="var:customer(INFO.CREATED_GMT); format:unix2mdy;"></sp
 	<h2>Wholesale</h2>
 	<div>
 	<label data-bind="useParentData:true; format:wholesaleScheduleSelect; extension:admin_customer;">Schedule: </label>
-	<label class='clearfix'><input type="checkbox" name="ALLOW_PO" data-bind="var:customer(WS.ALLOW_PO); format:popCheckbox;"> Enable/Accept Purchase Orders</label>
-	<label class='clearfix'><input type="checkbox" name="RESALE" data-bind="var:customer(WS.RESALE); format:popCheckbox;"> Do not charge sales tax</label>
+	<label class='clearfix'><input type="checkbox" name="ALLOW_PO" data-bind="var:customer(WS.ALLOW_PO); format:popVal;"> Enable/Accept Purchase Orders</label>
+	<label class='clearfix'><input type="checkbox" name="RESALE" data-bind="var:customer(WS.RESALE); format:popVal;"> Do not charge sales tax</label>
 	<label><span>Credit Limit: $</span><input type="number" step='0.01' min='0' name="CREDIT_LIMIT"  size="10" data-bind="var:customer(WS.CREDIT_LIMIT); hideZero:false; format:popVal;" /></label>
 	<label><span>Credit Balance: $</span><input type="number" step='0.01' min='0' name="CREDIT_BALANCE"  size="10" data-bind="var:customer(WS.CREDIT_BALANCE); hideZero:false; format:popVal;" /></label>
 	<label><span>Resale #: </span><input type="number" name="RESALE_PERMIT"  size="15" data-bind="var:customer(WS.RESALE_PERMIT); format:popVal;" /></label>
@@ -371,7 +376,7 @@ Created: <span data-bind="var:customer(INFO.CREATED_GMT); format:unix2mdy;"></sp
 	<td class='alignRight' data-bind="var:wallet(TC); format:text;"></td>
 	<td class='alignRight' data-bind="var:wallet(TE); format:text;"></td>
 	<td class='alignRight'>
-<!--	<button data-app-event="admin_customer|showWalletDetail">View this wallet</button> -->
+	<button data-app-event="admin_customer|adminCustomerWalletPeekShow" title='View wallet - requires admin access'>View this wallet</button>
 	<button data-app-event="admin|tagRowForRemove">Delete this wallet</button><!--
 	<button data-app-event="admin_customer|tagRowForIsDefault">Set wallet as default</button>--></td>
 </tr>
@@ -668,7 +673,7 @@ The checkbox below does not work.
 
 <label>
 	<span>Order #</span>
-	<input type="text" value="" name="orderid" size="12" /> ####-##-######
+	<input type="text" value="" name="orderid" size="12" data-bind="var: ticket(orderid); format:popVal;" /> ####-##-######
 </label>
 
 <label>
@@ -940,7 +945,7 @@ The checkbox below does not work.
 
 <table>
 <tr id='reviewsResultsRowTemplate'>
-	<td><input type='checkbox' /></td>
+	<td><span data-bind="var: giftcard(APPROVED_GMT); format: hideIfSet;"><input type='checkbox' /></span></td>
 	<td data-bind="var: giftcard(CREATED_GMT); format:epoch2pretty;" class='hideInDetailMode valignTop'></td>
 	<td data-bind="var: giftcard(PID); format:text;" class='valignTop'></td>
 	<td data-bind="var: giftcard(SUBJECT); format:text;" class='valignTop'></td>
@@ -957,7 +962,7 @@ The checkbox below does not work.
 
 
 <div id='reviewAddUpdateTemplate'>
-<form action='#' onsubmit="return false" class='labelsAsBreaks alignedLabels'>
+<form action='#' onsubmit="return false" class='labelsAsBreaks alignedLabels alignedInputs'>
 <fieldset>
 	<legend>Review Details</legend>
 
@@ -984,7 +989,7 @@ The checkbox below does not work.
 
 	<label>
 		<span>Message</span>
-		<textarea name='MESSAGE' data-bind="var: review(MESSAGE); format:popVal;" required='required'></textarea>
+		<textarea name='MESSAGE' data-bind="var: review(MESSAGE); format:popVal;" rows='6' required='required'></textarea>
 	</label>
 	
 	<label>
@@ -992,6 +997,10 @@ The checkbox below does not work.
 		<input name='PID' data-bind="var: review(PID); format:popVal;" type='text' required='required' />
 	</label>
 
+	<label>
+		<input type='checkbox' class='applyAnycb' name='approve' data-bind="var: review(APPROVED_GMT); format:popVal;" />
+		Approved
+	</label>
 </fieldset>
 
 <fieldset>
@@ -1025,3 +1034,202 @@ The checkbox below does not work.
 </form>
 
 </div>
+
+
+
+<!-- campaignManager -->
+
+<table>
+<tr id='campaignResultsRowTemplate'>
+	<td>
+	<span data-bind="var: campaign(CAMPAIGNID); format:text;" data-app-event="admin_customer|adminCampaignUpdateShow"></span>
+	</td>
+	<td data-bind="var: campaign(SUBJECT); format:text;" class='hideInDetailMode'></td>
+	<td data-bind="var: campaign(STATUS); format:text;" class='hideInDetailMode'></td>
+	<td class='campaignPlatformIcons'>
+<span class='displayNone' data-bind="var:campaign(SEND_ANDROID); format:showIfSet;"><img src='app-admin/images/platforms/android-23x23.png' width='23' height='23' alt='android' /></span>
+<span class='displayNone' data-bind="var:campaign(SEND_APPLEIOS); format:showIfSet;"><img src='app-admin/images/platforms/ios-23x23.png' width='23' height='23' alt='apple/ios' /></span>
+<span class='displayNone' data-bind="var:campaign(SEND_EMAIL); format:showIfSet;"><img src='app-admin/images/platforms/email-23x23.png' width='23' height='23' alt='email' /></span>
+<span class='displayNone' data-bind="var:campaign(SEND_FACEBOOK); format:showIfSet;"><img src='app-admin/images/platforms/facebook-23x23.png' width='23' height='23' alt='facebook' /></span>
+<span class='displayNone' data-bind="var:campaign(SEND_SMS); format:showIfSet;"><img src='app-admin/images/platforms/sms-23x23.png' width='23' height='23' alt='sms' /></span>
+<span class='displayNone' data-bind="var:campaign(SEND_TWITTER); format:showIfSet;"><img src='app-admin/images/platforms/twitter-23x23.png' width='23' height='23' alt='twitter' /></span>
+	</td>
+	<td data-bind="var: campaign(QUEUE_MODE); format:text;" class='hideInDetailMode'></td>
+	<td data-bind="var: campaign(CREATED_TS); format:text;" class='hideInDetailMode'></td>
+	<td data-bind="var: campaign(EXPIRES_TS); format:text;" class='hideInDetailMode'></td>
+	<td class='alignRight'>
+		<button class='hideInDetailMode' data-app-event='admin_customer|adminCampaignRemoveConfirm'>Delete</button>
+<!--		<button class='hideInDetailMode'>clone</button> -->
+		
+		<button data-app-event="admin_customer|adminCampaignUpdateShow">Edit</button>
+		<!-- these need to be in the editor, not here:
+		send test,
+		select recipients
+		--></td>
+</tr>
+</table>
+
+
+<div id='caimpaignCreateTemplate' class='campaignEditor'>
+
+<form action='#' onsubmit="return false" class='labelsAsBreaks alignedLabels'>
+<input name='GUID' type='hidden' value='' data-bind="var: campaign(GUID); format:popVal;" />
+
+<fieldset>
+
+<label>
+	<span>Campaign ID</span>
+	<input type='text' name='CAMPAIGNID' value='' required='required' data-app-event='admin|alphaNumeric' maxlength='11' data-minlength='6' />
+	<span class='toolTip' title="An 6-18 character alpha-numeric code that represents the campaign (ex: SUMMER13). Used as a reference point in lists and also in the URL's for image reference. This code can not be changed.">?</span>
+</label>
+
+<label>
+	<span>Template</span>
+	<select data-bind="var: mkt(@TEMPLATES);format:optionsFromList; text:SUBDIR; value:SUBDIR;" name='template_origin'></select>
+</label>
+
+
+</fieldset>
+
+<div class='buttonset alignRight'>
+	<button data-app-event="admin_customer|adminCampaignCreateExec">Create Campaign</button>
+</div>
+
+</form>
+
+</div>
+
+
+
+
+
+
+<div id='caimpaignUpdateTemplate' class='campaignEditor ui-widget ui-widget-content ui-corner-all stdPadding clearfix'>
+
+<form action='#' onsubmit="return false" class='labelsAsBreaks' data-cb_tf='true'>
+<input name='CAMPAIGNID' type='hidden' value='' data-bind="var: campaign(CAMPAIGNID); format:popVal;" />
+
+
+<div class='marginBottom clearfix'>
+	
+	<button class='floatRight' data-app-event="admin_customer|adminCampaignUpdateExec">Save Campaign</button>
+	<button class='floatRight marginRight' data-app-event="admin_customer|adminCampaignSendConfirm">Start</button>
+	
+	<h1 data-bind="var:campaign(CAMPAIGNID); format:text; pretext: Edit Campaign ;"></h1>
+</div>
+
+	
+	<fieldset class='floatLeft threeColumn'>
+		<legend>Template</legend>
+		<div class='label' data-app-role='campaignTemplateConfigContainer'>
+			<span>Selected</span>
+			<span data-bind='var:campaign(template_origin); format:text;' data-app-role='templateOrigin'  class='marginLeft marginRight'></span>
+		</div>
+		
+		<div class='buttonset ui-widget-content smallPadding ui-corner-all' data-bind='var:profile(CAMPAIGNID); format:assignAttribute; attribute:data-campaignid;'>
+			<button data-app-event='admin_templateEditor|templateChooserShow' data-mode='campaign'>Choose</button>
+			<button data-app-event='admin_templateEditor|templateEditorShow' data-mode='campaign'>Edit</button>
+			<button data-app-event='admin_templateEditor|containerZipDownloadExec' data-mode='campaign'>Download Zip</button>
+			<button data-app-event='admin_templateEditor|containerFileUploadShow' data-mode='campaign'>Upload</button>
+		</div>
+	
+	</fieldset>
+	
+	
+	
+	<fieldset data-app-role='campaignSettings' class='floatLeft threeColumn'>
+		<legend>Campaign Settings</legend>
+
+
+<label>
+	<input type='checkbox' name='SEND_EMAIL' data-bind="var: campaign(SEND_EMAIL); format:popVal;" />Email
+</label>
+
+<label>
+	<input type='checkbox' name='SEND_APPLEIOS' data-bind="var: campaign(SEND_APPLEIOS); format:popVal;" />Apple iOS <span class='hint'>coming soon</span>
+</label>
+
+<label>
+	<input type='checkbox' name='SEND_ANDROID' data-bind="var: campaign(SEND_ANDROID); format:popVal;" />Android <span class='hint'>coming soon</span>
+</label>
+<!--
+<label>
+	<input type='checkbox' name='SEND_TWITTER' data-bind="var: campaign(SEND_TWITTER); format:popVal;" />Twitter <span class='hint'>coming soon</span>
+</label>
+
+<label>
+	<input type='checkbox' name='SEND_FACEBOOK' data-bind="var: campaign(SEND_FACEBOOK); format:popVal;" />Facebook <span class='hint'>coming soon</span>
+</label>
+
+<label>
+	<input type='checkbox' name='SEND_SMS' data-bind="var: campaign(SEND_SMS); format:popVal;" />SMS/Text <span class='hint'>coming soon</span>
+</label>
+-->
+
+<label>
+	<span>Start time</span>
+	<input type='text' name='STARTTIME' class='applyDatetimepicker' data-bind="var: campaign(STARTTIME); format:popVal;" />
+</label>
+
+
+
+
+
+	</fieldset>
+
+	<fieldset data-app-role='campaignCustomerSelector' class='floatLeft threeColumn'>
+		<legend>Customer Selection</legend>
+		<div data-app-role='pickerContainer'>
+		
+		</div>
+	
+	</fieldset>
+
+</form>
+
+
+</div>
+
+
+
+
+<!-- CUSTOMER PICKER -->
+
+
+
+<div id='customerPickerTemplate'>
+	<div data-app-role='accordionContainer' class='labelsAsBreaks'>
+
+		<h6 data-pickmethod='CUSTOMER_SELECTALL'>All</h6>
+		<div data-contentloaded='true'>
+		<label><input type='checkbox' name='SELECTALL' data-app-event='admin|lockAccordionIfChecked' /> Select all customers</label>
+		<p class='note'>If checked, all other menus will be disabled</p>
+		</div>
+
+		<h6 class='showForZoovyOnly' data-pickmethod='CUSTOMER_SUBSCRIBERLISTS'>From Subscriber List</h6>
+		<div class='showForZoovyOnly' data-bind="var: list(@lists); format: processList; loadsTemplate:pickerSubscriberListsRowTemplate;"></div>
+
+		<h6 data-pickmethod='CUSTOMER_TAG'>From Tags</h6>
+		<div class='labelsAsBreaks' data-contentloaded='true'>
+Coming Soon
+		</div>
+
+
+		<h6 data-pickmethod='CUSTOMER_LOCATION'>By Location</h6>
+		<div class='labelsAsBreaks' data-contentloaded='true'>
+Coming Soon
+		</div>
+	
+		<h6 data-pickmethod='CUSTOMER_EMAIL'>By CSV Upload</h6>
+		<div data-contentloaded='true'>
+<textarea name='csv' rows='10' class='fullWidth'></textarea><!-- passed as EMAILS+ -->
+		</div>
+		
+	</div>
+
+</div>
+
+
+<label id='pickerSubscriberListsRowTemplate' class='displayNone' data-bind="var: list(NAME); format:showIfSet;">
+	<input type='checkbox' name='' data-bind="var:list(ID); format:assignAttribute; attribute:name; valuePretext:SUBLIST+;" /><span data-bind="var: list(NAME); format:text;"></span>
+</label>

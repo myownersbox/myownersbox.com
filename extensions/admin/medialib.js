@@ -351,7 +351,7 @@ setTimeout(function(){
 // the delete below is a fairly benign delete. report errors, but no need updated the entire files list again, just remove the line from the dom.
 // errors will get reported and, if the file doesn't delete, it'll always be here next time for deletion.
 				for(var i = 0; i < L; i += 1)	{
-					$ul.append($("<li>").html("[ <a href='#' onClick=\"app.ext.admin_medialib.calls.adminPublicFileDelete.init('"+data[i].file+"',{},'passive');  $(this).parent().empty().remove(); return false;\">del<\/a> ] <a href='"+data[i]['link']+"' target='_blank' >"+data[i].file+"<\/a>"));
+					$ul.append($("<li>").html("[ <a href='#' onClick=\"app.ext.admin_medialib.calls.adminPublicFileDelete.init('"+data[i].file+"',{},'passive');  $(this).parent().empty().remove(); app.model.destroy('adminPublicFileList'); return false;\">del<\/a> ] <a href='"+data[i]['link']+"' target='_blank' >"+data[i].file+"<\/a>"));
 					}
 				 $('#publicFilesList').empty().removeClass('loadingBG').append($ul.children());
 				},
@@ -387,12 +387,16 @@ setTimeout(function(){
 
 //mode typically isn't needed. It is added to the ul containing the 'list' and when that list is run through the templating engine, mode can be used to change behaviors.
 //for instance, mode = 'manage' will turn off the 'select' icons and not add an onclick to the images.
+//if mode = kissTemplate, then in the 'selectThisMedia' phase, we'll look for image in the templateEditor iframe.
 				P.mode = P.mode || 'unset'
 				if($target.length)	{
 //this is where the contents for what media is currently selected go. Needs to be emptied each time so old contents don't show up.
 //also hidden by default. will be set to visible if populated (keep buttons from showing up)
 					$('#mediaLibraryFocusMediaDetails').empty().hide();
-
+//** 201324 -> bug fix. need these cleared each time so they don't carry over between uses.
+					$target.data('mode',"");
+					$target.data('pid',"");
+					$target.data('src',"");
 					} //media lib has already been created.
 //media library hasn't been opened yet. Add to dom and add properties that only get added once.
 				else	{
@@ -489,11 +493,13 @@ setTimeout(function(){
 //imageID should always be set. And the presence of eleSelector or mode determines the action.
 //eleSelector just updates some form on the page.
 //mode requires an API call.
-
-				if(mediaData.imageID && ( mediaData.eleSelector ||  mediaData.src))	{
+//when in kissTemplate mode, we're just doing a straight image substitution, so eleSelector and src are NOT required.
+				if(mediaData.imageID && ( mediaData.eleSelector ||  mediaData.src || mediaData.mode == 'kissTemplate'))	{
 //update the image on the page to show what has been selected.
 					if(mediaData.imageID)	{
-						var $image = $(mediaData.imageID);
+						var $image = (mediaData.mode == 'kissTemplate') ? $('iframe',$('#templateEditor')).contents().find(mediaData.imageID) : $(mediaData.imageID);
+						var oldSrc = $image.src;
+						app.u.dump(" -> $image.length: "+$image.length);
 //						app.u.dump(app.u.makeImage({'tag':0,'w':$image.attr('width'),'h':$image.attr('height'),'name':newFilename,'b':'ffffff'}));
 						$image.attr({
 							'src':app.u.makeImage({'tag':0,'w':$image.attr('width'),'h':$image.attr('height'),'name':newFilename,'b':'ffffff'}),
@@ -509,6 +515,7 @@ setTimeout(function(){
 						if(mediaData.eleSelector.indexOf('#') == -1)	{
 							app.u.dump(" -> # some dumbass called medialib but used selector \'"+mediaData.eleSelector+"\'! i will *attempt* to fix it.");
 							correctedSelector = app.u.jqSelector('#',mediaData.eleSelector);
+							app.u.dump(" -> correctedSelector.length: "+$(correctedSelector).length);
 							}
 //						app.u.dump(" -> mediaData.eleSelector: "+mediaData.eleSelector);
 //						app.u.dump(" -> selector.length: "+$(app.u.jqSelector('#',mediaData.eleSelector)).length);
@@ -516,10 +523,19 @@ setTimeout(function(){
 						$medialib.dialog('close');
 						}
 //selector OR mode WILL be set by the time we get here.
-					else	{
+					else if(mediaData.src)	{
 //						app.u.dump("took mode route");
 						app.ext.admin_medialib.calls.adminUIMediaLibraryExecute.init({'verb':'SAVE','src':mediaData.src,'IMG':newFilename},{'callback':'handleMediaLibUpdate','extension':'admin_medialib'});
 						app.model.dispatchThis('immutable');
+						}
+					else if(mediaData.mode == 'kissTemplate')	{
+						if($image.data('filepath'))	{$image.attr('data-oldfilepath',$image.data('filepath'))}
+						$image.attr({'data-wizardificated':'true','data-filepath':newFilename});  //must be attribute, not data, so it's preserved on save.
+						magic.inspect(mediaData.imageID);  //update object inspector.
+						$medialib.dialog('close');// straight substitution, which occurs above.
+						}
+					else	{
+						//hhhmmm.. should never end up here. the 'if' to get into this block precludes any of the previous conditions not being met.
 						}
 					}
 				else	{
@@ -769,8 +785,10 @@ app.u.dump(" -> mode: "+mode);
 
 //both a selector and a mode are required.
 if(selector && mode)	{
-	
-	var $selector = $(app.u.jqSelector(selector.charAt(0),selector.substring(1)));
+	// *** 201324 -> selector can now be a jquery object OR a string of a selector.
+//	var $selector = $(app.u.jqSelector(selector.charAt(0),selector.substring(1)));
+	var $selector = (selector instanceof jQuery) ? selector : $(app.u.jqSelector(selector.charAt(0),selector.substring(1)));
+
 //	app.u.dump(" -> $selector.length: "+$selector.length); //app.u.dump($selector);
 //	app.u.dump(" -> $selector: "); app.u.dump($selector);
 	var successCallbacks = {
@@ -784,9 +802,13 @@ if(selector && mode)	{
 				data[i].folder = folderName;
 				app.ext.admin_medialib.calls.adminImageUpload.init(data[i],{'callback':'handleImageUpload','extension':'admin_medialib','filename':data[i].filename},'immutable'); //on a successful response, add the file to the media library.
 				}
+//*** 201324 -> this wasn't getting dispatched!
+			app.model.dispatchThis('immutable');
 			},
 		'publicFileUpload' : function(data,textStatus)	{
 //			app.u.dump("Got to csvUploadToBatch success.");
+//* 201320 -> the adminPublicFileList is slow, so on upload, we do not reload content. The destroy below will remove the data from localStorage so a merchant can exit publick files and return to see their updated list.
+			app.model.destroy('adminPublicFileList');
 			app.ext.admin_medialib.calls.adminPublicFileUpload.init(data[0],{'callback':'handleFileUpload2Batch','extension':'admin'},'immutable');
 			app.model.dispatchThis('immutable');
 			},
@@ -798,6 +820,53 @@ if(selector && mode)	{
 //			app.u.dump(" -> data[0].uuid: "+data[0].uuid);
 			app.ext.admin_support.calls.adminTicketFileAttach.init(data[0],{'callback':'handleAdminTicketFileAttach','extension':'admin_support'},'immutable');
 //			app.calls.ping.init({'callback':'showUI','extension':'admin','path':'/biz/support/index.cgi?VERB=TICKET-VIEW&ID='+data[0].ticketid},'immutable'); //need to piggy-back this on the file attach so that the showUI request is triggered after the changes are reflected on the ticket.
+			app.model.dispatchThis('immutable');
+			},
+		'adminEBAYProfileFileUpload' : function(data,textStatus)	{
+			app.u.dump("Got to adminEBAYProfileFileUpload success.");
+			$selector.showLoading({"message":"uncompressing and distributing zip file. This may take a minute. You may safely close the 'eBay Template Zip File Upload' window (do not close the browser) and we will alert you when this has finished."});
+//			app.u.dump(" -> data: "); app.u.dump(data);
+			var
+				L = data.length,
+				profile = $("[name='profile']",$selector).val();
+
+			for(var i = 0; i < L; i += 1)	{
+				app.model.addDispatchToQ({
+					'_cmd':'adminEBAYProfileFileUpload',
+					'fileguid' : data[i].fileguid,
+					'FILENAME' : data[i].filename,
+					'PROFILE' : profile
+					},'mutable');
+
+				}
+			app.model.addDispatchToQ({
+				'_cmd':'ping',
+				'_tag':	{
+					'callback':function(rd)	{
+						if($selector.is(":visible"))	{$selector.hideLoading();}
+						else	{
+							alert("Your zip file upload has completed.");
+							}
+						}
+					}
+				},'mutable');
+
+			app.model.dispatchThis('mutable');
+			
+			},
+		
+		'ebayTemplateMediaUpload' : function(data,textStatus)	{
+			app.u.dump("Got to ebayTemplateMediaUpload success.");
+			var L = data.length;
+			var tagObj;
+			var folderName = "_ebay/"+$('#ebayTemplateEditor').data('profile');
+			for(var i = 0; i < L; i += 1)	{
+				data[i].folder = folderName;
+				app.ext.admin_medialib.calls.adminImageUpload.init(data[i],{},'immutable'); //on a successful response, add the file to the media library.
+				}
+//refresh the projects file list so that upon returning to the file chooser, it loads quick.
+			app.model.destroy("adminImageFolderDetail|"+folderName);
+			app.ext.admin_medialib.calls.adminImageFolderDetail.init(folderName,{},'immutable');
 			app.model.dispatchThis('immutable');
 			},
 		'csvUploadToBatch' : function(data,textStatus) {
@@ -819,7 +888,7 @@ if(selector && mode)	{
 		url: '//www.zoovy.com/webapi/jquery/fileupload.cgi', //don't hard code to http or https. breaks safari and chrome.
 		maxNumberOfFiles : (mode == 'csvUploadToBatch') ? 1 : null, //for csv uploads, allow only 1 file to be selected.
 		success : function(data,textStatus){
-			app.u.dump(" -> mode:  "+mode+" data: "); app.u.dump(data);
+//			app.u.dump(" -> mode:  "+mode+" data: "); app.u.dump(data);
 			successCallbacks[mode](data,textStatus);
 			}
 		});
@@ -1211,11 +1280,56 @@ var tabs = [
 				$target.empty().append(app.renderFunctions.transmogrify({},'page-setup-import-'+pathParams.VERB.toLowerCase(),{})); //load the page template.
 				app.ext.admin_medialib.u.convertFormToJQFU('#csvUploadToBatchForm','csvUploadToBatch');
 				app.ext.admin.u.uiHandleNavTabs(tabs);
+				app.u.handleAppEvents($target);
 				}
 
-			} //u
+			}, //u
 
+		e : {
+			
+			adminCSVExportRewritesExec : function($btn)	{
+				$btn.button({icons: {primary: "ui-icon-circle-arrow-s"},text: true});
+				$btn.off('click.helpSearch').on('click.helpSearch',function(event){
+$btn.parent().showLoading({"message":"Building URL Rewrite File"});
+app.model.addDispatchToQ({
+	'_cmd':'adminCSVExport',
+	'base64' : 1,
+	'export' : 'REWRITES',
+	'_tag':	{
+		'callback':'fileDownloadInModal',
+		'extension':'admin',
+		'filename' : 'rewrites.csv',
+		'datapointer':'adminCSVExport|REWRITE',
+		'jqObj' : $btn.parent()
+		}
+	},'mutable');
+app.model.dispatchThis('mutable');
 
+					});
+				},		
+			adminCSVExportNavcatsExec : function($btn)	{
+				$btn.button({icons: {primary: "ui-icon-circle-arrow-s"},text: true});
+				$btn.off('click.helpSearch').on('click.helpSearch',function(event){
+$btn.parent().showLoading({"message":"Building Category File"});
+app.model.addDispatchToQ({
+	'_cmd':'adminCSVExport',
+	'export' : 'CATEGORY',
+	'base64' : 1,
+	'@OTHER_COLUMNS' : $('#navcatExportHeader').val() ? $('#navcatExportHeader').val().split(',') : [],
+	'_tag':	{
+		'callback':'fileDownloadInModal',
+		'datapointer':'adminCSVExport|CATEGORY',
+		'extension':'admin',
+		'filename' : 'categories.csv',
+		'jqObj' : $btn.parent()
+		}
+	},'mutable');
+app.model.dispatchThis('mutable');
+
+					});
+				}
+			
+			}
 
 		} //r object.
 	return r;

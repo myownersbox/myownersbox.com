@@ -4,25 +4,19 @@
 
 <div id='pageSyndicationTemplate' class='page pageSyndication' data-app-role='syndicationContainer'>
 
-	
-	<div class='betaWarning ui-widget ui-widget-content ui-corner-all smallPadding marginBottom clearfix'>
-	<p>This section has been updated as of 201320. If you experience issues please logout and click the previous version link, then come back to this page to make your changes.</p>
-	</div>
-
 	<section class='slimLeftNav' data-app-role='slimLeftNav'>
 
-<h2>Recommended Marketplaces</h2>
+<h2>Marketplaces</h2>
 <div class='alignCenter'>
 
 	<div class='marginBottom pointer' data-mkt="GOO" data-app-event="admin_syndication|showDSTDetail">	
 	<img height="40" width="150" src="app-admin/images/marketplaces/googletrustedstores.png" />
 	</div>
-		
 
-	<div class='marginBottom pointer' onClick="navigateTo('/biz/syndication/ebay/index.cgi');"><!-- data-mkt="EBF" data-app-event="admin_syndication|showDSTDetail" -->
+
+	<div class='marginBottom pointer' data-mkt="EBF" data-app-event="admin_syndication|showDSTDetail"><!--  onClick="navigateTo('#!ebay');" -->
 	<img height="40" width="150"  src="app-admin/images/marketplaces/ebay.png" />
 	</div>
-
 
 	<div class='marginBottom pointer' data-mkt="AMZ" data-app-event="admin_syndication|showDSTDetail"><!--  onClick="navigateTo('/biz/syndication/amazon/index.cgi');" -->
 	<img height="40" width="150"  src="app-admin/images/marketplaces/amazon_services.png" />
@@ -39,9 +33,6 @@
 	</div>
 
 
-	<div class='marginBottom pointer' data-mkt="WSH" data-app-event="admin_syndication|showDSTDetail">
-	<img  src="app-admin/images/marketplaces/wishpot.png" />
-	</div>
 		
 	<div class='marginBottom pointer' data-mkt="HSN" data-app-event="admin_syndication|showDSTDetail" >
 	<img height="40" width="150"  src="app-admin/images/marketplaces/hsn.png" />
@@ -59,7 +50,7 @@
 
 </div>
 
-<h2>Recommended CPC</h2>
+<h2>CPC Traffic</h2>
 <div class='alignCenter'>
 
 	<div class='marginBottom pointer' data-mkt="SHO" data-app-event="admin_syndication|showDSTDetail">
@@ -94,13 +85,16 @@
 
 </div>
 
-<h2>More Integrations</h2>
+<h2>Other</h2>
 <div class='alignCenter'>
 
 	<div class='marginBottom pointer' data-mkt="CJ" data-app-event="admin_syndication|showDSTDetail">
 <img height="40" width="150"  src="app-admin/images/marketplaces/commissionjunction.png" />
 	</div>
-		
+
+	<div class='marginBottom pointer' data-mkt="WSH" data-app-event="admin_syndication|showDSTDetail">
+	<img  src="app-admin/images/marketplaces/wishpot.png" />
+	</div>
 
 	<div class='marginBottom pointer' data-mkt="FND" data-app-event="admin_syndication|showDSTDetail">
 	<img height="40" width="150"  src="app-admin/images/marketplaces/thefind.png" />
@@ -138,11 +132,11 @@
 	<div class='marginBottom pointer' data-mkt="" data-app-event="admin_syndication|showDSTDetail">
 	<img height="40" width="150"  src="app-admin/images/marketplaces/custom.png" />
 	</div>
--->
-
-	<div class='marginBottom opacity50' data-mkt="GSM" data-app-event="admin_syndication|showDSTDetail">
-	Google Sitemap<br />Coming Soon
+	<div class='marginBottom pointer' data-mkt="GSM" data-app-event="admin_syndication|showDSTDetail">
+	<img height="40" width="150"  src="app-admin/images/marketplaces/google.png" /><br />Site Map
 	</div>
+
+-->
 
 
 </div>
@@ -157,6 +151,9 @@
 		</div>
 		<div class='ui-widget-content ui-corner-bottom stdPadding slimLeftContentContainer' data-app-role='slimLeftContentContainer'>
 		<!-- syndaction landing page content. -->
+		
+		<div id='syndicationSummaryChartOne'></div>
+		
 		</div>
 	</section>
 
@@ -168,7 +165,8 @@
 
 	<div class='anytabsContainer'><!-- doesn't use applyAnytabs class because I want the tabs to appear earlier (instead of in callback) -->
 	<ul>
-		<li><a href='#settings' data-app-role='settings'>Settings</a></li>
+		<li><a href='#settings' data-app-role='settings'>Syndication</a></li>
+		<li class='displayNone' data-app-role='extrasTab'><a href='#extras' data-app-role='extras'></a></li><!-- DST specific. change tab text and content in showDST or showEBAy -->
 		<li><a href='#files' data-app-role='filesTab'>Files</a></li>
 		<li><a href='#history' data-app-role='historyTab'>History</a></li>
 		<li><a href='#errors' data-app-role='errorsTab'>Errors</a></li>
@@ -186,34 +184,39 @@
 	</section>
 
 
+	<section data-anytab-content='extras' class='clearfix'>
+
+	</section>
+
+
 	<section data-anytab-content='errors' class='clearfix'>
 	<div class='buttonset alignRight'>
 	<button data-app-event="admin_syndication|adminSyndicationUnsuspendAndClearErrorMacro">Clear Errors</button>
 	</div>
-	<table class='gridTable fullWidth applyAnytable'>
-	<thead>
+	<table class='gridTable fullWidth applyAnytable marginTop'>
+<!--	<thead>
 	<tr>
-		<th class='alignLeft'>id</th>
-		<th class='alignLeft'>error</th>
-		<th class='alignLeft'>created</th>
+		<th class='alignLeft'>ID</th>
+		<th class='alignLeft'>Error</th>
+		<th class='alignLeft'>Created</th>
 	</tr>
 	</thead>
-	<tbody data-bind="var: mkt(@ROWS); format:processList; loadsTemplate:syndicationErrorsRowTemplate;">
+-->	<tbody data-bind="var: mkt(@ROWS); format:processList; loadsTemplate:syndicationErrorsRowTemplate;">
 	
 	</tbody>
 	</table>
-	
 	</section>
+
 
 	<section data-anytab-content='files' class='clearfix'>
 	<table class='gridTable fullWidth applyAnytable'>
 	<thead>
 	<tr>
-		<th class='alignLeft'>title</th>
-		<th class='alignLeft'>created</th>
-		<th class='alignLeft'>expires</th>
-		<th class='alignLeft'>created by</th>
-		<th class='alignLeft'>filename</th>
+		<th class='alignLeft'>Title</th>
+		<th class='alignLeft'>Created</th>
+		<th class='alignLeft'>Expires</th>
+		<th class='alignLeft'>Created by</th>
+		<th class='alignLeft'>Filename</th>
 	</tr>
 	</thead>
 	<tbody data-bind="var: mkt(@FILES); format:processList; loadsTemplate:syndicationFilesRowTemplate;">
@@ -226,9 +229,9 @@
 	<table class='gridTable fullWidth applyAnytable'>
 	<thead>
 	<tr>
-		<th class='alignLeft'>type</th>
-		<th class='alignLeft'>id</th>
-		<th class='alignLeft'>message</th>
+		<th class='alignLeft'>Type</th>
+		<th class='alignLeft'>Date</th>
+		<th class='alignLeft'>Message</th>
 	</tr>
 	</thead>
 	<tbody data-bind="var: mkt(@ROWS); format:processList; loadsTemplate:syndicationHistoryRowTemplate;">
@@ -249,7 +252,7 @@
 <fieldset>
 
 	<label>
-		<span>Product:</span>
+		<span>Product</span>
 		<input type="text" name="PID" value="" />
 	</label>
 	<p class="hint">HINT: Leave this field blank to debug "all products".</p>
@@ -291,18 +294,19 @@
 
 <tr id='syndicationHistoryRowTemplate'>
 	<td data-bind="var: file(0); format:text;"></td>
-	<td data-bind="var: file(1); format:text;"></td>
+	<td data-bind="var: file(1); format:epoch2pretty;"></td>
 	<td data-bind="var: file(2); format:text;"></td>
 </tr>
 
 
 
-<tr id='syndicationErrorRowTemplate'>
-	<td data-bind="var: file(TITLE); format:text;"></td>
-	<td data-bind="var: file(CREATED); format:text;"></td>
-	<td data-bind="var: file(EXPIRES); format:text;"></td>
-	<td data-bind="var: file(CREATEDBY); format:text;"></td>
-	<td data-bind="var: file(FILENAME); format:text;"></td>
+<tr id='syndicationErrorsRowTemplate'>
+	<td data-bind="var: file(4); format:text;"></td>
+	<td data-bind="var: file(5); format:text;"></td>
+	<td data-bind="var: file(1); format:text;"></td>
+	<td data-bind="var: file(0); format:text;"></td>
+	<td data-bind="var: file(2); format:text;"></td>
+	<td data-bind="var: file(3); format:text;"></td>
 </tr>
 </table>
 
@@ -318,7 +322,7 @@
 <fieldset>
 	<legend>General Settings</legend>
 
-	<label><input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" /> Is active</label>
+	<label><input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" /> Is active</label>
 	<p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
 
 	<div class='label'>
@@ -332,8 +336,8 @@
 	</div>
 
 	<label>
-		<span>Pricing Schedule:</span>
-		<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+		<span>Pricing Schedule</span>
+		<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 			<option value=''>none</option>
 		</select>
 		<span class='hint'>Requires Wholesale Bundle</span>
@@ -358,11 +362,11 @@ HINT: The username, password, etc. are provided by Google Sitemap.
 <fieldset>
 	<legend>General Settings</legend>
 
-	<label><input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" /> Is active</label>
+	<label><input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" /> Is active</label>
 	<p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
 		
 	
-	<label><input type="checkbox" class='applyAnycb'  name="upc_exempt" data-bind="var: mkt(upc_exempt); format:popCheckbox;" /> Google Shopping Account has unique identifer exemption</label>
+	<label><input type="checkbox" class='applyAnycb'  name="upc_exempt" data-bind="var: mkt(upc_exempt); format:popVal;" /> Google Shopping Account has unique identifer exemption</label>
 
 	<label>
 		<span>Google Shopping FTP User</span>
@@ -382,21 +386,21 @@ HINT: The username, password, etc. are provided by Google Sitemap.
 		<span class='toolTip' title="ex: products.xml">?</span>
 	</label>
 	
-	<label><input type="checkbox" class='applyAnycb'  name="trusted_feed" data-bind="var: mkt(trusted_feed); format:popCheckbox;" /> Enable Trusted Stores Shipping/Cancel Feed</label>
+	<label><input type="checkbox" class='applyAnycb'  name="trusted_feed" data-bind="var: mkt(trusted_feed); format:popVal;" /> Enable Trusted Stores Shipping/Cancel Feed</label>
 </fieldset>
 
 
 <fieldset>
 	<legend>Options:</legend>
 <!--
-	<label><input type="checkbox" class='applyAnycb'  value="on" name="navcat_skiphidden" data-bind="var: mkt(navcat_skiphidden); format:popCheckbox;" /> Skip hidden navigation categories.</label>
-	<label><input type="checkbox" class='applyAnycb'  value="on" name="navcat_skiplists" data-bind="var: mkt(navcat_skiplists); format:popCheckbox;" /> Skip lists.</label>
--->	<label><input type="checkbox" class='applyAnycb'  value="on" name="include_shipping" data-bind="var: mkt(include_shipping); format:popCheckbox;" /> Include Fixed Cost Shipping Prices.</label>
-	<label><input type="checkbox" class='applyAnycb'  value="on" name="ignore_validation" data-bind="var: mkt(ignore_validation); format:popCheckbox;" /> Skip recommended validation logic</label>
+	<label><input type="checkbox" class='applyAnycb'  value="on" name="navcat_skiphidden" data-bind="var: mkt(navcat_skiphidden); format:popVal;" /> Skip hidden navigation categories.</label>
+	<label><input type="checkbox" class='applyAnycb'  value="on" name="navcat_skiplists" data-bind="var: mkt(navcat_skiplists); format:popVal;" /> Skip lists.</label>
+-->	<label><input type="checkbox" class='applyAnycb'  value="on" name="include_shipping" data-bind="var: mkt(include_shipping); format:popVal;" /> Include Fixed Cost Shipping Prices.</label>
+	<label><input type="checkbox" class='applyAnycb'  value="on" name="ignore_validation" data-bind="var: mkt(ignore_validation); format:popVal;" /> Skip recommended validation logic</label>
 
 	<label>
-		<span>Pricing Schedule:</span>
-		<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+		<span>Pricing Schedule</span>
+		<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 			<option value=''>none</option>
 		</select>
 		<span class='hint'>Requires Wholesale Bundle</span>
@@ -426,11 +430,11 @@ http://webapi.zoovy.com/webapi/nextag/index.cgi/sporks.D4FB7659.txt
 -->
 	<div class='label'>
 	Output File Format:
-	<label><input type="radio" value="0" checked="" name="format" data-bind='var: mkt(format); format:popRadio;' /> Soft Goods (RECOMMENDED)</label>
-	<label><input type="radio" value="1" name="format" data-bind='var: mkt(format); format:popRadio;' /> Tech Feed (Electronics Only)</label>
+	<label><input type="radio" value="0" checked="" name="format" data-bind='var: mkt(format); format:popVal;' /> Soft Goods (RECOMMENDED)</label>
+	<label><input type="radio" value="1" name="format" data-bind='var: mkt(format); format:popVal;' /> Tech Feed (Electronics Only)</label>
 	</div>
 	
-	<label><input type="checkbox" name='ENABLE' data-bind='var: mkt(enable); format:popCheckbox;' /> Is Active</label>
+	<label><input type="checkbox" name='ENABLE' data-bind='var: mkt(enable); format:popVal;' class='applyAnycb' /> Is Active</label>
 	<p class='zhint'>Checkbox must be selected or syndication will not be attempted.</p>
 	
 	<label>
@@ -449,8 +453,8 @@ http://webapi.zoovy.com/webapi/nextag/index.cgi/sporks.D4FB7659.txt
 
 
 	<label>
-		<span>Pricing Schedule:</span>
-		<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+		<span>Pricing Schedule</span>
+		<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 			<option value=''>none</option>
 		</select>
 		<span class='hint'>Requires Wholesale Bundle</span>
@@ -480,7 +484,7 @@ http://webapi.zoovy.com/webapi/nextag/index.cgi/sporks.D4FB7659.txt
 <table>
 	
 	
-	<tbody><tr><td align="left" colspan="2"><input type="checkbox" name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" /> Is Active</td></tr><tr><td colspan="2"><div class="hint">Checkbox must be selected or syndication will not be attempted.</div></td></tr>
+	<tbody><tr><td align="left" colspan="2"><input type="checkbox" name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" /> Is Active</td></tr><tr><td colspan="2"><div class="hint">Checkbox must be selected or syndication will not be attempted.</div></td></tr>
 	<tr>
 		<td valign="top">Buy.com FTP Username</td>
 		<td valign="top"><input type="text" value="" name="ftp_user" required='required' data-bind="var: mkt(ftp_user); format:popVal;" /></td>
@@ -504,7 +508,7 @@ http://webapi.zoovy.com/webapi/nextag/index.cgi/sporks.D4FB7659.txt
 	
    <tr>
       <td valign="top">Pricing Schedule:</td>
-      <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+      <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 			<option value=''>none</option>
 		</select> <i>(Requires Wholesale Bundle)</i></td>
    </tr>
@@ -535,7 +539,7 @@ These settings *MUST* match the settings in your Buy.com account.
 <input type='hidden' name='DST' value='HSN' />
 
 <label>
-	<input type="checkbox" name='ENABLE' data-bind='var: mkt(enable); format:popCheckbox;' />
+	<input type="checkbox" name='ENABLE' data-bind='var: mkt(enable); format:popVal;' />
 	Is Active
 </label>
 <p class='zhint'>Checkbox must be selected or syndication will not be attempted.</p>
@@ -576,8 +580,8 @@ These settings *MUST* match the settings in your Buy.com account.
 </label>
 		
 <label>
-	<span>Pricing Schedule:</span>
-	<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+	<span>Pricing Schedule</span>
+	<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 		<option value=''>none</option>
 	</select>
 </label>
@@ -603,7 +607,7 @@ HINT: The username, password, etc. are provided by HSN.com. These settings *MUST
 
 <table>
 <tr>
-	<td align="left" colspan="2"><input type="checkbox" name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" /> Is Active</td></tr><tr><td colspan="2"><div class="hint">Checkbox must be selected or syndication will not be attempted.</div></td></tr>
+	<td align="left" colspan="2"><input type="checkbox" name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" /> Is Active</td></tr><tr><td colspan="2"><div class="hint">Checkbox must be selected or syndication will not be attempted.</div></td></tr>
 <tr>
   <td>CJ Account #:</td>
   <td><input type="text" name="cjcid" value="" required='required' data-bind="var: mkt(cjcid); format:popVal;" /></td>
@@ -630,7 +634,7 @@ HINT: The username, password, etc. are provided by HSN.com. These settings *MUST
 </tr>
 <tr>
   <td>Pricing Schedule:</td>
-  <td><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <td><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 			<option value=''>none</option>
 		</select> <i>(Requires Wholesale Bundle)</i></td>
 </tr>
@@ -655,7 +659,7 @@ CommissionJunction.</p>
 <table>
 	
 	
-	<tbody><tr><td align="left" colspan="2"><input type="checkbox" name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" /> Is Active</td></tr><tr><td colspan="2"><div class="hint">Checkbox must be selected or syndication will not be attempted.</div></td></tr>
+	<tbody><tr><td align="left" colspan="2"><input type="checkbox" name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" /> Is Active</td></tr><tr><td colspan="2"><div class="hint">Checkbox must be selected or syndication will not be attempted.</div></td></tr>
 	<tr>
 		<td valign="top">BestBuy Marketplace FTP Username</td>
 		<td valign="top"><input type="text" value="" required='required' name="ftp_user" data-bind="var: mkt(ftp_user); format:popVal;" /></td>
@@ -679,7 +683,7 @@ CommissionJunction.</p>
 	
    <tr>
       <td valign="top">Pricing Schedule:</td>
-      <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+      <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 			<option value=''>none</option>
 		</select> <i>(Requires Wholesale Bundle)</i></td>
    </tr>
@@ -709,7 +713,7 @@ These settings *MUST* match the settings in your BestBuy Marketplace account.
 <table>
 	
 	
-	<tbody><tr><td align="left" colspan="2"><input type="checkbox" name='ENABLE' data-bind="var: mkt(enable); format:popCheckbox;" /> Is Active</td></tr><tr><td colspan="2"><div class="hint">Checkbox must be selected or syndication will not be attempted.</div></td></tr>
+	<tbody><tr><td align="left" colspan="2"><input type="checkbox" name='ENABLE' data-bind="var: mkt(enable); format:popVal;" /> Is Active</td></tr><tr><td colspan="2"><div class="hint">Checkbox must be selected or syndication will not be attempted.</div></td></tr>
 	<tr>
 		<td valign="top">PriceGrabber.com FTP/Web Username</td>
 		<td valign="top"><input type="text" value="" name="user" required='required' data-bind="var: mkt(user); format:popVal;" /></td>
@@ -723,7 +727,7 @@ These settings *MUST* match the settings in your BestBuy Marketplace account.
 	
    <tr>
       <td valign="top">Pricing Schedule:</td>
-      <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+      <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 			<option value=''>none</option>
 		</select> <i>(Requires Wholesale Bundle)</i><br></td>
    </tr>
@@ -749,7 +753,7 @@ HINT: The username, password, etc. are provided by PriceGrabber.com.
 
 <input type='hidden' name='DST' value='APA' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -773,7 +777,7 @@ HINT: The username, password, etc. are provided by PriceGrabber.com.
 	
    <tr>
       <td valign="top">Pricing Schedule:</td>
-      <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+      <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 			<option value=''>none</option>
 		</select> <i>(Requires Wholesale Bundle)</i><br></td>
    </tr>
@@ -792,71 +796,18 @@ HINT: The username, password, etc. are provided by Amazon Product Ads. These set
 
 
 
-<div id='syndication_ebf'>
-<h1 class='marginBottom'>eBay</h1>
-
-
-<p><a href='#' onClick="navigateTo('/biz/setup/ebay/index.cgi'); return false;">Register eBay Account</a></p>
-
-<input type='hidden' name='DST' value='EBF' />
-<label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
-	Is active
-</label>
-<p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
-
-
-
-<label>
-<input type="checkbox" class='applyAnycb' name="autopilot" data-bind="var: mkt(autopilot); format:popCheckbox;" />
-Use AutoPilot on New Items [RECOMMENDED]
-</label>
-<p class='hint'>
-Auto-Pilot allows Zoovy's eBay Syndication Engine to make 'reasonable guesses' about getting your products up on eBay.  
-This includes using fields such as the price on the website as the eBay Fixed price.
-Without Auto-Pilot, it will be necessary for you to choose eBay settings per product.
-If settings are not configured the product will generate listing event errors which you will need to correct.
-If the syndication engine encounters too many errors - then your token could be deactivated and all eBay processing will be suspended.
-</p>
-
-
-<label>
-	<input type="checkbox" class='applyAnycb' name="logging" data-bind="var: mkt(logging); format:popCheckbox;" />
-	Detailed Logging [NOT RECOMMENDED]
-</label>
-<p class='hint'>
-What this does:
-The syndication engine generates detailed log files (which can be obtained by asking support), 
-that include the decision logic that was used to perform a listing. These log files consume significantly 
-more disk space. You should probably only enable this if instructed to by Zoovy support, but it can be invaluable
-in diagnosing issues with auto-pilot.
-</p>
-
-<label>
-	<span>Pricing Schedule:</span>
-	<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
-		<option value=''>none</option>
-	</select>
-	<span class='hint'>Requires Wholesale Bundle</span>
-</label>
-
-<p class="hint">
-HINT: The username, password, etc. are provided by eBay Syndication.
-These settings *MUST* match the settings in your eBay Syndication account.
-</p>
-</div>
-
 
 
 
 
 <div id='syndication_amz'>
 <h1 class='marginBottom'>Amazon</h1>
+<h4 class='marginTop' data-bind="var:mkt(mws_token); format:text; pretext:Token: ;"></h4>
 
 <button class='floatRight' data-app-event="admin_syndication|amazonMWSLinkTo">Create/Verify MWS Token</button>
 <input type='hidden' name='DST' value='AMZ' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -946,9 +897,9 @@ These settings *MUST* match the settings in your eBay Syndication account.
 </fieldset>
 
 <fieldset class='clearfix'>
-	<legend>Thesauras</legend>
+	<legend>Thesaurus</legend>
 
-	<table data-app-role='dataTable' class='floatLeft marginRight gridTable'>
+	<table data-app-role='dataTable' class='floatLeft marginRight gridTable marginTop'>
 	<thead>
 	<tr>
 		<th>Name</th>
@@ -957,6 +908,7 @@ These settings *MUST* match the settings in your eBay Syndication account.
 		<th>Audience</th>
 		<th>Gift Wrap</th>
 		<th>Gift Message</th>
+		<th></th>
 	</tr>
 	</thead>
 	<tbody data-bind="var: mkt(@THESAURII); format:processList; loadsTemplate:amazonThesauriiRowTemplate;">
@@ -965,44 +917,44 @@ These settings *MUST* match the settings in your eBay Syndication account.
 	</table>
 
 
-<div class='floatLeft'>
-
+<div class='floatLeft' data-app-role='thesaurusDataTableInputs'>
+	<input type='hidden' name='guid' value='' data-bind="var: thesaurus(guid); format:popVal;"  />
 	<label>
-		<span>Name:</span>
+		<span>Name</span>
 		<input type="text" size="20" value="" name="name" class='skipTrack'  data-bind="var: thesaurus(name); format:popVal;" />
 	</label>
 
 	<label>
-		<span>Item Type:</span>
+		<span>Item Type</span>
 		<input type="text" size="20" value="" name="itemtype" class='skipTrack'  data-bind="var: thesaurus(itemtype); format:popVal;" /> [1 max]
 	</label>
 
 	<label>
-		<input type='checkbox' name='isgiftwrapavailable'  class='applyAnycb skipTrack' data-bind="var: thesaurus(isgiftwrapavailable); format:popCheckbox;" />
-		Is Gift Wrap Available:
+		<input type="checkbox" name='isgiftwrapavailable'  class='applyAnycb skipTrack' data-bind="var: thesaurus(isgiftwrapavailable); format:popVal; hideZero:false;" />
+		Is Gift Wrap Available
 	</label>
 
 	<label>
-		<input type='checkbox' name='isgiftmessageavailable'  class='applyAnycb skipTrack' data-bind="var: thesaurus(isgiftmessageavailable); format:popCheckbox;" />
-		Is Gift Message Available:
+		<input type="checkbox" name='isgiftmessageavailable'  class='applyAnycb skipTrack' data-bind="var: thesaurus(isgiftmessageavailable); format:popVal; hideZero:false;" />
+		Is Gift Message Available
 	</label>
 	
 	<label>
-		<span>Subject Content:</span>
+		<span>Subject Content</span>
 		<input type="text" size="20" value="" name="subjectcontent"  class='skipTrack' data-bind="var: thesaurus(subjectcontent); format:popVal;" />
 	</label>
 
 	<label>
-		<span>Target Audience:</span>
+		<span>Target Audience</span>
 		<input type="text" size="20" value="" name="targetaudience"  class='skipTrack' data-bind="var: thesaurus(targetaudience); format:popVal;" />
 	</label>
 
 	<label>
-		<span>Search Terms (250 chars max):</span>
+		<span>Search Terms (250 chars max)</span>
 		<textarea rows="5" name="search_terms" maxlength='250' class='skipTrack' data-bind="var: thesaurus(search_terms); format:popVal;" /></textarea>
 	</label>
 
-	<button data-app-event="admin_config|dataTableAddExec">Add</button>
+	<button data-app-event="admin_config|dataTableAddExec">Add/Update</button>
 </div>
 
 </fieldset>
@@ -1011,9 +963,9 @@ These settings *MUST* match the settings in your eBay Syndication account.
 <fieldset>
 	<legend>Feed Configuration</legend>
 
-	<label><input name="feed_inventory" type="checkbox" class='applyAnycb' data-bind="var: mkt(feed_inventory); format:popCheckbox;" /> Sync Inventory to Amazon</label>
-	<label><input name="feed_price" type="checkbox" class='applyAnycb' data-bind="var: mkt(feed_price); format:popCheckbox;" /> Sync Prices/Shipping to Amazon</label>
-	<label><input name="feed_product" type="checkbox" class='applyAnycb' data-bind="var: mkt(feed_product); format:popCheckbox;" /> Sync Products/Relations/Images to Amazon</label>
+	<label><input name="feed_inventory" type="checkbox" class='applyAnycb' data-bind="var: mkt(feed_inventory); format:popVal;" /> Sync Inventory to Amazon</label>
+	<label><input name="feed_price" type="checkbox" class='applyAnycb' data-bind="var: mkt(feed_price); format:popVal;" /> Sync Prices/Shipping to Amazon</label>
+	<label><input name="feed_product" type="checkbox" class='applyAnycb' data-bind="var: mkt(feed_product); format:popVal;" /> Sync Products/Relations/Images to Amazon</label>
 
 </fieldset>
 
@@ -1021,13 +973,13 @@ These settings *MUST* match the settings in your eBay Syndication account.
 	<legend>UPC Configuration</legend>
 
 	<label>
-		<input value="1" name="private_label" type="checkbox" class='applyAnycb' data-bind="var: mkt(private_label); format:popCheckbox;" />
+		<input value="1" name="private_label" type="checkbox" class='applyAnycb' data-bind="var: mkt(private_label); format:popVal;" />
 		Amazon has granted your store an exemption to the UPC requirement
 	</label>
 	<p class="hint">(ie your products are sold under your company's own Private Label)</p>
 
 	<label>
-		<input value="1" name="upc_creation" type="checkbox" class='applyAnycb' data-bind="var: mkt(upc_creation); format:popCheckbox;" />
+		<input value="1" name="upc_creation" type="checkbox" class='applyAnycb' data-bind="var: mkt(upc_creation); format:popVal;" />
 		Automatically Create UPCs
 	</label>
 	<p class="hint">(create UPCs for SKUs syndicating to categories that Amazon has deemed them required.)</p>
@@ -1037,7 +989,7 @@ These settings *MUST* match the settings in your eBay Syndication account.
 	<legend>Order Configuration</legend>
 	
 	<label>
-		<input name="order_permissions" type="checkbox" class='applyAnycb' data-bind="var: mkt(orderpermissions); format:popCheckbox;" />
+		<input name="order_permissions" type="checkbox" class='applyAnycb' data-bind="var: mkt(orderpermissions); format:popVal;" />
 		Import Orders and Send Tracking
 	</label>
 </fieldset>
@@ -1047,7 +999,7 @@ These settings *MUST* match the settings in your eBay Syndication account.
 	<legend>Fulfillment by Amazon (EXPERIMENTAL)</legend>
 	
 	<label>
-		<input name="fba_permissions" type="checkbox" class='applyAnycb' data-bind="var: mkt(fbapermissions); format:popCheckbox;" />
+		<input name="fba_permissions" type="checkbox" class='applyAnycb' data-bind="var: mkt(fbapermissions); format:popVal;" />
 		Import FBA Orders and Tracking from Amazon
 	</label>
 </fieldset>
@@ -1056,8 +1008,8 @@ These settings *MUST* match the settings in your eBay Syndication account.
 	<legend>MWS Token</legend>
 
 	<label>
-		<span>Pricing Schedule:</span>
-		<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+		<span>Pricing Schedule</span>
+		<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 			<option value=''>none</option>
 		</select>
 	</label>
@@ -1075,7 +1027,10 @@ These settings *MUST* match the settings in your eBay Syndication account.
 	<td data-bind="var:mkt(targetaudience); format:text;"></td>
 	<td data-bind="var:mkt(isgiftwrapavailable); format:text;"></td>
 	<td data-bind="var:mkt(isgiftmessageavailable); format:text;"></td>
-	<td><button data-app-event="admin|tagRowForRemove">Delete Rule</button></td>
+	<td>
+	<button data-app-event='admin_syndication|amazonThesaurasEdit'>Edit Thesaurus</button>
+	<button data-app-event="admin|tagRowForRemove">Delete Rule</button>
+	</td>
 </tr>
 </table>
 
@@ -1090,13 +1045,13 @@ These settings *MUST* match the settings in your eBay Syndication account.
 
 <input type='hidden' name='DST' value='WSH' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
 <label>
-	<span>Pricing Schedule:</span>
-	<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+	<span>Pricing Schedule</span>
+	<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 		<option value=''>none</option>
 	</select>
 </label>
@@ -1114,7 +1069,7 @@ SOMETHING SHOULD GO HERE!!!
 </p>
 <input type='hidden' name='DST' value='SAS' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1124,8 +1079,8 @@ SOMETHING SHOULD GO HERE!!!
 	<input type="text" value="" name="merchantid" required='required' data-bind="var: mkt(merchantid); format:popVal;" />
 </label>
 <label>
-	<span>Pricing Schedule:</span>
-	<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+	<span>Pricing Schedule</span>
+	<select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 		<option value=''>none</option>
 	</select>
 </label>
@@ -1141,7 +1096,7 @@ SOMETHING SHOULD GO HERE!!!
 
 <input type='hidden' name='DST' value='SHO' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1164,7 +1119,7 @@ SOMETHING SHOULD GO HERE!!!
 
 <label>
   Pricing Schedule:
-  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 	<option value=''>none</option>
 </select> <i>(Requires Wholesale Bundle)</i>
 </label>
@@ -1186,7 +1141,7 @@ These settings *MUST* match the settings in your Shopping.com account.
 
 <input type='hidden' name='DST' value='FND' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1208,7 +1163,7 @@ These settings *MUST* match the settings in your Shopping.com account.
 
 <label>
   Pricing Schedule:
-  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 	<option value=''>none</option>
 </select> <i>(Requires Wholesale Bundle)</i>
 </label>
@@ -1229,7 +1184,7 @@ These settings *MUST* match the settings in your TheFind.com account.
 
 <input type='hidden' name='DST' value='BIN' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1251,7 +1206,7 @@ These settings *MUST* match the settings in your TheFind.com account.
 
 <label>
   Pricing Schedule:
-  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 	<option value=''>none</option>
 </select> <i>(Requires Wholesale Bundle)</i>
 </label>
@@ -1272,7 +1227,7 @@ These settings *MUST* match the settings in your bing.com account.
 
 <input type='hidden' name='DST' value='BZR' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1305,7 +1260,7 @@ These settings *MUST* match the settings in your bing.com account.
 	</tr>
 <tr>
   <td valign="top">Pricing Schedule:</td>
-  <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 	<option value=''>none</option>
 </select> <i>(Requires Wholesale Bundle)</i><br></td>
 </tr>
@@ -1330,7 +1285,7 @@ These settings *MUST* match the settings in your Shopzilla account.
 
 <input type='hidden' name='DST' value='PTO' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1352,7 +1307,7 @@ These settings *MUST* match the settings in your Shopzilla account.
 
 <label>
   Pricing Schedule:
-  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 	<option value=''>none</option>
 </select> <i>(Requires Wholesale Bundle)</i>
 </label>
@@ -1373,7 +1328,7 @@ These settings *MUST* match the settings in your pronto.com account.
 
 <input type='hidden' name='DST' value='BCM' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1395,7 +1350,7 @@ These settings *MUST* match the settings in your pronto.com account.
 
 <label>
   Pricing Schedule:
-  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 	<option value=''>none</option>
 </select> <i>(Requires Wholesale Bundle)</i>
 </label>
@@ -1414,7 +1369,7 @@ These settings *MUST* match the settings in your become.com account.
 
 <input type='hidden' name='DST' value='SMT' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1436,7 +1391,7 @@ These settings *MUST* match the settings in your become.com account.
 
 <label>
   Pricing Schedule:
-  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 	<option value=''>none</option>
 </select> <i>(Requires Wholesale Bundle)</i>
 </label>
@@ -1456,7 +1411,7 @@ These settings *MUST* match the settings in your smarter.com account.
 
 <input type='hidden' name='DST' value='DIJ' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1478,7 +1433,7 @@ These settings *MUST* match the settings in your smarter.com account.
 
 <label>
   Pricing Schedule:
-  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 	<option value=''>none</option>
 </select> <i>(Requires Wholesale Bundle)</i>
 </label>
@@ -1498,7 +1453,7 @@ HINT: The username, password, etc. are provided by Dijipop.com. These settings *
 
 <input type='hidden' name='DST' value='LNK' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1536,7 +1491,7 @@ HINT: The username, password, etc. are provided by Dijipop.com. These settings *
 
 <label>
   Pricing Schedule:
-  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 	<option value=''>none</option>
 </select> <i>(Requires Wholesale Bundle)</i>
 </label>
@@ -1555,7 +1510,7 @@ HINT: The username, password, etc. are provided by LinkShare.com. These settings
 
 <input type='hidden' name='DST' value='HSN' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1569,7 +1524,7 @@ HINT: The username, password, etc. are provided by LinkShare.com. These settings
 
 <input type='hidden' name='DST' value='SRS' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1598,7 +1553,7 @@ HINT: The username, password, etc. are provided by LinkShare.com. These settings
 <tr>
 	<td colspan='2'>
 	<label>
-		<input type="checkbox"  class='applyAnycb' name="safe_sku" data-bind="var: mkt(safe_sku); format:popCheckbox;"> Use Safe SKU Algorithm
+		<input type="checkbox"  class='applyAnycb' name="safe_sku" data-bind="var: mkt(safe_sku); format:popVal;"> Use Safe SKU Algorithm
 	</label>
 	</td>
 </tr>
@@ -1608,7 +1563,7 @@ HINT: The username, password, etc. are provided by LinkShare.com. These settings
 
 <tr>
   <td valign="top">Pricing Schedule:</td>
-  <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <td valign="top"><select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 	<option value=''>none</option>
 </select> <i>(Requires Wholesale Bundle)</i></td>
 </tr>
@@ -1634,7 +1589,7 @@ These settings *MUST* match the settings in your Sears account.
 
 <input type='hidden' name='DST' value='EGG' />
 <label>
-	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popCheckbox;" />
+	<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: mkt(enable); format:popVal;" />
 	Is active
 </label>
 <p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
@@ -1656,7 +1611,7 @@ These settings *MUST* match the settings in your Sears account.
 
 <label>
   Pricing Schedule:
-  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:id; value:id;">
+  <select name='SCHEDULE' data-bind="var: mkt(@SCHEDULES);format:optionsFromList; text:SID; value:SID;">
 	<option value=''>none</option>
 </select> <i>(Requires Wholesale Bundle)</i>
 </label>
@@ -1669,4 +1624,1220 @@ HINT: The username, password, etc. are provided by NewEgg.com. These settings *M
 </form>
 </div>
 
+
+
+
+
+
+<div id='ebayCategoryChooserTemplate' class='ebayCategoryChooser'>
+
+<table data-app-role='ebayCategoryChooserTable' class='fullWidth'>
+<tr>
+	<td class='small valignTop leftCol'>
+	<div class='ebayCatChooserLeftColContainer'>
+	
+	<select class='marginBottom' data-bind="var: mkt(@USER_RECENT);format:optionsFromList; text:name; value:categoryid;" data-app-event='admin_syndication|ebayShowTreeByChild'>
+		<option>Recently Viewed</option>
+		
+	</select>
+	<ul class='noPadOrMargin listStyleNone marginRight' data-bind='var: ebay(@CHILDREN); format: processList; loadsTemplate:ebayCategoryListitemTemplate;' data-app-role='ebayCategoryList'></ul>
+	
+	</div>
+	</td>
+	<td class='valignTop rightCol'>
+	<div data-app-role='eBayCatChooserMessaging'></div>
+	<div class='ebayCatChooserRightColContainer'>
+	<form action='#' onSubmit='return false' class='labelsAsBreaks alignedLabels marginLeft displayNone' name="APIForm" id="APIForm">
+
+		<fieldset data-app-role='ebayCategoryChooserXSLContainer'></fieldset>
+		
+		<fieldset data-app-role='ebayCategoryChooserItemSpecificsFieldset'>
+			
+			<button data-app-event='admin_syndication|ebayAddCustomDetailShow'>Add A Custom Detail</button>
+		</fieldset>
+		
+		<div class='buttonset alignRight'>
+			<button data-app-event="admin_syndication|ebaySaveCatAndUpdateItemSpecifics">Save Items Specifics and Category</button>
+		</div>
+	</form>
+	</div>
+	</td>
+</tr>
+</table>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- used in the ebay category chooser -->
+<ul>
+	<li id='ebayCategoryListitemTemplate'>
+	<span class='lookLikeLink' data-bind='var:ebay(name); format:text;' onClick="app.ext.admin_syndication.u.handleEBAYChild($(this).parent());"></span>
+	</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id='ebayProfileCreateUpdateTemplate'>
+
+<form action='#' onSubmit='return false' class='labelsAsBreaks alignedLabels borderMarginFieldsets'>
+
+<input type='hidden' name='#destroy' value='item\' /><!-- will empty ALL the item\ fields -->
+
+<div class='marginBottom clearfix ui-widget ui-widget-content ui-corner-all stdPadding'>
+	<div class='floatRight'>
+<!--		<button>Delete</button> -->
+		<button data-app-event='admin_syndication|ebayLaunchProfileUpdateTestExec' data-mode='test' title="Test to see if settings are valid. This will save any changes.">Test</button>
+		<button data-app-role='saveButton' data-app-event='admin_syndication|ebayLaunchProfileUpdateTestExec' data-mode='update' disabled="disabled">Save <span class='numChanges'></span> Changes</button>
+	</div>
+	<h1 data-bind='var: profile(%PROFILE.PROFILE); format:text; pretext: Edit Launch Profile: ;'></h1>
+</div>
+
+<section class='twoColumn'>
+	
+	<fieldset data-panelname='eBayLaunchProfileSettings'>
+		<legend>Launch Profile Settings</legend>
+		<div class='clearfix'>
+
+		
+		
+		<!-- hide this in edit mode -->
+			<label>
+				<span>Profile</span>
+				<input name='PROFILE' value='' size='10' maxlength="8" data-bind="var: profile(%PROFILE.PROFILE); format:popVal;" />
+			</label>
+			
+			<label>
+				<span>Token</span>
+				<select name='EIAS' data-bind="var: profile(@ACCOUNTS);format:optionsFromList; text:EBAY_USERNAME; value:EBAY_EIAS;">
+				</select>
+			</label>
+
+			<div class='label' data-app-role='ebayTemplateConfigContainer'>
+				<span>Template</span>
+				<span data-bind='var:profile(%PROFILE.template_origin); format:text;' data-app-role='templateOrigin'  class='marginLeft marginRight'></span>
+			
+				<div class='buttonset marginTop'  data-bind='var:profile(%PROFILE.PROFILE); format:assignAttribute; attribute:data-profile;'>
+			
+					<button data-app-role='ebayTemplateChooseButton' data-app-event='admin_templateEditor|templateChooserShow' data-mode='ebay'>Choose</button>
+					<button data-app-role='ebayTemplateEditButton' data-app-event='admin_templateEditor|templateEditorShow' data-mode='ebay'>Edit</button>
+					
+					<button data-bind='var:profile(%PROFILE.PROFILE); format:assignAttribute; attribute:data-profile;' data-app-event='admin_syndication|adminEBAYProfileZipDownloadExec'>Download Zip</button>
+	
+					<button data-bind='var:profile(%PROFILE.PROFILE); format:assignAttribute; attribute:data-profile;' data-app-event='admin_syndication|adminEBAYProfileZipUploadExec'>Upload</button>
+				
+				
+				<span class='warn conditionalHide'><b>Needs Review!</b> <span class='toolTip' title="Not every template upgrade goes smoothly. Take a look and see how your's went. There are tools available to assist you in making further changes to your template(s).">?</span></span>
+				</div>
+			
+			</div>
+			
+			<label>
+				<input type='checkbox' name='AUTO_PRICE' class='applyAnycb' data-bind="var: profile(%PROFILE.AUTO_PRICE); format:popVal;" />
+				<span>Enable auto-price</span>
+				<span class='toolTip' title="If enabled, ebay fixed price (if blank) will be set to base_price at launch.">?</span>
+			</label>
+
+			<label>
+				<span>Note</span>
+				<textarea name='NOTE' value='' rows='10' placeholder="This is here for your use, to populate with hints or reminders about the profile." data-bind="var: profile(%PROFILE.NOTE); format:popVal;" />
+			</label>
+
+		</div>
+	</fieldset>
+	
+
+	<fieldset data-panelname='eBayListingSettings'>
+		<legend>Listing Settings</legend>
+		<div class='clearfix'>
+			<label>
+				<span>Country</span>
+				<input type='text' name='Item\Country' size='2' maxlength="2" data-bind="var: profile(%PROFILE.Item\Country); format:popVal;" />
+				<span class='toolTip' title="Set to a two character country code">?</span>
+			</label>
+			
+			<label>
+				<input type='checkbox' name='Item\UseTaxTable\@BOOLEAN' class='applyAnycb' data-bind="var: profile(%PROFILE.Item\UseTaxTable\@BOOLEAN); format:popVal; hideZero:false;" checked='checked' data-app-event='admin_syndication|ebayTaxToggle' />
+				<span>Use eBay tax table</span>
+				<span class='toolTip' title="Indicates whether the seller's tax table is to be used when applying and calculating sales tax for an order line item."></span>
+			</label>
+
+<!-- these fields will only show up if tax table is turned off -->
+			<div class='displayNone marginLeft marginTop' data-app-role='ebayTaxToggleContent'>
+			<label>
+				<span>Tax percent</span>
+				<input type='number' name='Item\ShippingDetails\SalesTax\SalesTaxPercent' size='6' max='100' min='0' step='.001' data-bind="var: profile(%PROFILE.Item\ShippingDetails\SalesTax\SalesTaxPercent); format:popVal;" />%
+				<span class='toolTip' title="Percent of an item's price to be charged as the sales tax for the order. The value passed in is stored with a precision of 3 digits after the decimal point (##.###). ">?</span>
+			</label>
+			
+			<label>
+				<span>Tax state</span>
+				<input type='text' name='Item\ShippingDetails\SalesTax\SalesTaxState' size='2' maxlength="2" data-bind="var: profile(%PROFILE.Item\ShippingDetails\SalesTax\SalesTaxState); format:popVal;" />
+				<span class='toolTip' title="State or jurisdiction for which the sales tax is being collected. Only returned if the seller specified a value.">?</span>
+			</label>
+			<label>
+				<input type='checkbox' name='Item\ShippingDetails\SalesTax\ShippingIncludedInTax\@BOOLEAN' class='applyAnycb' data-bind="var: profile(%PROFILE.Item\ShippingDetails\SalesTax\ShippingIncludedInTax\@BOOLEAN); format:popVal;" />
+				<span>Tax shipping</span>
+				<span class='toolTip' title="Whether shipping costs were part of the base amount that was taxed. Flat or calculated shipping. "></span>
+			</label>
+			<br />
+			</div>
+
+			<label>
+				<span>Cross border trade</span>
+				<input type='text' name='Item\CrossBorderTrade' data-bind="var: profile(%PROFILE.Item\CrossBorderTrade); format:popVal;" />
+				<span class='toolTip' title="Listing will be returned in the search results for other eBay sites. This feature is currently only supported by the US, UK, eBay Canada, and eBay Ireland sites. There is a small listing fee for each country specified as a Cross Border Trade country. ">?</span>
+			</label>
+			
+			<label>
+				<span>Currency</span>
+				<select name='Item\Currency' data-bind="var: profile(%PROFILE.Item\Currency); format:popVal;">
+					<option value='USD'>USD</option>
+				</select>
+				<span class='toolTip' title="Currency associated with the item's price information. 3-letter ISO 4217 currency code that corresponds to the site specified in the listing request">?</span>
+			</label>
+			
+			
+			<label>
+				<span>Dispatch Time Max</span>
+				<input type='number' step='1' size='5' name='Item\DispatchTimeMax' data-bind="var: profile(%PROFILE.Item\DispatchTimeMax); format:popVal;" />
+				<span class='toolTip' title="Specifies the maximum number of business days the seller commits to for preparing an item to be shipped after receiving a cleared payment. This time does not include the shipping time (the carrier's transit time). A value of 0 indicates same day handling for an item.  In this case, the seller's shipping commitment depends on the order cut off time set in the seller's user preferences.">?</span>
+			</label>
+			
+			
+			<label>
+				<input type="checkbox" class='applyAnycb' name='Item\GetItFast\@BOOLEAN' data-bind="var: profile(%PROFILE.Item\GetItFast\@BOOLEAN); format:popVal;" />
+				Get it fast
+				<span class='toolTip' title="Indicates whether the seller has committed to the GetItFast shipping rules for this listing.">?</span>
+			</label>
+			
+			<label>
+				<input type="checkbox" class='applyAnycb' name='Item\BestOfferDetails\BestOfferEnabled\@BOOLEAN' data-bind="var: profile(%PROFILE.Item\BestOfferDetails\BestOfferEnabled\@BOOLEAN); format:popVal;" />
+				Enable best offer
+				<span class='toolTip' title="This feature enables a buyer to make a lower-priced binding offer on that item.">?</span>
+			</label>			
+
+			<label>
+				<input type="checkbox" class='applyAnycb' name='Item\PrivateListing\@BOOLEAN' data-bind="var: profile(%PROFILE.Item\PrivateListing\@BOOLEAN); format:popVal;" />
+				<span>Private listing</span>
+				<span class='toolTip' title="The PrivateListing boolean field can be used by the seller in the Add/Relist/Revise family of calls to obscure item title, item ID, and item price from post-order Feedback comments left by buyers.">?</span>
+			</label>
+			
+		
+			<label>
+				<input type="checkbox" class='applyAnycb' name='Item\AutoPay' data-app-event='admin_syndication|ebayAutopayToggle' data-bind="var: profile(%PROFILE.Item\AutoPay); format:popVal;" />
+				Autopay
+				<span class='toolTip' title="(Recommend: Yes) If this feature is enabled for a listing, the buyer must pay immediately for the item through PayPal, and the buyer's funds are transferred instantly to the seller's PayPal account. The seller's item will remain available for purchase by other buyers until the buyer actually completes the payment.">?</span>
+			</label>
+
+			<label data-app-role='AutoPayPaymentMethods' >
+				<span>AutoPay requires PayPal payments</span>
+				<select disabled multiple='multiple' name='Item\PaymentMethods\@ARRAY' data-bind="var: profile(%PROFILE.Item\PaymentMethods\@ARRAY); format:popVal;">
+					<option selected value='PayPal'>PayPal</option>
+				</select>
+			</label>
+
+			<label data-app-role='eBayPaymentMethods' >
+				<span>Payment methods</span>
+				<!-- NOTE: PayPal is required and must be exclusive for Item\AutoPay = True -->
+				<select multiple='multiple' name='Item\PaymentMethods\@ARRAY' data-bind="var: profile(%PROFILE.Item\PaymentMethods\@ARRAY); format:popVal;">
+					<option value='PayPal'>PayPal</option>
+
+					<option value='AmEx'>American Express</option>
+					<option value='CashInPerson'>Cash-in-person option</option>
+					<option value='CashOnPickup'>Payment on delivery</option>
+					<option value='CCAccepted'>Credit card</option>
+<!--					<option value='COD'>Cash on delivery</option> -->
+					<option value='Diners'>Diners</option>
+					<option value='Discover'>Discover</option>
+					<option value='IntegratedMerchantCreditCard'>Integrated merchant credit card</option>
+					<option value='LoanCheck'>Loan check</option>
+					<option value='MOCC'>Money order/cashiers check</option>
+					<option value='Moneybookers'>Moneybookers</option>
+					<option value='MoneyXferAccepted'>Direct transfer of money</option>
+					<option value='MoneyXferAcceptedInCheckout'>Direct transfer of money in checkout</option>
+					<option value='None'>None</option>
+					<option value='Other'>Other forms of payment</option>
+					<option value='OtherOnlinePayments'>All other online payments</option>
+					<option value='Paymate'>Paymate</option>
+					<option value='PaymentSeeDescription'>Payment See description</option>
+					<option value='PayOnPickup'>PayOnPickup</option>
+					<option value='PersonalCheck'>Personal check</option>
+					<option value='ProPay'>ProPay</option>
+					<option value='StandardPayment'>Standard payment</option>
+					<option value='VisaMC'>Visa/MC</option>
+				</select>
+<!--			http://developer.ebay.com/DevZone/xml/docs/Reference/ebay/types/BuyerPaymentMethodCodeType.html -->
+				<span class='toolTip' title="This integer value indicates the number of hours that a buyer has (after he/she commits to buy) to make a deposit to the seller as a down payment on a motor vehicle.">?</span>
+			</label>
+			
+<p class='hint'>
+Not all payment types are available for all listing types.  See eBay for the compatibility list.<br />
+http://developer.ebay.com/DevZone/xml/docs/Reference/ebay/types/BuyerPaymentMethodCodeType.html
+</p>
+
+			<label>
+				<span>Hit counter</span>
+				<select type='text' name='Item\HitCounter' data-bind="var: profile(%PROFILE.Item\HitCounter); format:popVal;" >
+					<option value='HiddenStyle'>HiddenStyle</option>
+					<option value='BasicStyle'>BasicStyle</option>
+					<!-- <option value='GreenLED'>GreenLED</option> -->
+					<!-- <option value='Hidden' selected='selected'>Hidden (faster)</option> -->
+					<!-- <option value='HonestyStyle'>HonestyStyle</option> -->
+					<option value='NoHitCounter'>NoHitCounter</option>
+					<option value='RetroStyle'>RetroStyle</option>
+				</select>
+				<span class='toolTip' title="Indicates whether an optional hit counter is displayed on the item's listing page and, if so, what type.">?</span>
+			</label>
+			
+			
+			<label>
+				<span>Listing enhancement</span>
+				<select type='text' name='Item\ListingEnhancement\@ARRAY' data-bind="var: profile(%PROFILE.Item\ListingEnhancement\@ARRAY); format:popVal;" multiple="multiple" >
+					<option value=''>none</option>
+					<option value='BoldTitle'>title for the item's listing in boldface type</option>
+					<option value='Border'>add a border around the listing's pictures</option>
+					<option value='Featured'>display prominently in the Featured Items section</option>
+					<option value='Highlight'>listing is highlighted in a different color in lists</option>
+					<option value='HomePageFeatured'>rotate into a special display on eBay's Home page</option>
+					<option value='ProPackBundle'>ProPack Bundle*</option>
+					<option value='ProPackPlusBundle'>ProPackPlus Bundle**</option>
+					<option value='ValuePackBundle'>ValuePackBundle**</option>
+				</select>
+			</label>
+			<p class='hint'>
+			Selecting a value to listing enhancement will affect listing fees<br />
+			* eBay Motors only<br />
+			** Support for this feature varies by site and category.
+			</p>
+
+			<label>
+				<span>PayPal email address</span>
+				<input type='email' name='Item\PayPalEmailAddress' data-bind="var: profile(%PROFILE.Item\PayPalEmailAddress); format:popVal;" />
+				<span class='toolTip' title="Valid PayPal email address for the PayPal account that the seller will use if they offer PayPal as a payment method for the listing.">?</span>
+			</label>
+
+
+
+		
+		<div class='marginBottom'>
+			<label>
+				<span>Originating zip</span>
+				<input type='text' name='Item\ShippingDetails\CalculatedShippingRate\OriginatingPostalCode' required='required' data-bind="var: profile(%PROFILE.Item\ShippingDetails\CalculatedShippingRate\OriginatingPostalCode); format:popVal;" />
+			</label>
+		</div>		
+		<div class='marginBottom'>
+			<label>
+				<span>Item location</span>
+				<input type='text' name='Item\Location' required='required' data-bind="var: profile(%PROFILE.Item\Location); format:popVal;" />
+				<span class='toolTip' title="Indicates the geographical location of the item (along with Country) to be displayed on eBay listing pages. When you revise a listing, you can add or change this value only if the listing has no bids (or no items have sold) and it does not end within 12 hours.">?</span>
+			</label>
+		</div>
+		
+		
+
+
+
+
+
+
+			</div>
+	</fieldset>
+
+
+	
+</section>
+<section class='twoColumn column2'>
+
+
+	<!-- the shipping tables are formatted a little differently, with the fieldset around the data-table feature, because data-table wants it's own fieldset. -->
+	<div  data-panelname='eBayDomShipping'>
+		<h2>Domestic Shipping and Insurance</h2>
+		<div class='clearfix'>
+			<h4>Shipping</h4>
+		
+		
+			<fieldset>
+		
+			<table data-app-role='dataTable' class='gridTable fullWidth marginTop'>
+			<thead>
+			<tr>
+				<th>Service</th>
+				<th>Free</th>
+				<th>Pricing</th>
+				<th></th>
+			</tr>
+			</thead>
+				<tbody data-app-role='ebayShippingTbody_dom' data-bind="var: profile(%PROFILE.@ship_domservices); format:processList; loadsTemplate:ebayShippingRowTemplate;">
+			</tbody>
+			</table>
+			
+			<p class='hint marginBottom'>eBay supports a max of 3. Any more than three get dropped at save</p>
+			
+			<div data-app-role='addServiceInputs' class='displayNone'>
+		
+				<label>
+					<span>Service</span>
+					<select name="service" class='skipTrack' >
+						<option value="ShippingMethodStandard">Standard Shipping</option>
+						<option value="ePacketHongKong">ePacket delivery from Hong Kong</option>
+						<option value="ePacketChina">ePacket delivery from China</option>
+						<option value="UPSGround">UPS Ground</option>
+						<option value="ShippingMethodExpress">Expedited Shipping</option>
+						<option value="USPSPriority">USPS Priority Mail</option>
+						<option value="USPSPriorityFlatRateEnvelope">USPS Priority Mail Flat Rate Envelope</option>
+						<option value="USPSPriorityMailSmallFlatRateBox">USPS Priority Mail Small Flat Rate Box</option>
+						<option value="USPSPriorityFlatRateBox">USPS Priority Mail Medium Flat Rate Box</option>
+						<option value="USPSPriorityMailLargeFlatRateBox">USPS Priority Mail Large Flat Rate Box</option>
+						<option value="USPSPriorityMailPaddedFlatRateEnvelope">USPS Priority Mail Padded Flat Rate Envelope</option>
+						<option value="USPSPriorityMailLegalFlatRateEnvelope">USPS Priority Mail Legal Flat Rate Envelope</option>
+						<option value="USPSFirstClass">USPS First Class Package</option>
+						<option value="UPS3rdDay">UPS 3 Day Select</option>
+						<option value="UPS2ndDay">UPS 2nd Day Air</option>
+						<option value="Other">Economy Shipping</option>
+						<option value="USPSParcel">USPS Parcel Select</option>
+						<option value="USPSMedia">USPS Media Mail</option>
+						<option value="ShippingMethodOvernight">One-day Shipping</option>
+						<option value="USPSExpressMail">USPS Express Mail</option>
+						<option value="USPSExpressFlatRateEnvelope">USPS Express Mail Flat Rate Envelope</option>
+						<option value="USPSExpressMailLegalFlatRateEnvelope">USPS Express Mail Legal Flat Rate Envelope</option>
+						<option value="UPSNextDay">UPS Next Day Air Saver</option>
+						<option value="UPSNextDayAir">UPS Next Day Air</option>
+						<option value="FedExHomeDelivery">FedEx Ground or FedEx Home Delivery</option>
+						<option value="FedExExpressSaver">FedEx Express Saver</option>
+						<option value="FedEx2Day">FedEx 2Day</option>
+						<option value="FedExPriorityOvernight">FedEx Priority Overnight</option>
+						<option value="FedExStandardOvernight">FedEx Standard Overnight</option>
+						<option value="EconomyShippingFromOutsideUS">Economy Shipping from outside US</option>
+						<option value="StandardShippingFromOutsideUS">Standard Shipping from outside US</option>
+						<option value="ExpeditedShippingFromOutsideUS">Expedited Shipping from outside US</option>
+						<option value="US_FedExIntlEconomy">FedEx International Economy</option>
+						<option value="Freight">Flat Priced Freight</option>
+						<option value="FreightShipping">Freight Shipping</option>
+						<option value="Pickup">Local Pickup</option>
+					</select>
+				</label>
+
+				<label>
+					<span>Ship cost</span>
+					<input type='number' step='.01' min='0' name='cost' size='5' class='skipTrack' />
+				</label>
+		
+				<label>
+					<span>Addl item cost</span>
+					<input type='number' step='.01' min='0' name='addcost' size='5' class='skipTrack' />
+				</label>
+		
+				<label>
+					<span>AK+HI add</span>
+					<input type='number' step='.01' min='0' name='farcost' size='5' class='skipTrack' />
+				</label>
+
+				
+		
+				<label>
+					<input type='checkbox' class='applyAnycb skipTrack' name='free' />Free. This method can be selected at no cost to the buyer
+				</label>
+				<div class='buttonset alignRight'><button data-app-event="admin_config|dataTableAddExec">Apply Service</button></div><!-- needs to be within same fieldset as dataTable -->
+			</div>
+
+			<div class='buttonset alignRight'><button data-app-event="admin_syndication|ebayServiceAddShow">Add Service</button></div>
+			</fieldset>
+
+			<br />
+			<h4>Insurance</h4>
+
+
+
+			<label>
+				<span>Insurance option</span>
+				<select name='Item\ShippingDetails\InsuranceDetails\InsuranceOption' data-bind="var: profile(%PROFILE.Item\ShippingDetails\InsuranceDetails\InsuranceOption); format:popVal;">
+					<option value='NotOffered'>Not offered</option>
+					<option value='IncludedInShippingHandling'>Included in shipping/handling</option>
+					<option value='NotOfferedOnSite'>Not offered on site</option>
+					<option value='Optional'>Optional</option>
+					<option value='Required'>Required</option>
+				</select>
+				<span class='toolTip' title="Whether the seller offers shipping insurance and, if so, whether the insurance is optional or required. Applies to both flat and calculated shipping.">?</span>
+			</label>
+
+
+			<label>
+				<span>Insurance fee</span>
+				<input type='text' name='Item\ShippingDetails\InsuranceDetails\InsuranceFee@CURRENCY' data-bind="var: profile(%PROFILE.Item\ShippingDetails\InsuranceDetails\InsuranceFee@CURRENCY); format:popVal;" />
+				<span class='toolTip' title="Cost of shipping insurance set by the seller. If the buyer bought more than one of this item, this is the insurance for just a single item.">?</span>
+			</label>
+				
+			
+			
+			
+		</div>
+	</div>
+	
+	
+	<div data-panelname='eBayIntShipping'>
+		<h2>International Shipping and Insurance</h2>
+		<div class='clearfix'>
+
+
+		<h4>Shipping</h4>
+
+			<label>
+				<span>Location</span>
+				<select name='Item\ShipToLocations\@ARRAY' required='required' data-bind="var: profile(%PROFILE.Item\ShipToLocations\@ARRAY); format:popVal;" multiple="multiple">
+					<option value='None'>None</option>
+					<option value='Americas'>N. and S. America</option>
+					<option value='Asia'>Asia</option>
+					<option value='AU'>Australia</option>
+					<option value='MX'>Mexico</option>
+					<option value='CA'>Canada</option>
+					<option value='Worldwide'>Worldwide</option>
+					<option value='DE'>Germany</option>
+					<option value='Europe'>Europe</option>
+					<option value='GB'>United Kingdom</option>
+					<option value='JP'>Japan</option>
+				</select>
+				<span class='toolTip' title="Indicates the geographical location of the item (along with Country) to be displayed on eBay listing pages. When you revise a listing, you can add or change this value only if the listing has no bids (or no items have sold) and it does not end within 12 hours.">?</span>
+			</label>
+			
+			<fieldset>
+			<table data-app-role='dataTable' class='gridTable fullWidth'>
+			<thead>
+			<tr>
+				<th>Service</th>
+				<th>Free</th>
+				<th>Pricing</th>
+				<th></th>
+			</tr>
+			</thead>
+				<tbody data-app-role='ebayShippingTbody_int' data-bind="var: profile(%PROFILE.@ship_intservices); format:processList; loadsTemplate:ebayShippingRowTemplate;">
+			</tbody>
+			</table>
+			<p class='hint marginBottom'>eBay supports a max of 3. Any more than three get dropped at save</p>
+			<div data-app-role='addServiceInputs' class='displayNone'>
+				<label>
+					<span>Service</span>
+					<select name="service" class='skipTrack' >
+						<option value="USPSFirstClassMailInternational">USPS First Class Mail Intl / First Class Package Intl Service</option>
+						<option value="USPSPriorityMailInternational">USPS Priority Mail International</option>
+						<option value="USPSPriorityMailInternationalFlatRateEnvelope">USPS Priority Mail International Flat Rate Envelope</option>
+						<option value="USPSPriorityMailInternationalSmallFlatRateBox">USPS Priority Mail International Small Flat Rate Box</option>
+						<option value="USPSPriorityMailInternationalFlatRateBox">USPS Priority Mail International Medium Flat Rate Box</option>
+						<option value="USPSPriorityMailInternationalLargeFlatRateBox">USPS Priority Mail International Large Flat Rate Box</option>
+						<option value="USPSPriorityMailInternationalPaddedFlatRateEnvelope">USPS Priority Mail International Padded Flat Rate Envelope</option>
+						<option value="USPSPriorityMailInternationalLegalFlatRateEnvelope">USPS Priority Mail International Legal Flat Rate Envelope</option>
+						<option value="USPSExpressMailInternational">USPS Express Mail International</option>
+						<option value="USPSExpressMailInternationalFlatRateEnvelope">USPS Express Mail International Flat Rate Envelope</option>
+						<option value="USPSExpressMailInternationalLegalFlatRateEnvelope">USPS Express Mail International Legal Flat Rate Envelope</option>
+						<option value="UPSWorldWideExpressPlus">UPS Worldwide Express Plus</option>
+						<option value="UPSWorldWideExpress">UPS Worldwide Express</option>
+						<option value="UPSWorldWideExpedited">UPS Worldwide Expedited</option>
+						<option value="UPSWorldwideSaver">UPS Worldwide Saver</option>
+						<option value="UPSStandardToCanada">UPS Standard To Canada</option>
+						<option value="FedExInternationalEconomy">FedEx International Economy</option>
+						<option value="FedExInternationalPriority">FedEx International Priority</option>
+						<option value="FedExGroundInternationalToCanada">FedEx Ground International for Canada</option>
+						<option value="StandardInternational">Standard Int'l Shipping</option>
+						<option value="ExpeditedInternational">Expedited Int'l Shipping</option>
+						<option value="OtherInternational">Economy Int'l Shipping</option>
+						<option value="FreightShippingInternational">Freight Shipping</option>
+					</select>
+				</label>
+				<label>
+					<span>Ship cost</span>
+					<input type='number' step='.01' min='0' name='cost' size='5' class='skipTrack' />
+				</label>
+		
+				<label>
+					<span>Addl item cost</span>
+					<input type='number' step='.01' min='0' name='addcost' size='5' class='skipTrack' />
+				</label>
+
+				<label>
+					<span>Countries:</span>
+					<input type='textbox' name='shipto' size='25' class='skipTrack' />
+					<span class='toolTip' title="Enter a list of two digit ISO country codes in a comma
+					separated list, or leave blank for all supported
+					International Destinations">?</span>
+				</label>
+				<label>
+					<input type='checkbox' class='applyAnycb skipTrack' name='free' />Free. This method can be selected at no cost to the buyer
+				</label>
+				<div class='buttonset'><button data-app-event="admin_config|dataTableAddExec">Apply Service</button></div><!-- needs to be within same fieldset as dataTable -->
+			</div>
+			<div class='buttonset alignRight'><button data-app-event="admin_syndication|ebayServiceAddShow">Add Service</button></div>
+			
+			</fieldset>
+			
+			<br />
+			<h4>Insurance</h4>
+
+
+
+			<label>
+				<span>Insurance option</span>
+				<select name='Item\ShippingDetails\InternationalInsuranceDetails\InsuranceOption' data-bind="var: profile(%PROFILE.Item\ShippingDetails\InternationalInsuranceDetails\InsuranceOption); format:popVal;">
+					<option value='NotOffered'>Not offered</option>
+					<option value='IncludedInShippingHandling'>Included in shipping/handling</option>
+					<option value='Optional'>Optional</option>
+					<option value='Required'>Required</option>
+				</select>
+				<span class='toolTip' title="Whether the seller offers shipping insurance and, if so, whether the insurance is optional or required. Applies to both flat and calculated shipping.">?</span>
+			</label>
+
+
+			<label>
+				<span>Insurance fee</span>
+				<input type='text' name='Item\ShippingDetails\InternationalInsuranceDetails\InsuranceFee@CURRENCY' data-bind="var: profile(%PROFILE.Item\ShippingDetails\InternationalInsuranceDetails\InsuranceFee@CURRENCY); format:popVal;" />
+				<span class='toolTip' title="Cost of shipping insurance set by the seller. If the buyer bought more than one of this item, this is the insurance for just a single item.">?</span>
+			</label>
+			
+		
+			
+		</div>
+	</div>
+
+	
+	<!--
+	<fieldset data-panelname='charity'>
+		<legend>Charity</legend>
+		<div class='clearfix'>
+			<label>
+				<span>ID</span>
+				<input type='text' name='Item\Charity.CharityID' data-bind="var: profile(%PROFILE.Item\Charity.CharityID); format:popVal;" />
+				<span class='toolTip' title="A unique identification number assigned by eBay to registered nonprofit charity organizations. Required input when listing Giving Works items.">?</span>
+			</label>
+		
+			<label>
+				<span>Number</span>
+				<input type='number' name='Item\Charity.CharityNumber' data-bind="var: profile(%PROFILE.Item\Charity.CharityNumber); format:popVal;" />
+				<span class='toolTip' title="A unique identifier assigned to a nonprofit charity organization by the dedicated provider of eBay Giving Works. This value can contain up to 10 digits. This value is superseded by CharityID.">?</span>
+			</label>
+		
+			<label>
+				<span>Percent</span>
+				<input type='number' step='.5' min='10.0' name='Item\Charity.DonationPercent' data-bind="var: profile(%PROFILE.Item\Charity.DonationPercent); format:popVal;" />
+				<span class='toolTip' title="The percentage of the purchase price that the seller chooses to donate to the selected nonprofit organization. This percentage is displayed in the Giving Works item listing. Possible values: 10.0 to 100.0. Percentages must increment by 5.0. ">?</span>
+			</label>
+		</div>
+	</fieldset>
+	-->
+	
+	
+	<fieldset data-panelname='eBayContactInfo'>
+		<legend>Contact Information/Availability</legend>
+
+		
+		
+		<div class='clearfix'>
+
+			<label>
+				<input type="checkbox" class='applyAnycb' name='Item\ExtendedSellerContactDetails\ContactHoursDetails\Hours1AnyTime\@BOOLEAN' data-bind="var: profile(%PROFILE.Item\ExtendedSellerContactDetails\ContactHoursDetails\Hours1AnyTime\@BOOLEAN); format:popVal;" />
+				Anytime Hours
+				<span class='toolTip' title="Indicates whether or not a user is available to be contacted 24 hours a day during the range of days specified using the Hours1Days element.">?</span>
+			</label>
+		
+			<label>
+				<span>Days</span>
+				<select type='text' name='Item\ExtendedSellerContactDetails\ContactHoursDetails\Hours1Days' data-bind="var: profile(%PROFILE.Item\ExtendedSellerContactDetails\ContactHoursDetails\Hours1Days); format:popVal;">
+					<option value='None'>None</option>
+					<option value='EveryDay'>Every day</option>
+					<option value='Weekdays'>Weekdays</option>
+					<option value='Weekends'>Weekends</option>
+				</select>
+				<span class='toolTip' title="Indicates the range of days for which the primary contact hours specified by Hours1AnyTime or Hours1From and Hours1To apply. If a value of None is provided for this field, the values provided for Hours1AnyTime, Hours1From, Hours1To are ignored. ">?</span>
+			</label>
+		
+			<label>
+				<span>Available From</span>
+				<input type='text' name='Item\ExtendedSellerContactDetails\ContactHoursDetails\Hours1From' data-bind="var: profile(%PROFILE.Item\ExtendedSellerContactDetails\ContactHoursDetails\Hours1From); format:popVal;" />
+				<span class='toolTip' title="Indicates the starting time of day this eBay user is available for other eBay members to contact for the range of days specified using Hours1Days. Enter times in 30 minute increments from the top of the hour. That is, enter values either on the hour (:00) or 30 minutes past the hour (:30). Other values will be will be rounded down to the next closest 30 minute increment. Times entered should be local to the value provided for TimeZoneID. ">?</span>
+			</label>
+		
+			<label>
+				<span>Available To</span>
+				<input type='text' name='Item\ExtendedSellerContactDetails\ContactHoursDetails\Hours1To' data-bind="var: profile(%PROFILE.Item\ExtendedSellerContactDetails\ContactHoursDetails\Hours1To); format:popVal;" />
+				<span class='toolTip' title="Indicates the ending time of day this eBay user is available for other eBay members to contact them for the range of days specified using Hours1Days. Enter times in 30 minute increments from the top of the hour. That is, enter values either on the hour (:00) or 30 minutes past the hour (:30). Other values will be will be rounded down to the next closest 30 minute increment. Times entered should be local to the value provided for TimeZoneID. ">?</span>
+			</label>
+		</div>
+	</fieldset>
+	
+	
+	<!--
+	<fieldset>
+		<legend>Listing Redirect</legend>
+	
+		<label>
+			<span>ProStores name</span>
+			<input type='text' name='Item\ListingCheckoutRedirectPreference\ProStoresStoreName' data-bind="var: profile(%PROFILE.Item\ListingCheckoutRedirectPreference\ProStoresStoreName); format:popVal;" />
+		</label>
+	
+		<label>
+			<span>Third party username</span>
+			<input type='text' name='Item\ListingCheckoutRedirectPreference\SellerThirdPartyUsername' data-bind="var: profile(%PROFILE.Item\ListingCheckoutRedirectPreference\SellerThirdPartyUsername); format:popVal;" />
+			<span class='toolTip' title="The user name of the ProStores store.">?</span>
+		</label>
+	</fieldset>
+	
+	
+	
+	<fieldset>
+		<legend>Payment Details (motors)</legend>
+		<label>
+			<span>Days to full payment</span>
+			<select name='Item\PaymentDetails\DaysToFullPayment' data-bind="var: profile(%PROFILE.Item\PaymentDetails\DaysToFullPayment); format:popVal;">
+				<option value='3'>3</option>
+				<option value='7'>7</option>
+				<option value='10'>10</option>
+				<option value='14'>14</option>
+			</select>
+			<span class='toolTip' title="This integer value indicates the number of days that a buyer has (after he/she commits to buy) to make full payment to the seller and close the remaining balance on a motor vehicle.">?</span>
+		</label>
+	
+		
+	
+		<label>
+			<span>Deposit amount</span>
+			<input type='number' step='.01' max='2000' size='10' name='Item\PaymentDetails\DepositAmount' data-bind="var: profile(%PROFILE.Item\PaymentDetails\DepositAmount); format:popVal;" />
+			<span class='toolTip' title="This dollar value indicates the amount of the deposit that a buyer must make on a purchased motor vehicle (eBay Motors US and CA). The deposit amount can be as high as $2,000.00.">?</span>
+		</label>
+	
+		<label>
+			<span>Deposit type</span>
+			<select name='Item\PaymentDetails\DepositType' data-bind="var: profile(%PROFILE.Item\PaymentDetails\DepositType); format:popVal;">
+				<option value=''></option>
+				<option value='None'>No deposit needed</option>
+				<option value='OtherMethod'>PayPal</option>
+			</select>
+			<span class='toolTip' title="This field applies to eBay Motors (US and CA) vehicles listings. If the seller is requiring that the buyer make a deposit on the vehicle, the DepositType value must be included and set to 'OtherMethod'. ">?</span>
+		</label>
+	
+	
+		<label>
+			<span>Hours to deposit</span>
+			<select name='Item\PaymentDetails\HoursToDeposit' data-bind="var: profile(%PROFILE.Item\PaymentDetails\HoursToDeposit); format:popVal;">
+				<option value=''></option>
+				<option value='24'>24</option>
+				<option value='48'>48</option>
+				<option value='72'>72</option>
+			</select>
+			<span class='toolTip' title="This integer value indicates the number of hours that a buyer has (after he/she commits to buy) to make a deposit to the seller as a down payment on a motor vehicle.">?</span>
+		</label>
+	
+	
+	</fieldset>
+	-->
+	
+	
+	
+	
+	<fieldset data-panelname='eBayReturnPolicy'>
+		<legend>Return Policy</legend>
+		<div class='clearfix'>
+			<label>
+				<span>Description <span class='toolTip' title="A detailed explanation of your return policy.">?</span></span>
+				<textarea name='Item\ReturnPolicy\Description' data-bind="var: profile(%PROFILE.Item\ReturnPolicy\Description); format:popVal;" rows='5' class='fullWidth' />
+			</label>
+		<!--
+		EAN is a product level field.
+		-->
+		
+			<label>
+				<span>Returns Accepted</span>
+				<select name='Item\ReturnPolicy\ReturnsAcceptedOption' data-bind="var: profile(%PROFILE.Item\ReturnPolicy\ReturnsAcceptedOption); format:popVal;" data-app-event="admin_syndication|ebayReturnsToggle">
+					<option value='ReturnsAccepted'>Yes</option>
+					<option value='ReturnsNotAccepted'>No</option>
+				</select>
+			</label>
+		
+			<!-- the select above should conditionally show/hide the rest of these inputs -->
+			<div class='toggleThis displayNone'>
+				<label>
+					<span>Refund option</span>
+					<select name='Item\ReturnPolicy\RefundOption' data-bind="var: profile(%PROFILE.Item\ReturnPolicy\RefundOption); format:popVal;">
+						<option></option>
+						<option value='MoneyBack'>Money back</option>
+						<option value='MoneyBackOrExchange'>Money back or exchange</option>
+						<option value='MoneyBackOrReplacement'>Money back or replacement</option>
+					</select>
+					<span class='toolTip' title="Indicates how the seller will compensate the buyer for a returned item. Use the ReturnPolicy.Description field to explain the policy details (such as how quickly the seller will process the refund, whether the seller must receive the item before processing the refund, and other useful details.">?</span>
+				</label>
+			
+				<label>
+					<span>Restocking fee</span>
+					<select name='Item\ReturnPolicy\RestockingFeeValueOption' data-bind="var: profile(%PROFILE.Item\ReturnPolicy\RestockingFeeValueOption); format:popVal;">
+						<option></option>
+						<option value='NoRestockingFee'>No restocking fee</option>
+						<option value='Percent_10'>10%</option>
+						<option value='Percent_15'>15%</option>
+						<option value='Percent_20'>20%</option>
+					</select>
+					<span class='toolTip' title="Indicates the restocking fee charged by the seller for returned items. In order to charge the buyer a restocking fee when an item is returned, a US seller must input a restocking fee value as part of the return policy. ">?</span>
+				</label>
+			
+				<label>
+					<span>Returns within</span>
+					<select name='Item\ReturnPolicy\ReturnsWithinOption' data-bind="var: profile(%PROFILE.Item\ReturnPolicy\ReturnsWithinOption); format:popVal;">
+						<option></option>
+						<option value='Days_10'>10 days</option>
+						<option value='Days_14'>14 days</option>
+						<option value='Days_30'>30 days</option>
+						<option value='Days_60'>60 days</option>
+						<option value='Months_1'>1 Month</option>
+					</select>
+					<span class='toolTip' title="The buyer can return the item within this period of time from the day they receive the item. Use the ReturnPolicy.Description field to explain the policy details.">?</span>
+				</label>		
+				<label>
+					<span>Ship cost paid by</span>
+					<select name='Item\ReturnPolicy\ShippingCostPaidByOption' data-bind="var: profile(%PROFILE.Item\ReturnPolicy\ShippingCostPaidByOption); format:popVal;">
+						<option></option>
+						<option value='Buyer'>Buyer</option>
+						<option value='Seller'>Seller</option>
+					</select>
+					<span class='toolTip' title="The party who pays the shipping cost for a returned item. Use the ReturnPolicy.Description field to explain any additional details.">?</span>
+				</label>
+			
+			
+				<label>
+					<span>WarrantyDurationOption</span>
+					<select name='Item\ReturnPolicy\WarrantyDurationOption' data-bind="var: profile(%PROFILE.Item\ReturnPolicy\WarrantyDurationOption); format:popVal;">
+						<option></option>
+						<option value='Months_1'>1 Month</option>
+						<option value='Months_3'>3 Month</option>
+						<option value='Months_6'>6 Month</option>
+						<option value='Years_1'>1 Year</option>
+						<option value='Years_2'>2 Year</option>
+						<option value='Years_3'>3 Year</option>
+						<option value='Years_MoreThan3'>3 Years +</option>
+					</select>
+					<span class='toolTip' title="Indicates warranty period.">?</span>
+				</label>
+	
+			
+				<label>
+					<span>WarrantyTypeOption</span>
+					<select name='Item\ReturnPolicy\WarrantyTypeOption' data-bind="var: profile(%PROFILE.Item\ReturnPolicy\WarrantyTypeOption); format:popVal;">
+						<option></option>
+						<option value='DealerWarranty'>Dealer warranty</option>
+						<option value='ManufacturerWarranty'>Manufacturer warranty</option>
+						<option value='ReplacementWarranty'>Replacement warranty</option>
+					</select>
+					<span class='toolTip' title="Indicates the source or type of the warranty, if any.">?</span>
+				</label>
+			</div>
+		</div>
+	</fieldset>
+	
+
+
+	
+	
+	<fieldset data-panelname='eBayBuyerRequirements'>
+		<legend>Buyer Requirements</legend>
+		<div class='clearfix'>
+		
+			<label>
+				<select name='Item\DisableBuyerRequirements\@BOOLEAN' data-bind="var: profile(%PROFILE.Item\DisableBuyerRequirements\@BOOLEAN); format:popVal;" data-app-event='admin_syndication|ebayBuyerRequirementsToggle'>
+					<option value='0'>Disabled</option>
+					<option value='1'>Enabled</option>
+				</select>
+				Use buyer requirements, including My Ebay.<!-- ebay's field is disable, but we prefer enable, so 'off' is 1 to match their field values -->
+				<span class='toolTip' title="If enabled, all buyer requirements (from Item.BuyerRequirementDetails or Buyer requirements preferences in My eBay) are ignored. ">?</span>
+			</label>		
+		
+<!--		
+			<label>
+			
+				<input type="checkbox" class='applyAnycb' name='Item\DisableBuyerRequirements' data-bind="var: profile(%PROFILE.Item\DisableBuyerRequirements); format:popVal;" data-app-event='admin_syndication|hideInputsByCheckbox' />
+				Ignore all buyer requirements, including My Ebay.
+				<span class='toolTip' title="If on, all buyer requirements (from Item.BuyerRequirementDetails or Buyer requirements preferences in My eBay) are ignored. ">?</span>
+			</label>
+-->
+			<div class='toggleThis'>
+				<label>
+					<span>Max # policy violations</span>
+					<input type='number' step='1' min='0' size='6' name='Item\BuyerRequirementDetails\MaximumBuyerPolicyViolations\Count' data-bind="var: profile(%PROFILE.Item\BuyerRequirementDetails\MaximumBuyerPolicyViolations\Count); format:popVal;" />
+					<span class='toolTip' title="This integer value sets the maximum number of buyer policy violations that a prospective buyer is allowed to have during a specified time period (MaximumBuyerPolicyViolations\Period) before being blocked from buying/bidding on the item. ">?</span>
+				</label>
+				
+				<label>
+					<span>Policy violations period</span>
+					<select name='Item\BuyerRequirementDetails\MaximumBuyerPolicyViolations\Period' data-bind="var: profile(%PROFILE.Item\BuyerRequirementDetails\MaximumBuyerPolicyViolations\Period); format:popVal;">
+						<option value=''></option>
+						<option value='Days_30'>30</option>
+						<option value='Days_180'>180</option>
+						<option value='Days_360'>360</option>
+						<option value='Days_540'>540</option>
+					</select>
+					<span class='toolTip' title="The length of time over which a prospective buyer's buyer policy violations will be counted. If the prospective buyer's number of buyer policy violations during this defined period exceeds the value set in the Count field, that prospective buyer is blocked from buying/bidding on the item. ">?</span>
+				</label>
+	
+			
+				<label>
+					<span>Max. item count</span>
+					<select name='Item\BuyerRequirementDetails\MaximumItemRequirements\MaximumItemCount' data-bind="var: profile(%PROFILE.Item\BuyerRequirementDetails\MaximumItemRequirements\MaximumItemCount); format:popVal;">
+						<option value=''></option>
+						<option value='1'>1</option>
+						<option value='2'>2</option>
+						<option value='3'>3</option>
+						<option value='4'>4</option>
+						<option value='5'>5</option>
+						<option value='6'>6</option>
+						<option value='7'>7</option>
+						<option value='8'>8</option>
+						<option value='9'>9</option>
+						<option value='10'>10</option>
+						<option value='25'>25</option>
+						<option value='50'>50</option>
+						<option value='100'>100</option>
+					</select>
+					<span class='toolTip' title="The value of this field specifies the maximum number of items a prospective buyer can purchase from the seller during a 10-day period. The prospective buyer will be blocked from bidding/buying once this value is reached.">?</span>
+				</label>
+				<label>
+					<span>Min. feedback score</span>
+					<select name='Item\BuyerRequirementDetails\MaximumItemRequirements\MinimumFeedbackScore' data-bind="var: profile(%PROFILE.Item\BuyerRequirementDetails\MaximumItemRequirements\MinimumFeedbackScore); format:popVal;">
+						<option></option>
+						<option value='0'>0</option>
+						<option value='1'>1</option>
+						<option value='2'>2</option>
+						<option value='3'>3</option>
+						<option value='4'>4</option>
+						<option value='5'>5</option>
+					</select>
+					<span class='toolTip' title="The value of this field specifies the maximum number of items a prospective buyer can purchase from the seller during a 10-day period. The prospective buyer will be blocked from bidding/buying once this value is reached.">?</span>
+				</label>
+			
+			
+			
+				<label>
+					<span>Max. unpaid item strikes count</span>
+					<input type='number' step='1' size='5'  min='0' name='Item\BuyerRequirementDetails\MaximumItemRequirements\MinimumFeedbackScore\Count' data-bind="var: profile(%PROFILE.Item\BuyerRequirementDetails\MaximumItemRequirements\MinimumFeedbackScore\Count); format:popVal;" />
+					<span class='toolTip' title="This integer value sets the maximum number of unpaid item strikes that a prospective buyer is allowed to have during a specified time period (MaximumUnpaidItemStrikesInfo.Period) before being blocked from buying/bidding on the item. ">?</span>
+				</label>
+			
+				<label>
+					<span>Max. unpaid item strikes Period</span>
+					<select name='Item\BuyerRequirementDetails\MaximumItemRequirements\MinimumFeedbackScore\Period' data-bind="var: profile(%PROFILE.Item\BuyerRequirementDetails\MaximumItemRequirements\MinimumFeedbackScore\Period); format:popVal;">
+						<option value=''></option>
+						<option value='Days_30'>30</option>
+						<option value='Days_180'>180</option>
+						<option value='Days_360'>360</option>
+					</select>
+					<span class='toolTip' title="This enumerated value defines the length of time over which a prospective buyer's unpaid item strikes will be counted. If the prospective buyer's number of unpaid item strikes during this defined period exceeds the value set in the Count field, that prospective buyer is blocked from buying/bidding on the item. ">?</span>
+				</label>
+			
+			
+				
+				<label>
+					<span>Min Feedback Score</span>
+					<input type='number' step='1' size='5'  min='0' name='Item\BuyerRequirementDetails\MinimumFeedbackScore' data-bind="var: profile(%PROFILE.Item\BuyerRequirementDetails\MinimumFeedbackScore); format:popVal;" />
+					<span class='toolTip' title="Set this field as a mechanism to block bidders who have a Feedback Score less than the specified value.">?</span>
+				</label>
+				
+	
+				
+				
+				<label>
+					<input type="checkbox" class='applyAnycb' name='Item\BuyerRequirementDetails\ShipToRegistrationCountry\@BOOLEAN' data-bind="var: profile(%PROFILE.Item\BuyerRequirementDetails\ShipToRegistrationCountry\@BOOLEAN); format:popVal;" />
+					Ship to Reg. Country
+					<span class='toolTip' title="Enable to block bidders who reside (according to their eBay primary shipping address) in countries that are on the ship-to exclusion list..">?</span>
+				</label>
+				
+				
+				<label>
+					<input type="checkbox" class='applyAnycb' name='Item\BuyerRequirementDetails\VerifiedUserRequirements\VerifiedUser\@BOOLEAN' data-bind="var: profile(%PROFILE.Item\BuyerRequirementDetails\VerifiedUserRequirements\VerifiedUser\@BOOLEAN); format:popVal;" />
+					Verified user
+					<span class='toolTip' title="To block non-verified users from buying/bidding on their items, the seller should include this field and set its value to on. The default value of this field is off, so, if it is not included, non-verified users on the Australia, France, India, Ireland, Spain, and UK will be able to buy/bid on the seller's items.">?</span>
+				</label>
+			
+			
+				
+				<label>
+					<span>Verified user min feedback score</span>
+					<input type='number' step='1' size='5' min='0' name='Item\BuyerRequirementDetails\VerifiedUserRequirements\MinimumFeedbackScore' data-bind="var: profile(%PROFILE.Item\BuyerRequirementDetails\VerifiedUserRequirements\MinimumFeedbackScore); format:popVal;" />
+					<span class='toolTip' title="Block verified users who have a feedback score less than the specified value. Ignored if 'verified user' is not enabled.">?</span>
+				</label>
+				
+				
+				
+				<label>
+					<input type="checkbox" class='applyAnycb' name='Item\BuyerResponsibleForShipping\@BOOLEAN' data-bind="var: profile(%PROFILE.Item\BuyerResponsibleForShipping\@BOOLEAN); format:popVal;" />
+					Buyer Responsible For Shipping
+					<span class='toolTip' title="If on, the buyer is responsible for vehicle pickup or shipping. If off, specify vehicle shipping arrangements in the item description. Default is on. (The description can also include vehicle shipping arrangements when this value is true.) If the item has bids or ends within 12 hours, you cannot modify this flag. Do not specify ShippingDetails.ShippingServiceOptions for vehicle listings.">?</span>
+				</label>
+				<p class='hint'>
+				Applicable for listings in vehicle categories on the US eBay Motors site and eBay Canada site. (No business effect if specified for other categories or sites, as the Web site will not display the information to buyers.)
+				</p>
+			</div>
+		</div>
+	</fieldset>
+
+
+
+<!--
+	<fieldset data-panelname='eBaySellerDetails'>
+		<legend>eBay Motors Only</legend>
+		<div class='clearfix'>
+			<label>	
+				<input type="checkbox" class='applyAnycb' name='Item\MotorsDealer\@BOOLEAN' data-bind="var: profile(%PROFILE.Item\MotorsDealer\@BOOLEAN); format:popVal;" />
+				Motors Dealer
+				<span class='toolTip' title="Indicates if item is listed for sale by owner (FSBO) or listed by a dealer. Applies to eBay Motors Pro applications only.">?</span>
+			</label>
+		
+			<label>
+				<span>Company name</span>
+				<input type='text' name='Item\SellerContactDetails\CompanyName' data-bind="var: profile(%PROFILE.Item\SellerContactDetails\CompanyName); format:popVal;" />
+			</label>
+
+			<label>
+				<span>Street</span>
+				<input type='text' name='Item\SellerContactDetails\Street' data-bind="var: profile(%PROFILE.Item\SellerContactDetails\Street); format:popVal;" />
+			</label>
+			<label>
+				<span>Street2</span>
+				<input type='text' name='Item\SellerContactDetails\Street2' data-bind="var: profile(%PROFILE.Item\SellerContactDetails\Street2); format:popVal;" />
+			</label>
+
+		</div>
+	</fieldset>
+-->
+</section>
+
+</form>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div id='syndication_register_ebf'>
+	<h1>Generate eBayAutorization Token</h1>
+	
+	<h2>What is this?</h2>
+	<p>You have been brought to this page in order generate a new eBay Authorization Token. eBay Authorization Tokens permit us to communicate with your eBay account. eBay Authorization Tokens increase security on your eBay account because no storage of your password is required.</p>
+	
+	<p>Creating a new eBay Authorization Token is easy, simply on click the URL below, sign into your eBay account, and follow the steps. </p>
+	
+	
+	<div class='buttonset'>
+		<button data-app-event="admin_syndication|ebayTokenLinkTo" >Link eBay Account</button>
+		<button data-app-event="admin_syndication|ebayTokenLinkTo" data-sandbox='1'>Link Sandbox Account</button>
+		<button data-app-event="admin|linkOffSite" data-url="https://developer.ebay.com/join/">Join eBay Developer Program</button>
+	</div>
+
+
+<p class='hint'>
+The sandbox can be useful for developers who want to create test listings or present demonstrations. Listings created through the sandbox site will only be visible on the eBay development site - you will not be charged for listings created in the sandbox. Sandbox Notes:
+<ul>
+	<li>Zoovy will automatically validate sandbox accounts and give them a feedback of 1,000.</li>
+	<li>To create an eBay Store in the Sandbox Go to http://sandbox.ebay.com.
+		<ol>
+			<li>Click on the Site Map link at the top of the page.</li>
+			<li>Under Services > eBay Stores, click the Open an eBay Store link.</li>
+			<li>Sign in as your sandbox user and follow the instructions to create an eBay Store.</li>
+		</ol>
+	<li>Stores created on the sandbox will receive no fees.</li>
+</li>
+</ul>
+</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<div id='syndication_ebf'>
+
+	<div class='clearfix marginBottom'>
+		<div class='buttonset alignRight floatRight positionRelative'>
+			<button data-app-event="admin_syndication|adminSyndicationPublishExec">Publish</button>
+			<button data-app-event="admin_syndication|adminSyndicationUnsuspendMacro">Unsuspend</button>
+			<button data-app-role='saveButton' disabled='disabled' data-app-event="admin_syndication|adminSyndicationMacroExec">Save <span class='numChanges'></span> Changes</button>
+		</div>
+	
+		<h1 class='marginBottom'>eBay Syndication</h1>
+	</div>
+
+
+
+	<input type='hidden' name='DST' value='EBF' />
+	<label class='marginBottom'>
+		<input type="checkbox" class='applyAnycb'  name='ENABLE'  data-bind="var: profile(enable); format:popVal;" />
+		Is active
+	</label>
+	<p class="hint">Checkbox must be selected or syndication will not be attempted.</p>
+
+
+
+
+
+</div>
+
+
+<div id='ebayTokensAndProfilesTemplate'>
+
+	<div class='clearfix marginBottom'>
+		<div class='buttonset alignRight floatRight positionRelative'>
+		
+			<button data-app-event="admin_syndication|ebayLaunchProfileCreateShow">Add Launch Profile</button>
+			<button data-app-event="admin_syndication|ebayTokenLinkTo" >Link eBay Account</button>
+			<button data-app-event="admin_syndication|ebayTokenLinkTo" data-sandbox='1'>Link Sandbox Account</button>
+		</div>
+		<h1 class='marginBottom'>eBay Tokens and Launch Profiles</h1>
+	</div>
+
+	<section data-app-role='tokenListDetailContainer' class='marginBottom'>
+
+	<div class='betaWarning ui-widget ui-widget-content ui-corner-all smallPadding marginBottom clearfix'>
+	<p>This section has been updated as of 201324. If you experience issues please logout and click the previous version link, then come back to this page to make your changes.</p>
+	</div>
+
+
+	<h2>Tokens</h2>
+	<table class='fullWidth gridTable marginTop'>
+	<thead>
+	<tr>
+		<th class='alignLeft'>eBay Username</th>
+		<th class='alignLeft hideInMinimalMode'>Errors</th>
+		<th class='alignLeft hideInMinimalMode'>Has Store</th>
+		<th class='alignLeft hideInMinimalMode'>Feedback Score</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody data-bind="var:ebay(@ACCOUNTS); format:processList; loadsTemplate:ebayTokensRowTemplate;"></tbody>
+	</table>
+	</section>
+
+
+	<section data-app-role='launchProfileListDetailContainer' class=' marginTop'>
+	<h2>Launch Profiles</h2>
+	<table class='fullWidth gridTable marginTop'>
+	<thead>
+	<tr>
+		<th class='alignLeft'>Profile</th>
+		<th class='alignLeft hideInMinimalMode'>Created</th>
+		<th class='alignLeft hideInMinimalMode'>Last Modified</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody data-bind="var:ebay(@PROFILES); format:processList; loadsTemplate:ebayProfilesRowTemplate;"></tbody>
+	</table>
+	</section>
+
+
+</div>
+
+
+
+<table>
+
+<tr id='ebayTokensRowTemplate'>
+	<td data-bind="var: profile(EBAY_USERNAME); format:text;"></td>
+	<td data-bind="var: profile(ERRORS); format:text; hideZero:false;"></td>
+	<td>
+	<span data-bind="var: profile(HAS_STORE); format:addClass; className:ui-icon ui-icon-check;"></span>
+	</td>
+	<td data-bind="var: profile(EBAY_FEEDBACKSCORE); format:text; hideZero:false;" class='hideInMinimalMode'></td>
+	<td class='alignRight'>
+	<button title='Delete this token' data-app-event='admin_syndication|ebayTokenDeleteConfirm'>Delete</button>
+	<button title="Refresh your eBay Store categories" data-app-event='admin_syndication|ebayRefreshStoreCategoriesExec'>refresh eBay Categories</button>
+	</td>
+</tr>
+
+<tr id='ebayProfilesRowTemplate'>
+	<td data-bind="var: profile(PROFILE); format:text;"></td>
+	<td data-bind="var: profile(CREATED_TS); format:text;" class='hideInMinimalMode'></td>
+	<td data-bind="var: profile(MODIFIED_TS); format:text;" class='hideInMinimalMode'></td>
+	<td class='alignRight'>
+
+<!--	<button data-app-event='admin_syndication|showTemplateEditorInModal' data-bind='var:profile(PROFILE); format:assignAttribute; attribute:data-profile;'>Edit eBay Template</button> -->
+	<button data-app-event='admin_syndication|ebayLaunchProfileDeleteConfirm'>Delete</button>
+	<button data-app-event='admin_syndication|ebayLaunchProfileUpgradeConfirm'>Upgrade Launch Profile</button>
+	<button data-app-event='admin_syndication|ebayLaunchProfileRefreshListingsExec' title='Refresh your eBay Listings for this Launch Profile'>Refresh Listings</button>
+	<button data-app-event='admin_syndication|ebayLaunchProfileUpdateShow'>Edit</button>
+	</td>
+</tr>
+
+
+<tr id='ebayShippingRowTemplate'>
+	<td data-bind="var: ebay(service); format:text;"></td>
+	<td data-bind="var: ebay(free); format:text;"></td>
+	<td>
+	<span data-bind="var: ebay(cost); format:text; pretext: first: ;"></span>
+	<span data-bind="var: ebay(addcost); format:text; pretext: addl: ;"></span>
+	<span data-bind="var: ebay(farcost); format:text; pretext: AK+HI: ;"></span>
+	</td>
+	<td><button data-app-event="admin|tagRowForRemove">Delete Rule</button></td>
+</tr>
+
+</table>
+
+
+
+
+<div id='ebayTemplateChooserTemplate'>
+	<ul data-bind="var: ebay(@TEMPLATES); format:processList; loadsTemplate:ebayTemplateChooserItemTemplate;" class='listStyleNone'></ul>
+</div>
+
+
+<ul>
+	<li id='ebayTemplateChooserItemTemplate' class='floatLeft stdMargin small pointer'>
+	<img src='blank.gif' height='120' width='120' alt='' data-bind='var: template(@PREVIEWS.0); format:graphicURL; extension:admin;' />
+	<div data-bind="var: template(SUBDIR); format:text;" class='lookLikeLink' data-app-event='admin_syndication|ebayTemplateChooserExec'></div>
+	</li>
+</ul>
+
+
+
+
+
+<!-- used in the ebay template editor -->
+<div id='ebayZipUploadTemplate'>
+<form id="ebayZipUpload" class='clearfix marginBottom'  name="ebayZipUpload" action='#' method='post' enctype='multipart/form-data'>
+<input type='hidden' name='filetype' value='ZIP'>
+<!-- adds the file upload area, which is in the media library templates  -->
+<h1 class='floatLeft'>Upload individual files and/or a zip archive containing an entire template (images, html and all)</h1>
+
+<div data-bind="loadsTemplate: fileUploadTemplate; format: loadsTemplate;" class='floatRight'></div>
+</form>
+</div>
 

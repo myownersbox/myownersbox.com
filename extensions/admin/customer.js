@@ -46,7 +46,9 @@ var admin_customer = function() {
 	'crmManagerResultsRowTemplate',
 	'crmManagerTicketDetailTemplate',
 	'crmManagerTicketCreateTemplate',
-	'crmManagerTicketMsgRowTemplate'
+	'crmManagerTicketMsgRowTemplate',
+	
+	'pickerSubscriberListsRowTemplate'
 	
 	);
 	var r = {
@@ -84,59 +86,129 @@ var admin_customer = function() {
 		a : {
 //This is how the task manager is opened. Just execute this function.
 // later, we may add the ability to load directly into 'edit' mode and open a specific user. not supported just yet.
-			showCustomerManager : function() {
-				var $tabContent = $(app.u.jqSelector('#',app.ext.admin.vars.tab+"Content"));
-				$tabContent.intervaledEmpty();
-				$tabContent.anycontent({'templateID':'CustomerPageTemplate','showLoading':false}); //clear contents and add help interface
-				app.ext.admin.u.handleAppEvents($tabContent);
+			showCustomerManager : function($target,vars) {
+				vars = vars || {};
+				$target.intervaledEmpty();
+				$target.anycontent({'templateID':'CustomerPageTemplate','showLoading':false}); //clear contents and add help interface
+				app.ext.admin.u.handleAppEvents($target);
+				if(vars.scope && vars.searchfor)	{
+					$("[name='scope']",$target).val(vars.scope);
+					$("[name='searchfor']",$target).val(vars.searchfor);
+					$("[data-app-event='admin_customer|execCustomerSearch']",$target).trigger('click');
+					}
+				
 				}, //showCustomerManager
 
 			showCRMManager : function($target)	{
 				$target.empty()
 				$target.showLoading({"message":"Fetching list of recently updated/created tickets."});
 				
-				app.ext.admin.calls.adminAppTicketList.init('NEW',{'callback':'anycontent','jqObj':$target,'templateID':'crmManagerPageTemplate'},'mutable');
+				app.model.addDispatchToQ({
+					"_cmd":"adminAppTicketList",
+					"STATUS":'NEW',
+					"_tag":{
+						'callback':'anycontent',
+						'datapointer' : 'adminAppTicketList',
+						'jqObj':$target,
+						'templateID':'crmManagerPageTemplate'
+						}
+					},'mutable');	
 				app.model.dispatchThis();
 				},
 
+			showCampaignManager : function($target)	{
+				$target.empty();
+				var $table = app.ext.admin.i.DMICreate($target,{
+					'header' : 'Campaign Manager',
+					'className' : 'campaignManager',
+					'buttons' : ["<button data-app-event='admin|refreshDMI'>Refresh Coupon List<\/button>","<button data-title='Create a New Campaign' data-app-event='admin_customer|adminCampaignCreateShow'>Create New Campaign</button>"],
+					'thead' : ['ID','Subject','Status','Methods','Q Mode','Created','Expired',''],
+					'tbodyDatabind' : "var: campaign(@CAMPAIGNS); format:processList; loadsTemplate:campaignResultsRowTemplate;",
+					'cmdVars' : {
+						'_cmd' : 'adminCampaignList',
+						'_tag' : {'datapointer' : 'adminCampaignList'}
+						}
+					});
+//get this handy.
+				app.model.addDispatchToQ({'_cmd':'adminCampaignTemplateList','_tag':{'datapointer' : 'adminCampaignTemplateList'}},'mutable');
+				app.model.dispatchThis();
+
+				}, //showCampaignManager
+			
+			showCampaignEditor : function($target,CAMPAIGNID)	{
+				app.u.dump("BEGING admin_customer.a.showCampaignEditor");
+				if($target && $target instanceof jQuery && CAMPAIGNID)	{
+
+					$target.empty()
+					var data = app.ext.admin_customer.u.getCampaignByCAMPAIGNID(CAMPAIGNID);
+					//app.u.dump(" -> campaign data:"); app.u.dump(data);
+					if(data)	{
+					
+					//generate template instance and get some content in front of user. will be blocked by loading till template data available.
+						$("<div \/>").anycontent({'templateID':'caimpaignUpdateTemplate','data':data}).appendTo($target);
+						
+						$('.applyDatetimepicker',$target).datetimepicker({
+							changeMonth: true,
+							changeYear: true,
+							minDate : 0, //can't start before today.
+							dateFormat : 'yymmdd',
+							timeFormat:"HHmm00", //HH vs hh gives you military vs standard time (respectivly)
+							stepMinute : 60
+							});
+						$('.ui_tpicker_second',$target).hide(); //don't show second chooser, but have it so the seconds are added to the input.
+					
+					var $picker = $("[data-app-role='pickerContainer']:first",$target);
+					$picker.append(app.ext.admin.a.getPicker({'templateID':'customerPickerTemplate','mode':'customer'}));
+					app.u.handleAppEvents($target);
+						}
+					else if(data === false)	{
+						$('#globalMessaging').anymessage({"message":"In admin_customer.a.showCampaignEditor, unable to resolve campaign data from CAMPAIGNID: "+CAMPAIGNID,"gMessage":true});
+						}
+					else	{} //an error occured. getCampaignByCAMPAIGNID will handle displaying the error.
+					
+					}
+				else	{
+					$('#globalMessaging').anymessage({"message":"In admin_customer.a.showCampaignEditor, either $target is blank or not a jquery instance ["+$target instanceof jQuery+"] or CAMPAIGNID ["+CAMPAIGNID+"] not set.","gMessage":true});
+					}
+				},
 
 			showGiftcardManager : function($target)	{
 				$target.empty();
 				var $table = app.ext.admin.i.DMICreate($target,{
 					'header' : 'Giftcard Manager',
 					'className' : 'giftcardManager',
-					'buttons' : ["<button data-app-event='admin|openDialog' data-templateid='giftcardAddProductTemplate' data-title='Create a New Giftcard Product'>Create Giftcard Product</button><button data-app-event='admin_customer|giftcardCreateShow'>Add New Giftcard</button>"],
+					'buttons' : ["<button data-app-event='admin|refreshDMI'>Refresh Coupon List<\/button>","<button data-app-event='admin|openDialog' data-templateid='giftcardAddProductTemplate' data-title='Create a New Giftcard Product'>Create Giftcard Product</button><button data-app-event='admin_customer|giftcardCreateShow'>Add New Giftcard</button>"],
 					'thead' : ['code','Created','Expires','Last Order','Customer','Balance','Txn #','Type','Series',''],
 					'controls' : "<form action='#' onsubmit='return false'><input type='hidden' name='_cmd' value='adminGiftcardSearch' \/><input type='hidden' name='_tag/datapointer' value='adminGiftcardSearch' \/><input type='hidden' name='_tag/callback' value='DMIUpdateResults' /><input type='hidden' name='_tag/extension' value='admin' /><input type='search' name='CODE' \/><button data-app-event='admin|controlFormSubmit'>Search<\/button><\/form>",
-					'tbodyDatabind' : "var: users(@GIFTCARDS); format:processList; loadsTemplate:giftcardResultsRowTemplate;"
+					'tbodyDatabind' : "var: users(@GIFTCARDS); format:processList; loadsTemplate:giftcardResultsRowTemplate;",
+					'cmdVars' : {
+						'_cmd' : 'adminGiftcardList',
+						'_tag' : {'datapointer' : 'adminGiftcardList'}
+						}
 					});
-
-				if($table)	{
-					app.model.addDispatchToQ({'_cmd':'adminGiftcardList','_tag' : {'datapointer':'adminGiftcardList','callback':'anycontent','jqObj':$table}},'mutable');
-					app.model.dispatchThis();
-					}
-				else	{} //buildDualMode will handle the error display.
+				app.model.dispatchThis();
 				},
 
 
 			showReviewsManager : function($target)	{
 				$target.empty();
-				var $table = app.ext.admin.i.DMICreate($target,{
+				app.ext.admin.i.DMICreate($target,{
 					'header' : 'Reviews Manager',
 					'className' : 'reviewsManager',
-					'controls' : "<form action='#' onsubmit='return false'><input type='hidden' name='_cmd' value='adminProductReviewList' \/><input type='hidden' name='_tag/datapointer' value='adminProductReviewList' \/><input type='hidden' name='_tag/callback' value='DMIUpdateResults' /><input type='hidden' name='_tag/extension' value='admin' /><input type='search' name='PID' \/><button data-app-event='admin|controlFormSubmit'>Search<\/button><\/form>",
-					'buttons' : ["<button data-app-event='admin_customer|reviewApproveExec' disabled='disabled'>Approve Reviews<\/button>","<button data-app-event='admin_customer|reviewCreateShow'>Add Review<\/button>"],
+					'controls' : "<form action='#' onsubmit='return false'><input type='hidden' name='_cmd' value='adminProductReviewList' \/><input type='hidden' name='_tag/datapointer' value='adminProductReviewList' \/><input type='hidden' name='_tag/callback' value='DMIUpdateResults' /><input type='hidden' name='_tag/extension' value='admin' /><input type='search' placeholder='product id' name='PID' \/><button data-app-event='admin|controlFormSubmit'>Search<\/button><\/form>",
+					'buttons' : ["<button data-app-event='admin_customer|reviewApproveExec'>Approve Reviews<\/button>","<button data-app-event='admin_customer|reviewCreateShow'>Add Review<\/button>"],
 					'thead' : ['','Created','Product ID','Subject','Customer','Review',''],
-//					'controls' : "<form action='#' onsubmit='return false'><label>Product ID: <input type='search' name='PID' \/><\/label><button>Search<\/button><\/form>",
-					'tbodyDatabind' : "var: users(@REVIEWS); format:processList; loadsTemplate:reviewsResultsRowTemplate;"
+					'tbodyDatabind' : "var: users(@REVIEWS); format:processList; loadsTemplate:reviewsResultsRowTemplate;",
+					'cmdVars' : {
+						'filter':'UNAPPROVED',
+						'_cmd' : 'adminProductReviewList',
+						'_tag' : {
+							'datapointer' : 'adminProductReviewList'
+							}
+						}
 					});
-
-				if($table)	{
-					app.ext.admin.calls.adminProductReviewList.init({'filter':'UNAPPROVED'},{'callback':'anycontent','jqObj':$table},'mutable');
-					app.model.dispatchThis();
-					}
-				else	{} //buildDualMode will handle the error display.
-				},
+				app.model.dispatchThis('mutable');
+				}, //showReviewsManager
 
 
 //in obj, currently only CID is present (and required). but most likely, PRT will be here soon.
@@ -149,7 +221,9 @@ var admin_customer = function() {
 // ** 201320 -> added support for partition to be passed in. allows for editor to be linked from orders, where order/customer in focus may be on a different partition.
 						app.ext.admin.calls.adminEmailList.init({'TYPE':'CUSTOMER','PRT':obj.partition || app.vars.partition},{},'mutable');
 						app.ext.admin.calls.adminNewsletterList.init({},'mutable');
-//						app.ext.admin.calls.adminWholesaleScheduleList.init({},'mutable');
+//						app.ext.admin.calls.adminPriceScheduleList.init({},'mutable');
+// ** 201324 -> fetch a clean copy of the customer record when the editor is open.
+						app.model.destroy("adminCustomerDetail|"+obj.CID);
 						app.ext.admin.calls.adminCustomerDetail.init({'CID':obj.CID,'rewards':1,'wallets':1,'tickets':1,'notes':1,'events':1,'orders':1,'giftcards':1,'organization':1},{'callback':function(rd){
 $custEditorTarget.hideLoading();
 
@@ -323,37 +397,7 @@ else	{
 ////////////////////////////////////   RENDERFORMATS    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 		renderFormats : {
-//will generate a select list of wholesale schedules
-//if the customer is already on a schedule, their schedule will be pre-selected.
-//generates the select list too, instead of just the options, so that error messaging can be handled in a good manner.
-//the customer object is what's passed in here.
-/*			wholesaleScheduleSelect : function($tag,data)	{
-				if(!app.data.adminWholesaleScheduleList)	{$tag.anymessage({'message':'Unable to fetch wholesale list'})}
-				else if(!app.data.adminWholesaleScheduleList['@SCHEDULES'])	{
-					$tag.anymessage({'message':'You have not created any schedules yet.'})
-					}
-				else if(!data.value)	{$tag.anymessage({'message':'No data passed into wholesaleScheduleSelect renderFormat'})}
-				else	{
-					var $select = $("<select \/>",{'name':'SCHEDULE'}),
-					schedules =app.data.adminWholesaleScheduleList['@SCHEDULES'], //shortcut
-					L = app.data.adminWholesaleScheduleList['@SCHEDULES'].length
-					list = null;
-					$select.append($("<option \/>",{'value':''}).text('none'));
-					for(var i = 0; i < L; i += 1)	{
-						$select.append($("<option \/>",{'value':schedules[i].id}).text(schedules[i].id));
-						}
-					
-					$select.appendTo($tag);
-					$select.on('change',function(){
-						$select.addClass('edited');
-						app.ext.admin_customer.u.handleChanges($select.closest("form"));
-						});
-					
-					if(data.value.INFO && data.value.INFO.SCHEDULE)	{$select.val(data.value.INFO.SCHEDULE)} //preselect schedule, if set.
-					
-					}
-				}, //wholesaleScheduleSelect
-				*/
+
 			orderHistoryTotal : function($tag,data)	{
 				app.u.dump("BEGIN admin_customer.renderFormat.orderHistoryTotal");
 				var L = data.value.length,
@@ -490,6 +534,30 @@ else	{
 				var B = Number(newsint).toString(2).split('').reverse().join(''); //binary. converts 8 to 1000 or 12 to 1100.
 //				app.u.dump(" -> Binary of flags: "+B);
 				return B.charAt(val - 1) == 1 ? true : false; //1
+				},
+
+			getCampaignByCAMPAIGNID : function(CAMPAIGNID)	{
+				var r = false; //what is returned. Either 'false' if not found, null if an error occured or the data object.
+				if(CAMPAIGNID)	{
+					if(app.data.adminCampaignList && app.data.adminCampaignList['@CAMPAIGNS'] && app.data.adminCampaignList['@CAMPAIGNS'].length)	{
+						var L = app.data.adminCampaignList['@CAMPAIGNS'].length;
+						for(var i = 0; i < L; i += 1)	{
+							if(app.data.adminCampaignList['@CAMPAIGNS'][i].CAMPAIGNID == CAMPAIGNID)	{
+								r = app.data.adminCampaignList['@CAMPAIGNS'][i];
+								break; //match found. Exit early.
+								}
+							}
+						}
+					else	{
+						r = null;
+						$('#globalMessaging').anymessage({"message":"In admin_customer.u.getCampaignByCAMPAIGNID, app.data.adminCampaignList not in memory or @CAMPAIGNS is empty.","gMessage":true});
+						}
+					}
+				else	{
+					r = null;
+					$('#globalMessaging').anymessage({"message":"In admin_customer.u.getCampaignByCAMPAIGNID, no CAMPAIGNID specified.","gMessage":true});
+					}
+				return r;
 				}
 
 			}, //u [utilities]
@@ -501,6 +569,231 @@ else	{
 
 
 		e : {
+//custom event instead of using openDialog because of html editor.
+			adminCampaignCreateShow : function($btn)	{
+//consider the 'create' just having the subject and ID, then creating and going right into the editor. probably a good idea.
+				$btn.button();
+				$btn.off('click.adminCampaignCreateShow').on('click.adminCampaignCreateShow',function(event){
+					event.preventDefault();
+					var $D = app.ext.admin.i.dialogCreate({'templateID':'caimpaignCreateTemplate','data':app.data.adminCampaignTemplateList,'showLoading':false,'title':'Create a New Campaign'});
+//					app.u.handleAppEvents($D);
+					$D.dialog('option','width','60%');
+					$D.dialog('open');
+//may need to add some for attributes for processForm or a custom app event button. That'll depend on how the file vs other changes get saved.
+					});
+				},
+			
+			adminCampaignCreateExec : function($btn)	{
+				$btn.button();
+				$btn.off('click.adminCampaignCreateShow').on('click.adminCampaignCreateShow',function(event){
+					event.preventDefault();
+					var $form = $btn.closest('form');
+					if(app.u.validateForm($form))	{
+						$form.showLoading({'message':'Creating Campaign...'});
+						var
+							sfo = $form.serializeJSON(),
+							date = new Date(),
+							month = date.getMonth() + 1,
+							CAMPAIGNID = sfo.CAMPAIGNID.toUpperCase()+"_"+date.getFullYear()+(month < 10 ? '0'+month : month)+date.getDate(); //appending unix timestamp increases likelyhood that campaignID will be globally unique. upper case will be enforced by the API
+
+						app.model.addDispatchToQ({
+							'_cmd':'adminCampaignCreate',
+							'CAMPAIGNID' : CAMPAIGNID, 
+							'_tag':	{
+								'callback':function(rd){
+									if(app.model.responseHasErrors(rd)){
+										$form.hideLoading();
+										$form.anymessage({'message':rd});
+										}
+									else	{
+										//Campaign was successfully created.  Handle the templating piece.
+										//call is daisy chained instead of pipelined in case the first call (create) fails.
+										app.model.addDispatchToQ({'_cmd':'adminCampaignList','_tag':{'datapointer' : 'adminCampaignList'}},'immutable'); //this is where all campaign data is, so need this refreshed.
+										app.model.addDispatchToQ({
+											'_cmd':'adminCampaignTemplateInstall',
+											'PROJECTID' : "$SYSTEM", //set by what template was selected. !!! needs to be loaded from select list option data. the option renderformat should add more info as data to each option.
+											'CAMPAIGNID' : CAMPAIGNID,
+											'SUBDIR' : sfo.template_origin, //what is the file we are copying in.
+											'_tag':	{
+												'callback':function(responseData){
+													$form.hideLoading();
+													if(app.model.responseHasErrors(responseData)){
+														$form.anymessage({'message':rd});
+														}
+													else	{
+														//Template content was successfully added.
+														$btn.closest('.ui-dialog-content').dialog('close'); //closes the 'create' dialog.
+														app.ext.admin_customer.a.showCampaignEditor($(app.u.jqSelector('#',app.ext.admin.vars.tab+"Content")),CAMPAIGNID); //opens the editor for this campaign.
+														}
+													}
+												}
+											},'immutable');
+										app.model.dispatchThis('immutable');
+										}
+									}
+								}
+							},'immutable');
+						
+						app.model.dispatchThis('immutable');
+						}
+					else	{} //validateForm handles error display.
+					});
+				},
+
+//opens the ebay template in an editor
+			showCampaignTemplateEditor : function($btn)	{
+				$btn.button();
+				$btn.off('click.showCampaignTemplateEditor').on('click.showCampaignTemplateEditor',function(){
+					app.ext.admin_templateEditor.a.showTemplateEditorInModal('campaign',{'campaignid':$btn.data('campaignid')})
+					})
+				}, //showTemplateEditorInModal
+
+//clicked from campaign list row.
+			adminCampaignUpdateShow : function($ele)	{
+				if($ele.is('button'))	{
+					$ele.button({icons: {primary: "ui-icon-pencil"},text: false});
+					}
+				else	{
+					$ele.addClass('lookLikeLink');
+					}
+				$ele.off('click.adminCampaignUpdateShow').on('click.adminCampaignUpdateShow',function(){
+					var $table = $ele.closest('table');
+					$table.stickytab({'tabtext':'campaigns','tabID':'campaignStickyTab'});
+//make sure buttons and links in the stickytab content area close the sticktab on click. good usability.
+					$('button, a',$table).each(function(){
+						$(this).off('close.stickytab').on('click.closeStickytab',function(){
+							$table.stickytab('close');
+							})
+						})
+					app.ext.admin_customer.a.showCampaignEditor($(app.u.jqSelector('#',app.ext.admin.vars.tab+"Content")),$ele.closest('tr').data('campaignid'));
+					})
+				},
+//clicked within the campaign editor.
+			adminCampaignUpdateExec : function($btn)	{
+				$btn.button();
+				$btn.off('click.adminCampaignUpdateExec').on('click.adminCampaignUpdateExec',function(){
+app.u.dump("BEGIN adminCampaignUpdateExec click event");
+var $form = $btn.closest('form');
+if(app.u.validateForm($form))	{
+
+	var
+		HTML = $("[name='HTML']",$form).val(),
+		campaignID = $("[name='CAMPAIGNID']").val();
+
+	
+//update the campaign.
+	app.model.addDispatchToQ($.extend(true,{},$("[data-app-role='campaignSettings']",$form).serializeJSON({'cb':true}),{
+		'_cmd':'adminCampaignUpdate',
+		'CAMPAIGNID' : campaignID,
+		'RECIPIENTS' : app.ext.admin_tools.u.pickerSelection2KVP($("[data-app-role='pickerContainer']",$form)),
+		'_tag':	{
+			'callback':'showMessaging',
+			'message' : 'Your campaign settings changes have been saved.',
+			jqObj : $form
+			}
+		}),'immutable');
+	app.model.addDispatchToQ({
+		'_cmd':'adminCampaignFileSave',
+		'FILENAME' : 'index.html',
+		'CAMPAIGNID' : campaignID,
+		'body' : HTML,
+		'_tag':	{
+			'callback':'showMessaging',
+			'message' : 'Your template changes have been saved.',
+			jqObj : $form
+			}
+		},'immutable');
+//update the campaign Template
+	
+
+	app.model.dispatchThis('immutable');
+
+
+
+	//run a macro here to save the non-message content based changes.
+	}
+else	{
+	//validateform will handle error display.
+	}
+
+					})
+				},
+			adminCampaignSendConfirm : function($btn)	{
+				$btn.button({icons: {primary: "ui-icon-arrowthick-1-e"},text: true});
+				$btn.off('click.adminCampaignSendConfirm').on('click.adminCampaignSendConfirm',function(event){
+					event.preventDefault();
+					var 
+						sfo = $btn.closest('form').serializeJSON({cb:true})
+
+					app.ext.admin.i.dialogConfirmRemove({
+						"title" : "Start Campaign: "+sfo.CAMPAIGNID,
+						"removeButtonText" : "Start Campaign",
+						"message" : "Please confirm that you want to start the campaign: "+sfo.CAMPAIGNID+" from domain <b>"+app.vars.domain+"<\/b>. There is no undo for this action.",
+						'removeFunction':function(vars,$D){
+							$D.showLoading({"message":"Sending Campaign "+sfo.CAMPAIGNID});
+							app.model.addDispatchToQ({
+								'_cmd':'adminCampaignMacro',
+								'CAMPAIGNID': sfo.CAMPAIGNID,
+								'@updates' : ["CPGSTART"],
+								'_tag':	{
+									'callback':function(rd){
+									$D.hideLoading();
+									if(app.model.responseHasErrors(rd)){
+										$('#globalMessaging').anymessage({'message':rd});
+										}
+									else	{
+										$D.dialog('close');
+										app.ext.admin_customer.a.showCampaignManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+"Content")));
+										}
+									}
+								}
+							},'immutable');
+							app.model.dispatchThis('immutable');
+							}
+						});
+					});
+				
+				}, //adminCampaignSendConfirm
+			adminCampaignRemoveConfirm : function($btn)	{
+				$btn.button({icons: {primary: "ui-icon-trash"},text: false});
+				$btn.off('click.adminCampaignRemoveConfirm').on('click.adminCampaignRemoveConfirm',function(event){
+					event.preventDefault();
+					var 
+						$tr = $btn.closest('tr'),
+						data = $tr.data();
+
+					app.ext.admin.i.dialogConfirmRemove({
+						"title" : "Delete Campaign: "+data.campaignid,
+						"removeButtonText" : "Delete Campaign",
+						"message" : "Please confirm that you want to delete the campaign: "+data.title+" ["+data.campaignid+"] . There is no undo for this action.",
+
+						'removeFunction':function(vars,$D){
+							$D.showLoading({"message":"Deleting Campaign "+data.campaignid});
+							app.model.addDispatchToQ({
+								'_cmd':'adminCampaignRemove',
+								'CAMPAIGNID': data.campaignid,
+								'_tag':	{
+									'callback':function(rd){
+									$D.hideLoading();
+									if(app.model.responseHasErrors(rd)){
+										$('#globalMessaging').anymessage({'message':rd});
+										}
+									else	{
+										$D.dialog('close');
+										$('#globalMessaging').anymessage(app.u.successMsgObject('The campaign has been removed.'));
+										$tr.empty().remove(); //removes row for list.
+										}
+									}
+								}
+							},'immutable');
+							app.model.dispatchThis('immutable');
+							}
+						});
+					});
+				}, //adminCampaignRemoveConfirm
+
+
+
 
 //ele is a select list, most likely.
 			appAdminTicketListFilterExec : function($ele)	{
@@ -514,9 +807,16 @@ else	{
 						
 						$dualModeListContents.empty(); //empty all the existing rows.
 						$dualModeListContents.parent().showLoading(); //applied showLoading to table.
-						
-						app.ext.admin.calls.adminAppTicketList.init($ele.val(),{'callback':'anycontent','jqObj':$dualModeListContents.parent()},'mutable');
-						app.model.dispatchThis();
+						app.model.addDispatchToQ({
+							"_cmd":"adminAppTicketList",
+							"STATUS":$ele.val(),
+							"_tag":{
+								'callback':'anycontent',
+								'datapointer' : 'adminAppTicketList',
+								'jqObj':$dualModeListContents.parent()
+								}
+							},'mutable');
+						app.model.dispatchThis('mutable');
 						}
 					});
 				}, //appAdminTicketListFilterExec
@@ -549,7 +849,7 @@ app.ext.admin.calls.adminAppTicketMacro.init($btn.closest("[data-tktcode]").data
 app.model.dispatchThis('immutable');
 
 					});
-				},
+				}, //appAdminTicketAddNote
 
 			appAdminTicketChangeEscalation : function($btn)	{
 				
@@ -571,11 +871,12 @@ app.model.dispatchThis('immutable');
 						}},'immutable');
 					
 					app.model.destroy('adminAppTicketDetail|'+tktcode);
-					app.ext.admin.calls.adminAppTicketDetail.init(tktcode,{},'immutable');
+//					app.ext.admin.calls.adminAppTicketDetail.init(tktcode,{},'immutable');
+					app.model.addDispatchToQ({"_cmd":"adminAppTicketDetail","TKTCODE":tktcode,"_tag":{'datapointer':'adminAppTicketDetail|'+tktcode}},'immutable');
 					app.model.dispatchThis('immutable');
 					});
 				
-				},
+				}, //appAdminTicketChangeEscalation
 
 			appAdminTicketClose : function($btn)	{
 				$btn.button();
@@ -584,7 +885,7 @@ app.model.dispatchThis('immutable');
 					app.model.dispatchThis('immutable');
 					$btn.closest('.ui-widget-anypanel').anypanel('destroy');
 					});
-				},
+				}, //appAdminTicketClose
 
 //ele is a select list, most likely.
 			appAdminTicketListSearchExec : function($btn)	{
@@ -600,7 +901,16 @@ app.model.dispatchThis('immutable');
 					if(app.u.validateForm($form))	{
 						$dualModeListContents.empty(); //empty all the existing rows.
 						$dualModeListContents.parent().showLoading(); //applied showLoading to table.
-						app.ext.admin.calls.adminAppTicketSearch.init($form.serializeJSON(),{'callback':'anycontent','jqObj':$dualModeListContents.parent()},'mutable');
+						var sfo = $.extend(true,{},$form.serializeJSON(),{
+							"_cmd":"adminAppTicketSearch",
+							"_tag":{
+								'callback':'anycontent',
+								'datapointer' : 'adminAppTicketSearch',
+								'jqObj':$dualModeListContents.parent()
+								}
+							});
+						
+						app.model.addDispatchToQ(sfo,'mutable');	
 						app.model.dispatchThis();
 						}
 					else	{} //validateForm will handle error display.
@@ -629,18 +939,7 @@ app.model.dispatchThis('immutable');
 					app.ext.admin.u.toggleDualMode($dualModeContainer,'detail');
 					$panel.slideDown('fast',function(){$panel.showLoading({'message':'Fetching Ticket Details.'});});
 					
-					
-					app.ext.admin.calls.adminAppTicketDetail.init(data.tktcode,{
-						'callback':function(rd){
-							if(app.model.responseHasErrors(rd)){
-								app.u.throwMessage(rd);
-								}
-							else	{		
-								$panel.anycontent({'datapointer':rd.datapointer});
-								app.u.handleAppEvents($panel); 
-								}
-							}
-						},'mutable');
+app.model.addDispatchToQ({"_cmd":"adminAppTicketDetail","TKTCODE":data.tktcode,"_tag":{'callback':'anycontent','jqObj':$panel,'datapointer':'adminAppTicketDetail|'+data.tktcode}},'mutable');						
 					app.model.dispatchThis('mutable');
 					});
 
@@ -649,21 +948,10 @@ app.model.dispatchThis('immutable');
 			appAdminTicketCreateShow : function($btn)	{
 				$btn.button();
 				$btn.off('click.appAdminTicketCreateShow').on('click.appAdminTicketCreateShow',function(event){
-event.preventDefault();
-var $D = $("<div \/>").attr('title',"Add a New Organization");
-
-$D.anycontent({'templateID':'crmManagerTicketCreateTemplate','data':{}});
-app.u.handleAppEvents($D);
-$D.dialog({
-	modal: true,
-	width : '70%',
-	close: function(event, ui)	{
-		$(this).dialog('destroy');
-		}
-	});
-
-$D.dialog('open');
-
+					event.preventDefault();
+					var $D = app.ext.admin.i.dialogCreate({'templateID':'crmManagerTicketCreateTemplate','data':{'orderid':$btn.data('orderid')}});
+					app.u.handleAppEvents($D);
+					$D.dialog('open');
 					});
 				}, //appAdminTicketCreateShow
 
@@ -675,15 +963,15 @@ $D.dialog('open');
 				var
 					$form = $btn.closest('form'),
 					sfo = $form.serializeJSON();
-				
-				app.ext.admin.calls.adminAppTicketCreate.init(sfo,{'callback' : function(rd){
-					if(app.model.responseHasErrors(rd)){
-						$form.anymessage({'message':rd})
+					sfo._cmd = 'adminAppTicketCreate';
+					sfo._tag = {
+						'callback' : 'showMessaging',
+						'jqObjEmpty': true,
+						'jqObj' : $form,
+						'message' : 'The ticket has been created.'
 						}
-					else	{
-						$form.empty().anymessage(app.u.successMsgObject('The ticket has been created.'));
-						}
-					}},'immutable');
+				$form.showLoading({'message':'Creating CRM Ticket'});
+				app.model.addDispatchToQ(sfo,'immutable');
 				app.model.dispatchThis('immutable');
 
 					});
@@ -706,12 +994,12 @@ $D.dialog('open');
 						'data' : app.data.adminProductReviewList['@REVIEWS'][$btn.closest('tr').data('obj_index')]
 						});
 					$("[name='PID']",$panel).closest('label').hide(); //product id isn't editable. hide it. setting 'disabled' will remove from serializeJSON.
-					$('form',$panel).append("<input type='hidden' name='_cmd' value='adminProductReviewUpdate' /><input type='hidden' name='_tag/callback' value='showMessaging' /><input type='hidden' name='RID' value='"+RID+"' /><input type='hidden' name='_tag/message' value='The review has been successfully updated.' />");
+					$('form',$panel).append("<input type='hidden' name='_cmd' value='adminProductReviewUpdate' /><input type='hidden' name='_tag/callback' value='showMessaging' /><input type='hidden' name='RID' value='"+RID+"' /><input type='hidden' name='_tag/message' value='The review has been successfully updated.' /><input type='hidden' name='_tag/updateDMIList' value='"+$panel.closest("[data-app-role='dualModeContainer']").attr('id')+"' />");
 					
 					//app.model.addDispatchToQ({'RID':RID,'PID':PID,'_cmd':'adminProductReviewDetail','_tag':{'callback':'anycontent','jqObj':$panel}},'mutable');
 					//app.model.dispatchThis('mutable');
 					});
-				},
+				}, //reviewDetailDMIPanel
 			
 			
 			reviewRemoveConfirm : function($btn)	{
@@ -723,7 +1011,7 @@ $D.dialog('open');
 						data = $tr.data(),
 						$D = $btn.closest('.ui-dialog-content');
 
-					app.ext.admin.i.dialogConfirmRemove({'removeFunction':function(){
+					app.ext.admin.i.dialogConfirmRemove({'removeFunction':function(vars,$D){
 						$D.showLoading({"message":"Deleting Review"});
 						app.model.addDispatchToQ({'RID':data.id,'PID':data.pid,'_cmd':'adminProductReviewRemove','_tag':{'callback':function(rd){
 							$D.hideLoading();
@@ -735,8 +1023,8 @@ $D.dialog('open');
 								$('#globalMessaging').anymessage(app.u.successMsgObject('The review has been removed.'));
 								$tr.empty().remove(); //removes row for list.
 								}
-							}}},'mutable');
-					app.model.dispatchThis('mutable');
+							}}},'immutable');
+					app.model.dispatchThis('immutable');
 						}});
 					})
 				}, //reviewRemoveConfirm
@@ -754,16 +1042,45 @@ $D.dialog('open');
 						});
 					$D.dialog('open');
 //These fields are used for processForm on save.
-					$('form',$D).first().append("<input type='hidden' name='_cmd' value='adminProductReviewCreate' /><input type='hidden' name='_tag/callback' value='showMessaging' /><input type='hidden' name='_tag/message' value='Thank you, your review has been created.' />");
+					$('form',$D).first().append("<input type='hidden' name='_cmd' value='adminProductReviewCreate' /><input type='hidden' name='_tag/callback' value='showMessaging' /><input type='hidden' name='_tag/message' value='Thank you, your review has been created.' /><input type='hidden' name='_tag/updateDMIList' value='"+$btn.closest("[data-app-role='dualModeContainer']").attr('id')+"' />");
 					 $( ".applyDatepicker",$D).datepicker({
 						changeMonth: true,
 						changeYear: true,
 						dateFormat : 'yymmdd'
 						});
 					});
-				},
+				}, //reviewCreateShow
 			
-//			reviewApproveExec : function($btn)	{},
+			reviewApproveExec : function($btn)	{
+				$btn.button();
+				$btn.off('click.reviewApproveExec').on('click.reviewApproveExec',function(){
+					var
+						$DMI = $btn.closest("[data-app-role='dualModeContainer']"),
+						$tbody = $("[data-app-role='dualModeListTbody']",$DMI),
+						i = 0;
+						
+					$tbody.find('tr').each(function(){
+						var $tr = $(this);
+						if($(':checkbox:first',$tr).is(':checked'))	{
+							i += 1;
+							app.model.addDispatchToQ({'RID':$tr.data('id'),'PID':$tr.data('pid'),'_cmd':'adminProductReviewApprove'},'immutable');
+							}
+						}); // ends tr loop.
+					
+					
+					if(i)	{
+						$tbody.showLoading({'message':'Setting review status to approved for '+i+' review(s)'})
+//reload the reviews manager.
+app.model.addDispatchToQ({'_cmd':'adminProductReviewList','filter':'UNAPPROVED','_tag' : {'datapointer':'adminProductReviewList','jqObj':$DMI,'callback':'DMIUpdateResults','extension':'admin'}},'immutable');
+app.model.dispatchThis('immutable');
+					
+						}
+					else	{
+						$('.dualModeListMessaging',$DMI).anymessage({'message':'Please check at least one checkbox below to approve the reviews.'})
+						}
+					
+					});
+				}, //reviewApproveExec
 
 			giftcardCreateShow : function($btn)	{
 				$btn.button();
@@ -776,14 +1093,15 @@ $D.dialog('open');
 						});
 					$D.dialog('open');
 //These fields are used for processForm on save.
-					$('form',$D).first().append("<input type='hidden' name='_cmd' value='adminGiftcardCreate' /><input type='hidden' name='_tag/callback' value='showMessaging' /><input type='hidden' name='_tag/message' value='Thank you, your giftcard has been created.' />");
+//They're here instead of in the form directly so that the form/template can be recycled for edit.
+					$('form',$D).first().append("<input type='hidden' name='_cmd' value='adminGiftcardCreate' /><input type='hidden' name='_tag/callback' value='showMessaging' /><input type='hidden' name='_tag/message' value='Thank you, your giftcard has been created.' /><input type='hidden' name='_tag/jqObjEmpty' value='true' /><input type='hidden' name='_tag/updateDMIList' value='"+$btn.closest("[data-app-role='dualModeContainer']").attr('id')+"' \/>");
 					 $( ".applyDatepicker",$D).datepicker({
 						changeMonth: true,
 						changeYear: true,
 						dateFormat : 'yymmdd'
 						});
 					});
-				},
+				}, //giftcardCreateShow
 
 			giftcardDetailDMIPanel : function($btn)	{
 				$btn.button();
@@ -795,10 +1113,20 @@ var $panel = app.ext.admin.i.DMIPanelOpen($btn,{
 	'panelID' : 'giftcard_'+GCID,
 	'header' : 'Edit Giftcard: '+GCID
 	});
-app.ext.admin.calls.adminGiftcardDetail.init(GCID,{'callback':'anycontent','jqObj':$panel},'mutable');
+
+
+app.model.addDispatchToQ({
+	'_cmd' : 'adminGiftcardDetail',
+	'GCID' : GCID,
+	'_tag' : {
+		'callback':'anycontent',
+		'jqObj':$panel,
+		'datapointer' : 'adminGiftcardDetail|'+GCID
+		}
+	},'mutable');
 app.model.dispatchThis('mutable');
 					});
-				},
+				}, //giftcardDetailDMIPanel
 
 //executed within the customer create form to validate form and create user.
 			execAdminCustomerCreate : function($btn)	{
@@ -836,7 +1164,7 @@ app.model.dispatchThis('immutable');
 						}
 
 					});
-				},
+				}, //execAdminCustomerCreate
 
 //saves all the changes to a customer editor
 			execCustomerEditorSave : function($btn)	{
@@ -1029,7 +1357,7 @@ app.model.dispatchThis('immutable');
 						});
 					$D.dialog('open');
 					})
-				},
+				}, //execCustomerRemove
 
 //run when searching the customer manager for a customer.
 			execCustomerSearch : function($btn){
@@ -1049,29 +1377,29 @@ app.model.dispatchThis('immutable');
 					app.ext.admin.calls.adminCustomerSearch.init(formObj,{callback:function(rd){
 						$custManager.hideLoading();
 						
-$('.dualModeListMessaging',$custManager).empty();
-if(app.model.responseHasErrors(rd)){
-	$('.dualModeListMessaging',$custManager).anymessage({'message':rd});
-	}
-else	{
-	//if there was only 1 result, the API returns just that CID. open that customer.
-	if(app.data[rd.datapointer] && app.data[rd.datapointer].CID && (app.data[rd.datapointer].PRT == app.vars.partition))	{
-		$resultsTable.hide();
-		$editorContainer.show();
-		app.ext.admin_customer.a.showCustomerEditor($editorContainer,{'CID':app.data[rd.datapointer].CID});
-		}
-	else if(app.data[rd.datapointer] && app.data[rd.datapointer]['@CUSTOMERS'] && app.data[rd.datapointer]['@CUSTOMERS'].length)	{
-		$resultsTable.show();
-		$editorContainer.hide();	
-		$("tbody",$resultsTable).empty(); //clear any previous customer search results.
-		$resultsTable.anycontent({datapointer:rd.datapointer}); //show results
-		app.u.handleAppEvents($resultsTable);
-		$resultsTable.anytable();
-		}
-	else	{
-		$('.dualModeListMessaging',$custManager).anymessage({'message':'No customers matched that search. Please try again.<br />Searches are partition specific, so if you can not find this user on this partition, switch to one of your other partitions','persistent':true});
-		}
-	}
+						$('.dualModeListMessaging',$custManager).empty();
+						if(app.model.responseHasErrors(rd)){
+							$('.dualModeListMessaging',$custManager).anymessage({'message':rd});
+							}
+						else	{
+							//if there was only 1 result, the API returns just that CID. open that customer.
+							if(app.data[rd.datapointer] && app.data[rd.datapointer].CID && (app.data[rd.datapointer].PRT == app.vars.partition))	{
+								$resultsTable.hide();
+								$editorContainer.show();
+								app.ext.admin_customer.a.showCustomerEditor($editorContainer,{'CID':app.data[rd.datapointer].CID});
+								}
+							else if(app.data[rd.datapointer] && app.data[rd.datapointer]['@CUSTOMERS'] && app.data[rd.datapointer]['@CUSTOMERS'].length)	{
+								$resultsTable.show();
+								$editorContainer.hide();	
+								$("tbody",$resultsTable).empty(); //clear any previous customer search results.
+								$resultsTable.anycontent({datapointer:rd.datapointer}); //show results
+								app.u.handleAppEvents($resultsTable);
+								$resultsTable.anytable();
+								}
+							else	{
+								$('.dualModeListMessaging',$custManager).anymessage({'message':'No customers matched that search. Please try again.<br />Searches are partition specific, so if you can not find this user on this partition, switch to one of your other partitions','persistent':true});
+								}
+							}
 						}},'mutable');
 					app.model.dispatchThis();
 
@@ -1147,7 +1475,7 @@ else	{
 						$btn.closest('fieldset').anymessage({'message':'Please enter a note to save.','errtype':'youerr'});
 						}
 					});
-				},
+				}, //execNoteCreate
 
 			execWalletCreate : function($btn,o)	{
 				$btn.button();
@@ -1226,6 +1554,20 @@ else	{
 				$ele.one('keyup.tagNoteButtonAsEnabled',function(){
 					$ele.parent().find("[data-app-event='admin_customer|execNoteCreate']").button('enable').addClass('ui-state-highlight');
 					});
+				}, //tagNoteButtonAsEnabled
+
+			adminCustomerSearchShowUI : function($btn)	{
+				$btn.button({icons: {primary: "ui-icon-person"},text: false});
+				if($btn.data('scope') && $btn.data('searchfor'))	{
+					$btn.attr('title','Search customers by '+$btn.data('scope').toLowerCase()+" for '"+$btn.data('searchfor').toLowerCase()+"'");
+					$btn.off('click.adminCustomerSearchShowUI').on('click.adminCustomerSearchShowUI',function(event){
+						//later, maybe we add a data-stickytab to the button and, if true, closest table gets sticky.
+						app.ext.admin_customer.a.showCustomerManager($(app.u.jqSelector('#',app.ext.admin.vars.tab+"Content")),{'scope':$btn.data('scope'),'searchfor':$btn.data('searchfor')});
+						});
+					}
+				else	{
+					$btn.button('disable');
+					}
 				},
 
 			showAddrUpdate : function($btn){
@@ -1305,7 +1647,7 @@ else	{
 					$btn.button('disable').hide();
 					$("<span class='tooltip'>?<\/span>").attr('title','You must be logged in to a partition to edit a customer on that partition.').tooltip().insertAfter($btn);
 					}
-				},
+				}, //showCustomerUpdate
 			
 			showGiftcardUpdate : function($btn)	{
 				$btn.button({icons: {primary: "ui-icon-pencil"},text: false});
@@ -1315,7 +1657,7 @@ else	{
 					//!!! when giftcard macro is in place, update this.
 					navigateTo("/biz/manage/giftcard/index.cgi?VERB=EDIT&GCID="+$btn.closest('tr').data('id'));
 					});
-				},
+				}, //showGiftcardUpdate
 			
 			saveOrgToField : function($cb)	{
 				$cb.off('change.saveOrgToField').on('change.saveOrgToField',function(){
@@ -1329,7 +1671,7 @@ else	{
 					$cb.closest('.ui-dialog-content').dialog('close');
 					})
 				
-				},
+				}, //saveOrgToField
 			
 			showMailTool : function($btn)	{
 				$btn.button({icons: {primary: "ui-icon-mail-closed"},text: true});
@@ -1337,7 +1679,7 @@ else	{
 					event.preventDefault();
 					app.ext.admin.a.showMailTool({'listType':'CUSTOMER','partition':app.vars.partition,'CID':$btn.closest("[data-cid]").data('cid')});
 					});
-				},
+				}, //showMailTool
 			
 			showOrgChooser : function($btn)	{
 				
@@ -1360,23 +1702,38 @@ else	{
 					app.u.handleAppEvents($D);
 					
 					});
-				},
+				}, //showOrgChooser
 			
-/*
-			showMediaLib4DropshipLogo : function($ele)	{
-				$ele.off('click.mediaLib').on('click.mediaLib',function(event){
-					event.preventDefault();
-					mediaLibrary($('#customerDropshipLogoImg'),$('#customerDropshipLogo'),'Choose Dropship Logo');
-					});
-				},
-*/
 //not in use yet. will show wallet details.
-			showWalletDetail : function($btn)	{
-				$btn.button({icons: {primary: "ui-icon-check"},text: false});
-
-				$btn.off('click.showWalletDetail').on('click.showWalletDetail',function(event){
+			adminCustomerWalletPeekShow : function($btn)	{
+				$btn.button({icons: {primary: "ui-icon-info"},text: false});
+				$btn.off('click.adminCustomerWalletPeekShow').on('click.adminCustomerWalletPeekShow',function(event){
 					event.preventDefault();
-					});				
+						var $D = app.ext.admin.i.dialogCreate({'title':'Wallet Peek','showLoading':false});
+						$D.dialog('open');
+						$D.showLoading({"message":'Fetching Wallet Details'});
+app.model.addDispatchToQ({
+	'_cmd':'adminCustomerWalletPeek',
+	'CID' : $btn.closest("[data-cid]").data('cid'),
+	'SECUREID' : $btn.closest('tr').data('wi'),
+	'_tag':	{
+		'datapointer' : 'adminCustomerWalletPeek',
+		'callback':function(rd) {
+			$D.hideLoading();
+			if(app.model.responseHasErrors(rd)){
+				$D.anymessage({'message':rd});
+				}
+			else	{
+				//success content goes here.
+				$D.append("<div>CC: "+app.data[rd.datapointer].CC+"<\/div>");
+				$D.append("<div>MM: "+app.data[rd.datapointer].MM+"<\/div>");
+				$D.append("<div>YY: "+app.data[rd.datapointer].YY+"<\/div>");
+				}
+			}
+		}
+	},'mutable');
+app.model.dispatchThis('mutable');
+					});
 				} //showWalletDetail
 
 

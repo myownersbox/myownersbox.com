@@ -83,8 +83,9 @@
             // widget (via file input selection, drag & drop or add API call).
             // See the basic file upload widget for more information:
             add: function (e, data) {
-//				app.u.dump("jquery.fileupload-ui.js data.files: "); app.u.dump(data.files);
-                var that = $(this).data('fileupload'),
+//				app.u.dump("jquery.fileupload-ui.js data.fileupload: "); app.u.dump($(this).data());
+// ** 201324 -> odd. var that = $(this).data('fileupload') stopped working. checked data and it's a different pointer.
+                var that = $(this).data('blueimpFileupload'),
                     options = that.options,
                     files = data.files;
                 $(this).fileupload('process', data).done(function () {
@@ -110,7 +111,7 @@
             },
             // Callback for the start of each file upload request:
             send: function (e, data) {
-                var that = $(this).data('fileupload');
+                var that = $(this).data('blueimpFileupload');
                 if (!data.isValidated) {
                     if (!data.maxNumberOfFilesAdjusted) {
                         that._adjustMaxNumberOfFiles(-data.files.length);
@@ -140,7 +141,7 @@
             // Callback for successful uploads:
             done: function (e, data) {
 //				app.u.dump("jquery.fileupload-ui.js data.files: "); app.u.dump(data.files);
-                var that = $(this).data('fileupload'),
+                var that = $(this).data('blueimpFileupload'),
                     template;
                 if (data.context) {
                     data.context.each(function (index) {
@@ -190,7 +191,7 @@
             },
             // Callback for failed (abort or error) uploads:
             fail: function (e, data) {
-                var that = $(this).data('fileupload'),
+                var that = $(this).data('blueimpFileupload'),
                     template;
                 if (data.maxNumberOfFilesAdjusted) {
                     that._adjustMaxNumberOfFiles(data.files.length);
@@ -260,7 +261,7 @@
                         .find('.progress-extended');
                 if (extendedProgressNode.length) {
                     extendedProgressNode.html(
-                        $this.data('fileupload')._renderExtendedProgress(data)
+                        $this.data('blueimpFileupload')._renderExtendedProgress(data)
                     );
                 }
                 globalProgressNode
@@ -273,7 +274,7 @@
             },
             // Callback for uploads start, equivalent to the global ajaxStart event:
             start: function (e) {
-                var that = $(this).data('fileupload');
+                var that = $(this).data('blueimpFileupload');
                 that._transition($(this).find('.fileupload-progress')).done(
                     function () {
                         that._trigger('started', e);
@@ -283,7 +284,7 @@
             // Callback for uploads stop, equivalent to the global ajaxStop event:
             stop: function (e) {
 //				app.u.dump(" -> STOPPED! "); app.u.dump(e);
-                var that = $(this).data('fileupload');
+                var that = $(this).data('blueimpFileupload');
                 that._transition($(this).find('.fileupload-progress')).done(
                     function () {
                         $(this).find('.progress')
@@ -296,7 +297,7 @@
             },
             // Callback for file deletion:
             destroy: function (e, data) {
-                var that = $(this).data('fileupload');
+                var that = $(this).data('blueimpFileupload');
                 if (data.url) {
                     $.ajax(data);
                     that._adjustMaxNumberOfFiles(1);

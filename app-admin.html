@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>Zoovy.com - Administrative Interface Login</title>
+<title>Administrative Interface Login</title>
 
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache"><!-- don't cache this file. -->
 <META NAME="ROBOTS" CONTENT="NONE">
@@ -26,7 +26,7 @@ else {
 
 var app = {vars:{
 	/////////////////////////////////\
-	"release":"201320.h",   ///|> Increment this with each change. model version followed by each deployed update getting a new letter in the alphabet.
+	"release":"201330.a",   ///|> Increment this with each change. model version followed by each deployed update getting a new letter in the alphabet.
 	//////////////////////////////////
 	"thisSessionIsAdmin": true,
 	"_clientid":"admin",
@@ -43,7 +43,8 @@ all css includes need to be after the js that changes the base url.
 css files should be included before any .js file to ensure they are downloaded in parallel
 -->
 
-<link rel="stylesheet" type="text/css" href="app-admin/jquery-ui-1.9.2.custom.min.css" />
+<!-- <link rel="stylesheet" type="text/css" href="app-admin/jquery-ui-1.9.2.custom.min.css" /> -->
+<link rel="stylesheet" type="text/css" href="app-admin/jquery-ui-1.10.3.custom.css" />
 <link rel="STYLESHEET" type="text/css" href="app-admin/standard.css" /><!-- legacy compat css. goal is to be rid of this file -->
 <link rel="STYLESHEET" type="text/css" href="app-admin/styles.css" /><!-- lots of UI specific styles. load early to avoid popping -->
 
@@ -53,9 +54,11 @@ css files should be included before any .js file to ensure they are downloaded i
 <script src="extensions/admin/resources/load-image.min.js"></script><!-- required for media lib. loading in extension causes issues. -->
 
 
-<!-- not much is going to run without these two. load em early -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+<!-- not much is going to run without these two. load em early
+ pre 201324 -> 	1.9.1/jquery.min.js and 1.9.2/jquery-ui.min.js
+ -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 
@@ -135,7 +138,7 @@ app.u.loadScript(app.vars.baseURL+"app-admin-init.js");
 <!--			<button class='floatRight' data-app-event="admin|showPasswordRecover">Recover Password</button> -->
 			<div class="hint">App Release #: <span id="appversion">??</span></div>
 			<label class='hint'><input type='checkbox' name='persistentAuth' value='1' checked='checked' /> Keep me logged in</label>
-			<div class="hint"><b><a href='/app/201318/app-admin.html'> &#187; Use previous version</a></b></div>
+			<div class="hint"><b><a href='/app/201320/app-admin.html'> &#187; Use previous version</a></b></div>
 
 		</fieldset>
 		</form>
@@ -207,7 +210,7 @@ app.u.loadScript(app.vars.baseURL+"app-admin-init.js");
 			<li class='productsTab' onClick="navigateTo('#:product');"><span class='text'>Products</span><span class='icon'></span></li>
 			<li class='ordersTab' onClick="navigateTo('#:orders');"><span class='text'>Orders</span><span class='icon'></span></li>
 			<li class='crmTab' onClick="navigateTo('#:crm');"><span class='text'>CRM</span><span class='icon'></span></li>
-			<li class='syndicationTab' onClick="navigateTo('#:syndication');"><span class='text'>Syndication</span><span class='icon'></span></li>
+			<li class='syndicationTab' onClick="navigateTo('#:syndication');"><span class='text'>Marketplaces</span><span class='icon'></span></li>
 			<li class='reportsTab' onClick="navigateTo('#:reports');"><span class='text'>Reports</span><span class='icon'></span></li>
 			<li class='kpiTab' onClick="navigateTo('#:kpi');"><span class='text'>KPI</span><span class='icon'></span></li>
 			<li class='utilitiesTab' onClick="navigateTo('#:utilities');"><span class='text'>Utilities</span><span class='icon'></span></li>
@@ -362,12 +365,29 @@ These two pieces of data are used for mapping after the uploads to set what fold
 	</li>
 	<li><a href='#'>Pages</a>
 	<ul>
-		<li><a href='#' onClick="app.ext.admin.a.showPicker(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')); return false;">showPicker</a>
-		<li><a href='#' onClick="app.ext.admin_config.a.showRulesBuilderInModal({'mode':'shipping','provider':'FLEX:LOCAL_CANADA_1369228546','table':'RULES'}); return false;">showRulesBuilderInModal</a></li>
-		<li><a href='#' onClick="navigateTo('#!launchpad'); return false;">Launchpad</a></li>
-		<li><a href='#' onClick="navigateTo('#!giftcardManager'); return false;">giftcardManager</a></li>
-		<li><a href='#' onClick="navigateTo('#!reviewsManager'); return false;">showReviewsManager</a></li>
+		<!-- privatefilelist supports 'type'. limit is also available. -->
+		<li><a href='#' onClick="app.ext.admin_prodEdit.a.showProductVariationManager($('#productTabMainContent'),'MODEL07');; return false;">model07 in prod editor </a></li>
 		
+
+		<li><a href='#' onClick="app.model.addDispatchToQ({'_cmd':'adminSupplierItemList','VENDORID':'JOEBOB'},'mutable'); app.model.dispatchThis('mutable'); return false;">adminSupplierItemList </a></li>
+		<li><a href='#' onClick="app.model.addDispatchToQ({'_cmd':'adminSupplierOrderItemList','VENDORID':'JOEBOB'},'mutable'); app.model.dispatchThis('mutable'); return false;">platformInfo</a></li>
+	
+		
+
+<!--		<li><a href='#' onClick="app.model.addDispatchToQ({'_cmd':'adminPlatformHealth'},'mutable'); app.model.dispatchThis('mutable'); return false;">adminPlatformHealth</a></li> -->
+
+		
+		<li><a href='#' onClick="app.model.addDispatchToQ({'_cmd':'adminConfigDetail','tuning':'1'},'mutable'); app.model.dispatchThis('mutable'); return false;">adminConfigDetail -> tuning</a></li>
+		<li><a href='#' onClick="app.model.addDispatchToQ({'_cmd':'platformInfo','inventory-event-queue':'1','disk-usage':'1'},'mutable'); app.model.dispatchThis('mutable'); return false;">platformInfo</a></li>
+		
+	
+		
+		<li><a href='#' onClick="app.ext.admin_syndication.a.showEBAYLaunchProfileEditor($(app.u.jqSelector('#',app.ext.admin.vars.tab+'Content')),'BOB'); return false;">edit launch profile bob</a></li>
+		<li><a href='#' onClick="app.ext.admin_templateEditor.a.showTemplateEditorInModal('ebay',{'profile':'BOB'}); return false;">BOB template</a></li>
+		<li><a href='#' onClick="app.ext.admin_prodEdit.u.showProductEditor('',{'pid':'AUDIO'}); return false;">edit AUDIO</a></li>
+		<li><a href='#' onClick="app.model.addDispatchToQ({'_cmd':'adminCampaignFileContents','base64':true,'FILENAME' : 'index.html','CAMPAIGNID':'222222_1372278124','_tag':	{'callback':'fileDownloadInModal','extension':'admin','datapointer' : 'adminCampaignFileContent','mime_type':'text/plain'}},'mutable'); app.model.dispatchThis('mutable'); return false;">fileDownloadInModal</a></li>
+
+		<li><a href='#' onClick="navigateTo('#!launchpad'); return false;">Launchpad</a></li>
 		<li><a href='#' onClick="navigateTo('#!supplierManager'); return false;">Supplier Manager</a></li>
 		<li><a href='#' onClick="navigateTo('#!appChooser'); return false;">App Chooser</a></li>
 		<li><a href='#' onClick="$('#setupContent').empty(); app.ext.admin.a.showAchievementList($('#setupContent')); return false;">showAchievementList (in setup)</a></li>
@@ -375,32 +395,17 @@ These two pieces of data are used for mapping after the uploads to set what fold
 	</li>
 	<li><a href='#'>Test</a>
 	<ul>
-
-
+		<li><a href='#' onClick='app.model.addDispatchToQ({"mode":"elastic-native","size":250,"filter":{"and":[{"range":{"base_price":{"from":0,"to":50000}}},{"term":{"pogs":"AC"}}]},"_cmd":"appPublicSearch","type":"product"},"mutable"); app.model.dispatchThis("mutable"); return false;'>elastic-native</a></li>	
 		<li><a href='#' onClick="$('#globalMessaging').anymessage(app.u.successMsgObject('Changes have been saved. and then there is this other text to make the text block a bit more texty and long, which is good for testing because it sometimes happens.')); return false;">throw success message</a></li>
 		
 		<li><a href='#' onClick="app.model.destroy('adminSyndicationList'); app.model.addDispatchToQ({'_cmd':'adminSyndicationList'},'mutable'); app.model.dispatchThis('mutable');">adminSyndicationList</a></li>
 
-		<li><a href='#' onClick="app.model.destroy('adminConfigDetail'); app.ext.admin.calls.adminConfigDetail.init({'coupons':true},{},'mutable'); app.model.dispatchThis('mutable');">adminConfigDetail</a></li>
-
-		
+		<li><a href='#' onClick="app.model.destroy('adminConfigDetail'); app.ext.admin.calls.adminConfigDetail.init({'inventory':true},{},'mutable'); app.model.dispatchThis('mutable');">adminConfigDetail</a></li>
 	
 	</ul>
-	</li>	
+	</li>
 </ul>
 
-<!--
-<button onClick="app.ext.admin.calls.appResource.init('email_macros.json',{},'mutable'); app.model.dispatchThis('mutable');">appResource</button>
-<button onClick="app.ext.admin.calls.appResource.init('shipcodes.json',{},'mutable'); app.model.dispatchThis('mutable');">shipcodes.json</button>
-<button onClick="app.ext.admin.calls.adminEmailList.init({},'mutable'); app.model.dispatchThis('mutable');">adminEmailList</button>
-<button onClick="app.model.addDispatchToQ({'_cmd':'adminDataQuery','query':'listing-active','since_gmt':app.u.unixNow() - (60*60*24*10)},'mutable'); app.model.dispatchThis('mutable');">adminDataQuery</button>
-<button onClick="app.ext.admin.calls.appConfig.init(); app.model.dispatchThis();">appConfig</button>
-
--->
-
-<!-- app.model.addDispatchToQ(obj,q); -->
-
-
 
 </div>
 
@@ -413,39 +418,6 @@ These two pieces of data are used for mapping after the uploads to set what fold
 
 
 
-
-<!--
-
-This is content that isn't template worthy, but still necessary (most likely for modals or static pages)
-
--->
-
-
-
-
-<div id='orderListTab' class='ui-widget ui-widget-content displayNone'>
-	<div class='positionRelative'>
-		<div class='tab ui-state-default ui-corner-right smallPadding'><span>Order&nbsp;Results</span></div><!-- non breaking space to prevent word wrap -->
-		<div class='ordersContainer minimalMode'>
-		<table class='gridTable'>
-			<thead><tr></tr></thead><!-- will get a clone of order list thead -->
-			<tbody></tbody><!-- will get appended w/ the children of the order list -->
-		</table>
-		</div>
-	</div>
-</div>
-
-<div id='productListTab' class='ui-widget ui-widget-content displayNone'>
-	<div class='positionRelative'>
-		<div class='tab ui-state-default ui-corner-right smallPadding'><span>Product&nbsp;Results</span></div><!-- non breaking space to prevent word wrap -->
-		<div class='productContainer minimalMode'>
-		<table class='gridTable'>
-			<thead><tr></tr></thead><!-- will get a clone of order list thead -->
-			<tbody></tbody><!-- will get appended w/ the children of the order list -->
-		</table>
-		</div>
-	</div>
-</div>
 
 
 </body>

@@ -20,13 +20,13 @@ http://net.tutsplus.com/tutorials/javascript-ajax/coding-your-first-jquery-ui-pl
 // ** 201318 -> replacement for obsolete .browser() function.
 //.browser() is deprecated as of jquery 1.3 and removed in 1.9+ however a lot of plugins use it.
 // Figure out what browser is being used
-if(typeof typeof jQuery.browser == 'undefined')	{
+if(typeof jQuery.browser == 'undefined')	{
 	jQuery.browser = {
-		version: (userAgent.match( /.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/ ) || [0,'0'])[1],
-		safari: /webkit/.test( userAgent ),
-		opera: /opera/.test( userAgent ),
-		msie: /msie/.test( userAgent ) && !/opera/.test( userAgent ),
-		mozilla: /mozilla/.test( userAgent ) && !/(compatible|webkit)/.test( userAgent )
+		version: (navigator.userAgent.match( /.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/ ) || [0,'0'])[1],
+		safari: /webkit/.test( navigator.userAgent ),
+		opera: /opera/.test( navigator.userAgent ),
+		msie: /msie/.test( navigator.userAgent ) && !/opera/.test( navigator.userAgent ),
+		mozilla: /mozilla/.test( navigator.userAgent ) && !/(compatible|webkit)/.test( navigator.userAgent )
 		}
 	}
 
@@ -486,6 +486,14 @@ either templateID or (data or datapointer) are required.
 					gMessage : true,
 					message:"Unable to translate. Either: <br \/>Template ["+o.templateID+"] not specified and/or does not exist ["+typeof app.templates[o.templateID]+"].<br \/> OR does not specified ["+typeof o.data+"] OR no datapointer ["+o.datapointer+"] does not exist in app.data "});
 				}
+// ** 201324 -> for the admin UI, need to make sure data is getting set.
+//always add the dataAttribs as 'data()'. that way they're available even if a failure occurs later.
+//applying theme as data() insteat of attr('data-** means case is preserved.
+			if(o.dataAttribs)	{
+//				app.u.dump(" -> this.element.id: "+this.element.attr('id'));
+				this.element.data(o.dataAttribs);
+				}
+
 			}, //_init
 
 		_setOption : function(option,value)	{
@@ -541,6 +549,9 @@ either templateID or (data or datapointer) are required.
 				//should never get here. error handling handled in _init before this is called.
 				r = false;
 				}
+			
+
+			
 			return r;
 			},
 
@@ -672,17 +683,20 @@ run $('#someTable').anytable() to have the headers become clickable for sorting 
 (function($) {
 	$.widget("ui.anytable",{
 		options : {
+			inverse : false
 			},
 		_init : function(){
 			this._styleHeader();
-			var $table = this.element;
+			var
+				$table = this.element,
+				o = this.options;
 			
 	
 			$('th',$table).each(function(){
 
 var th = $(this),
-thIndex = th.index(),
-inverse = false;
+thIndex = th.index();
+
 // * 201318 -> support for data-anytable-nosort='true' which will disable sorting on the th.
 if(th.data('anytable-nosort'))	{} //sorting is disabled on this column. good for columns that only have buttons.
 else	{
@@ -695,17 +709,17 @@ else	{
 				var numB = Number($.text([b]).replace(/[^\w\s]/gi, ''));
 				if(numA && numB)	{
 	//				console.log('is a number');
-					r = numA > numB ? inverse ? -1 : 1 : inverse ? 1 : -1; //toLowerCase make the sort case-insensitive.
+					r = numA > numB ? o.inverse ? -1 : 1 : o.inverse ? 1 : -1; //toLowerCase make the sort case-insensitive.
 					}
 				else	{
-					r = $.text([a]).toLowerCase() > $.text([b]).toLowerCase() ? inverse ? -1 : 1 : inverse ? 1 : -1; //toLowerCase make the sort case-insensitive.
+					r = $.text([a]).toLowerCase() > $.text([b]).toLowerCase() ? o.inverse ? -1 : 1 : o.inverse ? 1 : -1; //toLowerCase make the sort case-insensitive.
 					}
 				return r
 				},function(){
 			// parentNode is the element we want to move
 			return this.parentNode; 
 			});
-		inverse = !inverse;
+		o.inverse = !o.inverse;
 		});
 	}
 
@@ -714,7 +728,8 @@ else	{
 
 		_setOption : function(option,value)	{
 			$.Widget.prototype._setOption.apply( this, arguments ); //method already exists in widget factory, so call original.
-			switch (option)	{
+// * 201320 -> the code below isn't necessary (from the copy/paste used to create widget
+/*			switch (option)	{
 				case 'state':
 					(value === 'close') ? this.close() : this.open(); //the open/close function will change the options.state val as well.
 					break;
@@ -730,7 +745,7 @@ else	{
 					console.log(" -> option: "+option);
 					break;
 				}
-			}, //_setOption
+*/			}, //_setOption
 
 		_styleHeader : function()	{
 			var $table = this.element;
@@ -803,9 +818,10 @@ and it'll turn the cb into an ios-esque on/off switch.
 			else if($label.length)	{
 //				app.u.dump(" -> anycbifying. is label: "+$label.is('label'));
 				var $input = $("input",$label).first(),
-				$container = $("<span \/>").addClass('ui-widget ui-widget-content ui-corner-all ui-widget-header').css({'position':'relative','display':'block','width':'55px','margin-right':'6px','height':'20px','z-index':1,'padding':0,'float':'left','float':'left'}),
+				$container = $("<span \/>").addClass('ui-widget ui-widget-content ui-corner-all ui-widget-header').css({'position':'relative','display':'block','width':'55px','margin-right':'6px','height':'20px','z-index':1,'padding':0,'float':'left'}),
 				$span = $("<span \/>").css({'padding':'0px','width':'30px','text-align':'center','height':'20px','line-height':'20px','position':'absolute','top':-1,'z-index':2,'font-size':'.75em'});
 	
+				this.$input = $input;
 				$label.data('anycb',true).css({'min-height':'20px','cursor':'pointer'}); // allows for plugin to check if it's already been run on this element.
 				self.span = $span; //global (within instance) for easy reference.
 //				self.input = $input;//global (within instance) for easy reference.
@@ -819,7 +835,8 @@ and it'll turn the cb into an ios-esque on/off switch.
 				$label.prepend($container);
 				$input.is(':checked') ? self._turnOn() : self._turnOff(); //set default
 //				app.u.dump('got here');
-				$input.on('click.anycb',function(){
+// * 201324 -> changed from click to change. 'supposedly' this listens for programatic changes. I think that's a lie.
+				$input.on('change.anycb',function(){
 //					app.u.dump(" -> anycb is toggled. checked: "+$input.is(':checked'));
 					if($input.is(':checked')){self._turnOn();}
 					else	{self._turnOff();}
@@ -843,6 +860,11 @@ and it'll turn the cb into an ios-esque on/off switch.
 			this.span.addClass('ui-state-default ui-corner-right').removeClass('ui-state-highlight ui-corner-left');
 			this.span.animate({'left': 24},'fast');
 //			this.input.prop('checked',false);
+			},
+//if a checkbox is generated and 'checked' w/ js
+		update : function()	{
+//			app.u.dump(' -> running update on: '+this.$input.attr('name')+' and checked: '+this.$input.is(':checked'));
+			this.$input.is(':checked') ? this._turnOn() : this._turnOff(); //set default
 			},
 		_setOption : function(option,value)	{
 			$.Widget.prototype._setOption.apply( this, arguments ); //method already exists in widget factory, so call original.
@@ -907,6 +929,7 @@ Additional a settings button can be added which will contain a dropdown of selec
 			extension : '', //used in conjunction w/ persist.
 			name : '', //used in conjunction w/ persist.
 			persistent : false, //if set to true and name AND extension set, will save to localStorage
+			persistentStateDefault : 'expand',
 			settingsMenu : {}
 			},
 		_init : function(){
@@ -1002,6 +1025,10 @@ Additional a settings button can be added which will contain a dropdown of selec
 			else if(o.templateID)	{
 				$content = app.renderFunctions.createTemplateInstance(o.templateID,o.dataAttribs);
 				}
+			else if(o.dispatch)	{
+				app.model.addDispatchToQ(o.dispatch,o.Q);
+				app.model.dispatchThis(o.Q);
+				}
 			else	{
 				
 				}
@@ -1038,12 +1065,16 @@ Additional a settings button can be added which will contain a dropdown of selec
 			if(o.settingsMenu)	{self._buildSettingsMenu()}			
 
 			},
-
+// ** 201324 -> added means of setting a default for 'persistent' state so a panel could be closed if it has never been opened before.
 		_handleInitialState : function()	{
 			if(this.options.state == 'persistent' && this.options.name && this.options.extension)	{
+//				app.u.dump(" -> using persistent settings");
 				var settings = app.ext.admin.u.dpsGet(this.options.extension,'anypanel');
 				if(settings && settings[this.options.name])	{
 					this.options.state = settings[this.options.name].state; //if not defined, default to expand.
+					}
+				else if(this.options.persistentStateDefault == 'expand' || this.options.persistentStateDefault == ' collapse') {
+					this.options.state = this.options.persistentStateDefault;
 					}
 				else	{
 					this.options.state = 'expand';
@@ -1167,7 +1198,8 @@ supported options include tabID (given to the container), tabtext (what appears 
 //			console.log('init sticktab');
 			var self = this,
 			o = self.options, //shortcut
-			$t = self.element; //this is the targeted element (ex: $('#bob').anymessage() then $t is bob)
+			$t = self.element, //this is the targeted element (ex: $('#bob').anymessage() then $t is bob)
+			guid = app.u.guidGenerator()
 			
 			if($t.data('isstickytab'))	{
 				//already in a stickytab. do nothing.
@@ -1177,7 +1209,7 @@ supported options include tabID (given to the container), tabtext (what appears 
 //add an id if one doesn't already exist.
 				if($t.attr('id'))	{}
 				else	{
-					$t.attr({'id':(o.tabID || 'stickytab_'+app.u.guidGenerator())}); //the ID goes onto the element this is run on.  allows for methods to easily be run later.
+					$t.attr({'id':(o.tabID) ? 'stickycontents_'+o.tabID : 'stickycontents_'+guid}); //the ID goes onto the element this is run on.  allows for methods to easily be run later.
 					}
 				
 				var 
@@ -1186,7 +1218,8 @@ supported options include tabID (given to the container), tabtext (what appears 
 					$stickytabText = $('.ui-widget-stickytab-tab-text',$sticky)
 	
 				this.sticky = $sticky; //global reference to container for easy access.
-	
+//* 202324  -> tabid wasn't getting applied to tab.
+				$sticky.attr({'id':(o.tabID) ? o.tabID : 'stickytab_'+guid});
 				$sticky.appendTo($tabContainer);
 				this._moveAnimate();
 	//			$('.ui-widget-stickytab-content',$sticky).append(this.element);
@@ -1224,7 +1257,7 @@ supported options include tabID (given to the container), tabtext (what appears 
 					'position':'fixed',
 					'left':0,
 					'top':'120px',
-					'width':'120px',
+					'width':'25px', // ** 201320 -> changed from 120 to 25 to solve a z-index issue. probably a typo to begin with.
 					'height':'300px',
 					'z-index':500
 					}).appendTo('body');
@@ -1257,7 +1290,7 @@ supported options include tabID (given to the container), tabtext (what appears 
 			var 
 				$sticky = $("<div \/>").css({'position':'relative'}).addClass('ui-widget ui-widget-stickytab'),
 				$stickytab = $("<div \/>").addClass("ui-widget-stickytab-tab ui-corner-right "+this.options.tabclass),
-				$stickyContent = $("<div \/>").addClass("ui-widget-stickytab-content minimalMode ui-widget ui-widget-content ui-corner-right");
+				$stickyContent = $("<div \/>").addClass("ui-widget-stickytab-content minimalMode detailMode ui-widget ui-widget-content ui-corner-right");
 
 			this._addTabEvents($stickytab);
 			$stickytab.append("<div class='ui-widget-stickytab-tab-text'>"+this.options.tabtext+"</div>");
@@ -1291,6 +1324,7 @@ supported options include tabID (given to the container), tabtext (what appears 
 			this.sticky.animate({left: -(this.sticky.outerWidth())}, 'slow');
 			},
 		destroy : function()	{
+			app.u.dump(" -> stickytab destroy called. this.sticky.id: "+this.sticky.attr('id'));
 			this.sticky.empty().remove();
 			},
 		_setOption : function(option,value)	{
@@ -1298,7 +1332,6 @@ supported options include tabID (given to the container), tabtext (what appears 
 			}
 		}); // create the widget
 })(jQuery);
-
 
 
 
@@ -1312,8 +1345,11 @@ $.fn.intervaledEmpty = function(interval, remove){
 			i++;
 			});
 		}
-	if(remove){
-		$(this).remove();
+	else	{
+// ** only remove in the last iteration, when there are no children, or this could still potentially lock up the browser.
+		if(remove){
+			$(this).remove();
+			}
 		}
 	return this;
 	}

@@ -1175,7 +1175,7 @@ after using it, too frequently the dispatch would get cancelled/dominated by ano
 				$buttonBar.append($("<button \/>").text("Find Customer").button().click(function(){
 					$buttonBar.hide();
 					$target.showLoading();
-					app.ext.admin.calls.adminCustomerSearch.init($('#customerLookupByEmail').val(),{'callback':'useLookupForCustomerGet','extension':'convertSessionToOrder'});
+					app.ext.admin.calls.adminCustomerSearch.init({'scope':'EMAIL','searchfor':$('#customerLookupByEmail').val()},{'callback':'useLookupForCustomerGet','extension':'convertSessionToOrder'});
 					app.model.dispatchThis();
 					}));
 				$buttonBar.appendTo($target);
@@ -1312,7 +1312,6 @@ the dom update for the lineitem needs to happen last so that the cart changes ar
 					app.u.dump(" -> a stid ["+stid+"] and a quantity ["+qty+"] are required to do an update cart.");
 					}
 				},
-
 
 
 //generate the list of existing addresses (for users that are logged in )

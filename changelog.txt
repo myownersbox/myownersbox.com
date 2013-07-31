@@ -6,6 +6,25 @@
 
 Any time you are upgrading to a new version of the MVC, you should create a new branch.
 
+301330
+ADMIN
+ -> new options in customer search (schedule, account manager and account type)
+ -> new options in organization search (schedule, account type)
+ -> new interface for price schedules
+ -> everywhere schedule is referenced in the UI got updated (syndication, organizations, etc)
+ -> new interface for account utilities (that interface formerly known as tech tools)
+ 	disk usage and inventory event queue are in the 'logs' section.
+ -> "Inventory Lookup" in utilities moved to 'vstore' in setup.
+ -> new interface for vendors
+ -> new flexedit manager interface in utilities
+ -> flexedit panel in product editor upgraded to full app
+
+
+301324
+popCheckbox and popRadio are retired. popVal will now handle all input types. all files were updated.
+ -> https://github.com/zoovy/AnyCommerce-Development/commit/877a5a382f629150aedfcaa9087b0f37d1667a92
+ -> https://github.com/zoovy/AnyCommerce-Development/commit/a6c2fbff7ad08c077842e38100c2dbe7dfc93f6f
+
 
 
 201314

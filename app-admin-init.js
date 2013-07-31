@@ -17,9 +17,10 @@ app.rq.push(['extension',1,'store_cart','extensions/store_cart.js']);
 app.rq.push(['extension',1,'store_checkout','extensions/store_checkout.js']);
 app.rq.push(['extension',1,'store_product','extensions/store_product.js']);
 
-app.rq.push(['extension',1,'admin_support','extensions/admin/support.js']); 
+app.rq.push(['extension',0,'admin_support','extensions/admin/support.js']); 
 app.rq.push(['extension',0,'admin_tools','extensions/admin/tools.js']); 
 app.rq.push(['extension',1,'admin_task','extensions/admin/task.js']);
+app.rq.push(['extension',1,'admin_templateEditor','extensions/admin/template_editor.js']); 
 app.rq.push(['extension',0,'admin_syndication','extensions/admin/syndication.js']); //needs to be in pass 0 for linkFrom (links from marketplaces)
  
 app.rq.push(['extension',0,'admin_config','extensions/admin/config.js']);
@@ -41,6 +42,7 @@ app.rq.push(['script',0,app.vars.baseURL+'controller.js']);
 
 
 app.rq.push(['script',1,app.vars.baseURL+'resources/jquery.ui.jeditable.js']); //used for making text editable (customer address). non-essential. loaded late. used in orders.
+app.rq.push(['script',1,app.vars.baseURL+'resources/jquery.fullscreen-1.2.js']); //used in template editor. will likely get used more.
 app.rq.push(['script',0,app.vars.baseURL+'extensions/admin/resources/highcharts-3.0.1/highcharts.js']); //used for KPI
 
 app.rq.push(['script',1,'https://crypto-js.googlecode.com/files/2.5.3-crypto-md5.js']); //used for authentication.
@@ -51,6 +53,16 @@ app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.showloading-v1.0.jt.j
 //used in the launchpad. needed early.
 app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.mousewheel-3.0.6.min.js']);
 
+
+//used in campaigns. probably get used more. allows for time selection in datepicker.
+
+app.rq.push(['css',1,app.vars.baseURL+'resources/jquery-ui-timepicker-addon.css']);
+app.rq.push(['script',1,app.vars.baseURL+'resources/jquery-ui-timepicker-addon.js']);
+
+//right now, used in ebay category chooser. Likely to be used more in the future.
+//app.rq.push(['script',1,app.vars.baseURL+'extensions/admin/resources/jquery.xsltransform.20071214.js']); //must be loaded after sarissa is done.
+//app.rq.push(['script',0,app.vars.baseURL+'extensions/admin/resources/sarissa.0.9.9.6.js']);
+
 //anycommerce plugins, such as anycontent, anytable, anycb, etc.
 app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.ui.anyplugins.js']);
 app.rq.push(['css',1,app.vars.baseURL+'resources/anyplugins.css']);
@@ -60,6 +72,11 @@ app.rq.push(['css',1,app.vars.baseURL+'resources/anyplugins.css']);
 app.rq.push(['css',1,app.vars.baseURL+'extensions/admin/resources/jquery.contextMenu.css']);
 app.rq.push(['script',0,app.vars.baseURL+'extensions/admin/resources/jquery.contextMenu.js']); //must be in first pass in case orders is the landing page.
 app.rq.push(['script',1,app.vars.baseURL+'extensions/admin/resources/jquery.ui.position.js']);
+
+
+//used for image enlargement in template chooser (in syndication but suspect it will be in email, newsletter, app, etc soon enough)
+app.rq.push(['script',1,app.vars.baseURL+'resources/load-image.min.js']); //in zero pass in case product page is first page.
+app.rq.push(['script',1,app.vars.baseURL+'resources/jquery.image-gallery.jt.js']); //in zero pass in case product page is first page.
 
 //app.rq.push(['script',0,app.vars.baseURL+'extensions/admin/resources/jquery.ui.touch-punch.min.js']);
 //app.rq.push(['script',0,app.vars.baseURL+'extensions/admin/resources/jquery.shapeshift.js']);
