@@ -35,7 +35,7 @@ app.rq.push(['script',0,app.vars.baseURL+'resources/jquery.ui.anyplugins.js']); 
 
 
 app.rq.push(['myRIA', 'pageHandler', 'category', '.drawers', 'categoryTemplate', 'init', 0]);
-app.rq.push(['myRIA', 'pageHandler', 'category', '/\.drawers/', 'categoryTemplate', 'init', 1]);
+app.rq.push(['myRIA', 'pageHandler', 'category', '/\.drawers\.major-league-baseball/', 'categoryTemplate', 'init', 2]);
 app.rq.push(['myRIA', 'pageHandler', 'category', '.drawers.*', 'categoryTemplate', 'init', 1]);
 
 //add tabs to product data.

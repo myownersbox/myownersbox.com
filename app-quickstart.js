@@ -2713,11 +2713,14 @@ buyer to 'take with them' as they move between  pages.
 					else if(catSafeID == zGlobals.appSettings.rootcat || infoObj.pageType == 'homepage')	{
 						infoObj.templateID = 'homepageTemplate'
 						}
-					else if(app.ext.myRIA.u.queryPageHandlers('category',catSafeID)){
-						infoObj.templateID = 'categoryTemplate';
-						}
-					else	{
-						infoObj.templateID = 'categoryTemplate'
+					else{
+						var tmp = app.ext.myRIA.u.queryPageHandlers('category',catSafeID);
+						if(tmp){
+							infoObj.templateID = tmp.templateID;
+							}
+						else{
+							infoObj.templateID = 'categoryTemplate'
+							}
 						}
 					infoObj.state = 'onInits';
 					var parentID = infoObj.parentID || infoObj.templateID+'_'+app.u.makeSafeHTMLId(catSafeID);
@@ -3199,7 +3202,9 @@ else	{
 				else {
 					//Just because your mommy says you're special doesn't mean you have a custom template.
 					}
-					
+				if(r && r.tag){
+					app.u.dump("Special Page Handler used for key: ["+key+"], pagetype: "+pagetype+", tag: "+r.tag);
+					}
 				return r;
 				},
 
