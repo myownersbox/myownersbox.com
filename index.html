@@ -3,27 +3,6 @@
 <head>
 <meta charset="utf-8">
 
-<!-- TODO: test conversion script -->
-<!-- TODO: suggest having one review per category -->
-
-<!-- Error -->
-<!-- TODO: * During checkout, after processing an order the confirmation page loads for a few seconds then forwards to a blank screen -->
-<!-- TODO: * META variable is not outputting on order sheet.  -->
-<!-- TODO:   Example: A sale from http://www.myownersbox.com/category/drawers/?META=CUBEITS should output CUBEITS on the order invoice. This may need to be escalated -->
-
-<!-- 101912 -->
-<!-- TODO: 5. Remove shipping module in cart and checkout and highlight that there is FREE SHIPPING -->
-
-<!-- 010213 -->
-<!-- TODO: 13. Add new name highlighted in red below (but put in black text on site) to each product as follows
-a. Arizona Diamondbacks MLB STOREITS™ Fabric Storage Drawer
-b. MLB CUBEITS™ White 3-Cube Bench Storage Organizer
-14. Add new name highlighted in red below (but put in white text on site)on red banner header for each category page
-a. View STOREITS™ Storage Drawers Below
-b. View CUBEITS™ Cube Organizers Below -->
-
-<!-- TODO: look at text files in project folder -->
-<!-- TODO: embed youtube video http://www.youtube.com/watch?v=4QZVOVH50pY -->
 
 <!-- do not populate or add meta data or title, the SEO layer will add it -->
 
@@ -283,7 +262,7 @@ var addthis_share = {
 			</div>
 			<div class='spriteBG newsHead floatLeft'></div>
 			<div class='floatLeft'>
-				<form action='#' id='subscribeFrm' name='subscribeFrm' onSubmit="app.ext.store_crm.u.handleSubscribe(this.id); return false">
+				<form action='#' id='subscribeFrm' name='subscribeFrm' onSubmit="app.ext.store_crm.u.handleSubscribe($(this)); return false">
 					<input type='email' class='twoBorder' maxlength='50' size='30' name='login' id='subscribeLogin' value='email address' onFocus="if(this.value == this.defaultValue) this.value =''" onBlur="if(this.value == '') this.value = this.defaultValue" />
 					<input type='text'  class='twoBorder' maxlength='50' size='30' name='fullname' id='subscribeFullname' value='full name' onFocus="if(this.value == this.defaultValue) this.value =''" onBlur="if(this.value == '') this.value = this.defaultValue" />
 					<input type='submit' class='spriteBG submit pointer' value='' />
