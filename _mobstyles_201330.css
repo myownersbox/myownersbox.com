@@ -1,0 +1,7 @@
+.ui-button.ui-state-default.snappyButton,
+.ui-button.snappyButton {
+    background: url("images/ui-bg_glass_20_bf0400_1x400.png") repeat-x scroll 50% 50% #BF0400;
+    border: 1px solid #E3A1A1;
+    color: #FFFFFF;
+    font-weight: bold;
+}

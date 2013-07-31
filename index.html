@@ -63,6 +63,7 @@ css files should be included before any .js file to ensure they are downloaded i
 <link rel="stylesheet" type="text/css" href="_mobstyles_customizer.css" /><!-- left separate for customizer portability -->
 <link rel="stylesheet" type="text/css" href="app-quickstart.css" />
 <link rel="stylesheet" type="text/css" href="_mobstyles-20120910.css" />
+<link rel="stylesheet" type="text/css" href="_mobstyles_201330.css" />
 <link rel="stylesheet" type="text/css" href="jquery-ui-1.10.3.custom.min.css" />
 <!-- mobile device css overrides -->
 <link media="handheld, only screen and (max-width: 480px), only screen and (max-device-width: 480px)" href="_mobstyles_customizer_mobile.css" type="text/css" rel="stylesheet" /> 
@@ -808,9 +809,9 @@ remember to NOT put the button inside the 'onclick' container or two events will
 
 	<form data-bind='var: product(pid); format:atcForm; extension:store_product;' class='prodListAddToCartForm marginBottom clearfix' id='prodListAddToCartFrm' action='#' onSubmit="app.ext.myRIA.u.handleAddToCart($(this),{'action':'modal'}); return false;">
 		<input type="hidden" name="qty" value="1"/>
-		<button data-bind='format:addToCartButton; extension:myRIA; useParentData:true;'>more details</button>
-		<input type='submit' value='Add to Cart' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseOut="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' class='displayNone pointer floatRight spriteBG addToCartButton' />
+		<button class="snappyButton" data-bind='format:addToCartButton; extension:myRIA; useParentData:true;'>more details</button>
 		<!--
+		<input type='submit' value='Add to Cart' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseOut="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' class='displayNone pointer floatRight spriteBG addToCartButton' />
 		-->
 	</form>
 		
@@ -1627,7 +1628,7 @@ So the cart template should contain these two elements and the extension should 
 
 	<div class='checkoutButtonsContainer'>
 
-		<span title='proceed to secure checkout'><button class='ui-button ui-button-text-only ui-state-default ui-corner-all checkoutButton' onClick="showContent('checkout',{});"><span class="ui-button-text">Store Checkout</span></button></span>
+		<span title='proceed to secure checkout'><button class='ui-button snappyButton ui-button-text-only ui-state-default ui-corner-all checkoutButton' onClick="showContent('checkout',{});"><span class="ui-button-text">Store Checkout</span></button></span>
 
 		<span id='paypalECButton' data-bind='var: cart(cart/cartid); format:paypalECButton;'></span>
 
