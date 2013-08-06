@@ -315,11 +315,7 @@ document.write = function(v){
 *** 201318 -> passing in unsanitized tagObj caused an issue with showPageContent
 				app.ext.myRIA.u.buildQueriesFromTemplate(tagObj);
 */
-				app.ext.myRIA.u.buildQueriesFromTemplate({
-					'templateID':tagObj.templateID,
-					'parentID':tagObj.parentID,
-					'navcat':tagObj.navcat,
-					'datapointer':tagObj.datapointer});
+				app.ext.myRIA.u.buildQueriesFromTemplate(tagObj);
 
 				app.model.dispatchThis();
 				},
@@ -929,7 +925,7 @@ for legacy browsers. That means old browsers will use the anchor to retain 'back
 						if(app.ext.myRIA.vars.session.recentCategories[0] != infoObj.navcat)	{
 							app.ext.myRIA.vars.session.recentCategories.unshift(infoObj.navcat);
 							}
-						
+						//app.u.dump(infoObj);
 						infoObj.parentID = app.ext.myRIA.u.showPage(infoObj); //### look into having showPage return infoObj instead of just parentID.
 						break;
 	
@@ -1461,7 +1457,7 @@ if(ps.indexOf('?') >= 1)	{
 	} catch(err){
 		//we lost the URI params to kvp2Array
 	}
-//	app.u.dump(uriParams);
+	//app.u.dump(infoObj.uriParams);
 	}
 //app.u.dump("infoObj: "); app.u.dump(infoObj);
 
@@ -2745,8 +2741,10 @@ buyer to 'take with them' as they move between  pages.
 							$content.addClass('displayNone'); //hidden by default for page transitions.
 							$('#mainContentArea').append($content);
 							}
-						
-						app.ext.store_navcats.calls.appCategoryDetailMax.init(catSafeID,{'callback':'fetchPageContent','extension':'myRIA','templateID':infoObj.templateID,'parentID':parentID});
+						infoObj.callback = 'fetchPageContent'
+						infoObj.extension = 'myRIA'
+						infoObj.parentID = parentID
+						app.ext.store_navcats.calls.appCategoryDetailMax.init(catSafeID,infoObj);
 						app.model.dispatchThis();
 						}
 
@@ -3213,7 +3211,7 @@ else	{
 			createTemplateFunctions : function()	{
 
 				app.ext.myRIA.template = {};
-				var pageTemplates = new Array('categoryTemplate','productTemplate','companyTemplate','customerTemplate','homepageTemplate','searchTemplate','cartTemplate','checkoutTemplate','pageNotFoundTemplate');
+				var pageTemplates = new Array('categoryTemplateMOBCustomizer', 'categoryTemplate','productTemplate','companyTemplate','customerTemplate','homepageTemplate','searchTemplate','cartTemplate','checkoutTemplate','pageNotFoundTemplate');
 				var L = pageTemplates.length;
 				for(var i = 0; i < L; i += 1)	{
 					app.ext.myRIA.template[pageTemplates[i]] = {"onCompletes":[],"onInits":[],"onDeparts":[]};

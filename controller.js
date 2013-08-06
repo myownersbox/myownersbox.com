@@ -1082,8 +1082,14 @@ app.u.throwMessage(responseData); is the default error handler.
 			onSuccess : function(_rtag)	{
 //				app.u.dump("BEGIN callbacks.translateTemplate"); app.u.dump(_rtag);
 //				app.u.dump("typeof jQuery.hideLoading: "+typeof jQuery().hideLoading);
-				if(typeof jQuery().hideLoading == 'function'){$(app.u.jqSelector('#',_rtag.parentID)).hideLoading();}
-				app.renderFunctions.translateTemplate(app.data[_rtag.datapointer],_rtag.parentID);
+				if(_rtag.$jqObj){
+					if(typeof jQuery().hideLoading == 'function'){_rtag.$jqObj.hideLoading();}
+					app.renderFunctions.translateTemplate(app.data[_rtag.datapointer],_rtag.$jqObj);
+					}
+				else {
+					if(typeof jQuery().hideLoading == 'function'){$(app.u.jqSelector('#',_rtag.parentID)).hideLoading();}
+					app.renderFunctions.translateTemplate(app.data[_rtag.datapointer],_rtag.parentID);
+					}
 				}
 			}, //translateTemplate
 
@@ -2648,19 +2654,25 @@ return $r;
 
 		translateTemplate : function(data,target)	{
 //		app.u.dump('BEGIN translateTemplate (target = '+target+')');
-		var safeTarget = app.u.makeSafeHTMLId(target); //jquery doesn't like special characters in the id's.
-		
-		var $divObj = $('#'+safeTarget); //jquery object of the target tag. template was already rendered to screen using createTemplate.
-		if($divObj.length > 0)	{
-			var templateID = $divObj.attr('data-templateid'); //always use all lowercase for data- attributes. browser compatibility.
-			var dataObj = $divObj.data();
+		var $jqObj;
+		if(typeof target == "string"){
+			var safeTarget = app.u.makeSafeHTMLId(target); //jquery doesn't like special characters in the id's.
+			
+			$jqObj = $('#'+safeTarget); //jquery object of the target tag. template was already rendered to screen using createTemplate.
+			} 
+		else if(target instanceof jQuery){
+			$jqObj = target;
+			}
+		if($jqObj.length > 0)	{
+			var templateID = $jqObj.attr('data-templateid'); //always use all lowercase for data- attributes. browser compatibility.
+			var dataObj = $jqObj.data();
 //yes, i wish I'd commented why this is here. jt. appears to be for preserving data() already set prior to re-rendering a template.
-			if(dataObj)	{dataObj.id = safeTarget}
-			else	{dataObj = safeTarget;}
+			if(dataObj)	{dataObj.id = $jqObj.attr('id')}
+			else	{dataObj = $jqObj.attr('id');}
 //believe the 'replace' to be causing a lot of issues. changed in 201239 build
 //			var $tmp = app.renderFunctions.transmogrify(dataObj,templateID,data);
 //			$('#'+safeTarget).replaceWith($tmp);
-			this.handleTranslation($('#'+safeTarget),data)
+			this.handleTranslation($jqObj,data)
 			}
 		else	{
 			app.u.dump("WARNING! attempted to translate an element that isn't on the DOM. ["+safeTarget+"]");

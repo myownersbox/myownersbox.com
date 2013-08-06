@@ -473,6 +473,9 @@ if no parentID is set, then this function gets the data into memory for later us
 						if(plObj.isWizard)	{
 							_tag = {'callback':'translateTemplate','extension':'store_prodlist','jqObj':magic.inspect('#'+this.getSkuSafeIdForList(plObj.parentID,pageCSV[i]))}
 							}
+						else if(plObj.placeholders){
+							_tag = {'callback':'translateTemplate','extension':'store_prodlist','jqObj':$(plObj.placeholders.get(i))}
+							}
 						else if(plObj.parentID)	{
 							_tag = {'callback':'translateTemplate','extension':'store_prodlist','parentID':this.getSkuSafeIdForList(plObj.parentID,pageCSV[i])}
 							}
@@ -556,7 +559,9 @@ params that are missing will be auto-generated.
 						}
 //adds all the placeholders. must happen before getProductDataForList so individual product translation can occur.
 //can't just transmogrify beccause sequence is important and if some data is local and some isn't, order will get messed up.
-					$tag.append(this.getProdlistPlaceholders(plObj)).removeClass('loadingBG');
+					
+					plObj.placeholders = this.getProdlistPlaceholders(plObj)
+					$tag.append(plObj.placeholders).removeClass('loadingBG');
 					$tag.data('prodlist',plObj); //sets data object on parent
 
 					if(!obj.hide_summary)	{

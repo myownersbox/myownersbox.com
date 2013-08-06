@@ -13,7 +13,8 @@ app.rq.push(['extension',0,'store_search','extensions/store_search.js']);
 app.rq.push(['extension',0,'store_product','extensions/store_product.js']);
 app.rq.push(['extension',0,'store_cart','extensions/store_cart.js']);
 app.rq.push(['extension',0,'store_crm','extensions/store_crm.js']);
-app.rq.push(['extension',0,'mob_customizer','_mobapp_customizer.js']);
+//app.rq.push(['extension',0,'mob_customizer','_mobapp_customizer.js']);
+app.rq.push(['extension',0,'mob_customizer','extensions/mob_customizer/extension.js']);
 app.rq.push(['extension',0,'myRIA','app-quickstart.js','startMyProgram']);
 
 app.rq.push(['extension',1,'google_analytics','extensions/partner_google_analytics.js','startExtension']);

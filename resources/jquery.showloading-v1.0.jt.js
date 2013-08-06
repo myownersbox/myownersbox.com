@@ -30,7 +30,7 @@
 
 		jQuery.extend(settings, options);
        	
-		if($this.length)	{
+		if($this.length && $('.loading-indicator', $this).length < 1)	{
 			var $loadingDiv = jQuery('<div></div>');
 			var $overlayDiv = jQuery('<div></div>');
 	

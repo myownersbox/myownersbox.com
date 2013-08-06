@@ -357,8 +357,9 @@ templateID - the template id used (from app.templates)
 						for(var i = 0; i < L; i += 1)	{
 							if(data.value[i].pretty[0] != '!')	{
 								var parentID = data.value[i].id+"_catgid+"+(app.u.guidGenerator().substring(10));
-								$tag.append(app.renderFunctions.createTemplateInstance(data.bindData.loadsTemplate,{'id':parentID,'catsafeid':data.value[i].id}));
-								numRequests += app.ext.store_navcats.calls[call].init(data.value[i].id,{'parentID':parentID,'callback':'translateTemplate'});
+								var $jqObj = app.renderFunctions.createTemplateInstance(data.bindData.loadsTemplate,{'id':parentID,'catsafeid':data.value[i].id})
+								$tag.append($jqObj);
+								numRequests += app.ext.store_navcats.calls[call].init(data.value[i].id,{'$jqObj':$jqObj,'parentID':parentID,'callback':'translateTemplate'});
 								}
 							}
 						if(numRequests)	{app.model.dispatchThis()}
