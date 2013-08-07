@@ -1,60 +1,107 @@
-<div id="categoryTemplateMOBCustomizer">
-	<div data-mobcustomizer="s1" data-templateID="s1Template"></div>
-	<div data-mobcustomizer="s2" data-templateID="s2Template"></div>
-	<div data-mobcustomizer="s3" data-templateID="s3Template"></div>
-	
-	<div data-mobcustomizer="previewContainer">
-		<ul data-mobcustomizer="previewList" data-loadsTemplate="productTemplateDrawerPreview"></ul>
+<div class="mobcustomizer" id="categoryTemplateMOBCustomizer">
+	<div class="leftCol noListStyle noPadOrMargin">
+		<h3>
+			<strong>Step 1:</strong> Choose Storage Organizer Style
+		</h3>
+		<div data-mobcustomizer="s1" data-templateID="s1Template"></div>
+		<h3>
+			<strong>Step 2:</strong> Choose Storage Organizer Size
+		</h3>
+		<div data-mobcustomizer="s2" data-templateID="s2Template"></div>
+		<h3>
+			<strong>Step 3:</strong> Click Drag Icon &amp; Drop In Location
+		</h3>
+		<div data-mobcustomizer="s3" data-templateID="s3Template"></div>
 	</div>
 	
-	<div>
-		<ul data-mobcustomizer="prodList" data-loadsTemplate="productTemplateDrawerList"></ul>
-		<div data-mobcustomizer="storageChoice" data-templateID="productTemplateStorageChoice"></div>
+	<div class="middleCol noListStyle noPadOrMargin">
+		<div class="mobPreviewContainer" data-mobcustomizer="previewContainer">
+			<ul class="mobPreviewList" data-mobcustomizer="previewList" data-loadsTemplate="productTemplateDrawerPreview"></ul>
+		</div>
 	</div>
 	
-	<button onClick="app.ext.mob_customizer.a.addToCart(); return false;" >Add Everything To The Cart</button>
+	<div class="rightCol noListStyle noPadOrMargin">
+		<div>
+			<ul data-mobcustomizer="prodList" data-loadsTemplate="productTemplateDrawerSelectedList"></ul>
+			<div data-mobcustomizer="storageChoice" data-templateID="productTemplateStorageChoice"></div>
+		</div>
+
+		<button onClick="app.ext.mob_customizer.a.addToCart(); return false;" >Add Everything To The Cart</button>
+	</div>
 </div>
 
 
 <div id="s1Template">
-	<select data-bind="var:category(@subcategoryDetail); format:s1Select; extension:mob_customizer;"></select>
+	<ul class="cssDDMenu s1Chooser">
+		<li>
+			<a data-mobcustomizer="s1Text" onclick="return false;" href="#"></a>
+			<ul data-bind="var:category(@subcategoryDetail); format:categoryList; extension:store_navcats; loadsTemplate:categoryTemplateS1Chooser;"></ul>
+		</li>
+	</ul>
 </div>
 
 <div id="s2Template">
-	<ul data-bind="var:category(@products); format:productList; extension:store_prodlist; loadsTemplate:productTemplateStorageList;"></ul>
+	<ul class="mobStorageChooser" data-bind="var:category(@products); format:productList; extension:store_prodlist; loadsTemplate:productTemplateStorageList;"></ul>
 </div>
 
 <div id="s3Template">
-	<ul data-bind="var:category(@subcategoryDetail); format:categoryList; extension:store_navcats; loadsTemplate:categoryListTemplateS3; detail:max;"></ul>
+	<ul class="mobDrawerChooser" data-bind="var:category(@subcategoryDetail); format:categoryList; extension:store_navcats; loadsTemplate:categoryListTemplateS3; detail:max;"></ul>
 </div>
 
 <div id="s3DrawerListTemplate">
-	<ul data-bind="var:category(@products); format:productList; extension:store_prodlist; loadsTemplate:productTemplateDrawerList; hide_summary:true; items_per_page:999999;"></ul>
+	<ul class="drawerList" data-bind="var:category(@products); format:productList; extension:store_prodlist; loadsTemplate:productTemplateDrawerList; hide_summary:true; items_per_page:999999;"></ul>
 </div>
 
 <ul>
-<li id="productTemplateDrawerPreview">
-	<div data-mobcustomizer="prodIndex"></div>
-	<div data-bind="var:product(zoovy:prod_name);format:text;">Open Slot!</div>
+<li id="categoryTemplateS1Chooser">
+	<div data-bind="var:category(id); format:assignAttribute; attribute: data-navcat;" onClick="app.ext.mob_customizer.a.setS1($(this).attr('data-navcat')); return false;">
+		<a data-bind="var:category(pretty); format:text;" onClick="return false;" href="#"></a>
+	</div>
 </li>
-
-<li id="productTemplateDrawerList">
-	<div data-bind="var:product(pid); format:draggableDrawer; extension:mob_customizer;">
-		<div data-mobcustomizer="prodIndex"></div>
-		<div data-bind="var:product(zoovy:prod_name);format:text;">Empty</div>
+<li id="productTemplateDrawerPreview">
+	<div class="prodIndex" data-bind="var:product(mobcustomizerIndex); format:text;"></div>
+	<div class="removeProduct displayNone" data-bind="var:product(pid); format:showIfSet;">
+		<div class="pointer" data-bind="var:product(mobcustomizerIndex); format:assignAttribute; attribute: data-index;" onClick="app.ext.mob_customizer.a.chooseDrawer($(this).attr('data-index'),''); return false;">X</div>
+	</div>
+	<div class="displayNone" data-bind="var:product(pid); format:showIfSet;">
+		<div class="dragIconContainer" data-bind="var:product(pid); format:draggableDrawer; extension: mob_customizer;">
+			<img width="131" height="131" data-bind="var:product(zoovy:prod_image7);format:imageURL; bgcolor:ffffff;"/>
+		</div>
 	</div>
 </li>
 
-<li id="productTemplateStorageList">
-	<div class="pointer" data-bind="var:product(pid); format:s2Link; extension:mob_customizer;">
-		<div data-bind="var:product(zoovy:prod_name);format:text;"></div>
+<li id="productTemplateDrawerSelectedList">
+	<div class="prodName" data-bind="var:product(user:prod_organization);format:text; defaultVar:product(zoovy:prod_name);"></div>
+</li>
+
+<li id="productTemplateDrawerList">
+	<div class="magnify pointer" data-bind="var:product(pid); format:assignAttribute; attribute:data-pid;" onClick="app.ext.store_product.u.showPicsInModal({'pid':$(this).attr('data-pid')}); return false;"></div>
+	<div class="prodAttContainer">
+		<img class="prodThumb" width="57" height="45" data-bind="var:product(zoovy:prod_image1); format:imageURL; bgcolor:tttttt;"/>
+		<div class="prodName" data-bind="var:product(user:prod_organization);format:text; defaultVar:product(zoovy:prod_name);"></div>
+	</div>
+	<div class="dragIconContainer" data-bind="var:product(pid); format:draggableDrawer; extension:mob_customizer;">
+		<span class="dragIcon"></span>
+		<span class="displayNone dragThumb">
+			<img class="prodThumb" width="128" height="128" data-bind="var:product(zoovy:prod_image7); format:imageURL; bgcolor:tttttt;"/>
+		</span>
+	</div>
+</li>
+
+<li id="productTemplateStorageList" data-mobcustomizer="s2Choice" class="pointer" data-bind="var:product(pid); format:assignAttribute; attribute:data-pid;" onClick="app.ext.mob_customizer.a.setS2($(this).attr('data-pid')); return false;">
+	<div>
+		<span class="checkmark"></span>
+		<img class="prodThumb" width="75" height="75" data-bind="var:product(zoovy:prod_image1); format:imageURL; bgcolor:tttttt;" />
 	</div>
 </li>
 
 <li id="categoryListTemplateS3">
-	<div data-bind="var:category(id); format:s3Link; extension:mob_customizer;">
-		<img class="catThumb" data-bind="var:category(%meta.CAT_THUMB); format:imageURL; bgcolor:tttttt;" height="35" width="35"/> 
-		<div class="catName" data-bind="var:category(pretty); format:text;"></div>
+	<div data-mobcustomizer="drawerListContainer" data-bind="var:category(id); format:assignAttribute; attribute:data-navcat;">
+		<div class="pointer" data-bind="var:category(id); format:assignAttribute; attribute:data-navcat;" onClick="app.ext.mob_customizer.a.setS3($(this).attr('data-navcat')); return false;">
+			<span class="arrow"></span>
+			<img class="catThumb" data-bind="var:category(%meta.CAT_THUMB); format:imageURL; bgcolor:tttttt;" height="35" width="35"/> 
+			<div class="catName" data-bind="var:category(pretty); format:text;"></div>
+		</div>
 		<div data-bind="var:category(id); format:assignAttribute; attribute:data-navcat;" data-mobcustomizer="s3DrawerList" data-templateID="s3DrawerListTemplate"></div>
 	</div>
 </li>

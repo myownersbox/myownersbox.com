@@ -60,7 +60,12 @@ all css includes need to be after the js that changes the base url.
 css files should be included before any .js file to ensure they are downloaded in parallel
 -->
 <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/themes/redmond/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" href="_mobstyles_customizer.css" /><!-- left separate for customizer portability -->
+
+<!-- left separate for customizer portability 
+<link rel="stylesheet" type="text/css" href="_mobstyles_customizer.css" />
+-->
+<link rel="stylesheet" type="text/css" href="extensions/mob_customizer/styles.css" />
+
 <link rel="stylesheet" type="text/css" href="app-quickstart.css" />
 <link rel="stylesheet" type="text/css" href="_mobstyles-20120910.css" />
 <link rel="stylesheet" type="text/css" href="_mobstyles_201330.css" />

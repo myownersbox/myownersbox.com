@@ -83,9 +83,9 @@ var mob_customizer = function() {
 		populateS1 : {
 			onSuccess : function(tagObj){
 				app.u.dump("-> mob_customizer.callbacks.populateS1.onSuccess");
-				app.ext.mob_customizer.a.setS1(app.ext.mob_customizer.vars.params.s1);
 				var $s1 = $('[data-mobcustomizer=s1]', app.ext.mob_customizer.vars.$context);
 				$s1.empty().anycontent({"datapointer":tagObj.datapointer,"templateID":$s1.attr('data-templateID')});
+				app.ext.mob_customizer.a.setS1(app.ext.mob_customizer.vars.params.s1);
 				
 				},
 			onError : function(responseData,uuid){app.u.throwMessage(responseData);}
@@ -95,6 +95,9 @@ var mob_customizer = function() {
 				app.u.dump("-> mob_customizer.callbacks.setS1.onSuccess");
 				$('[data-mobcustomizer=s1]', app.ext.mob_customizer.vars.$context).hideLoading();
 				$('[data-mobcustomizer=s2]', app.ext.mob_customizer.vars.$context).hideLoading();
+				
+				$('[data-mobcustomizer=s1Text]', app.ext.mob_customizer.vars.$context).text(app.data[tagObj.datapointer].pretty);
+				
 				var $s2 = $('[data-mobcustomizer=s2]', app.ext.mob_customizer.vars.$context);
 				$s2.empty().anycontent({"datapointer":tagObj.datapointer,"templateID":$s2.attr('data-templateID')});
 				},
@@ -113,13 +116,16 @@ var mob_customizer = function() {
 		setS2 : {
 			onSuccess : function(tagObj){
 				app.u.dump("-> mob_customizer.callbacks.setS2.onSuccess");
-				$('[data-mobcustomizer=s2]', app.ext.mob_customizer.vars.$context).hideLoading();
-				$('[data-mobcustomizer="previewContainer"]', app.ext.mob_customizer.vars.$context).hideLoading();
-				$('[data-mobcustomizer="prodList"]', app.ext.mob_customizer.vars.$context).hideLoading();
-				$('[data-mobcustomizer="storageChoice"]', app.ext.mob_customizer.vars.$context).hideLoading();
 				
 				var prod = app.data[tagObj.datapointer];
 				var dimensions = prod['%attribs']['zoovy:prod_dimensions'].toLowerCase();
+				
+				$('[data-mobcustomizer=s2]', app.ext.mob_customizer.vars.$context).hideLoading();
+				$('[data-mobcustomizer="s2Choice"].selected', app.ext.mob_customizer.vars.$context).removeClass('selected');
+				$('[data-mobcustomizer="s2Choice"][data-pid="'+tagObj.pid+'"]', app.ext.mob_customizer.vars.$context).addClass('selected');
+				$('[data-mobcustomizer="previewContainer"]', app.ext.mob_customizer.vars.$context).attr('data-mobcustomizer-dimensions',dimensions).hideLoading();
+				$('[data-mobcustomizer="prodList"]', app.ext.mob_customizer.vars.$context).hideLoading();
+				$('[data-mobcustomizer="storageChoice"]', app.ext.mob_customizer.vars.$context).hideLoading();
 				
 				var $storageChoice = $('[data-mobcustomizer="storageChoice"]', app.ext.mob_customizer.vars.$context)
 				$storageChoice.intervaledEmpty().anycontent({"datapointer":tagObj.datapointer,"templateID":$storageChoice.attr('data-templateID')});
@@ -178,6 +184,8 @@ var mob_customizer = function() {
 				var $drawerList = $('[data-mobcustomizer="s3DrawerList"][data-navcat="'+tagObj.navcat+'"]', app.ext.mob_customizer.vars.$context);
 				attempts = attempts || 0;
 				if($drawerList.length > 0){
+					$('[data-mobcustomizer="drawerListContainer"].selected', app.ext.mob_customizer.vars.$context).removeClass('selected');
+					$('[data-mobcustomizer="drawerListContainer"][data-navcat="'+tagObj.navcat+'"]', app.ext.mob_customizer.vars.$context).addClass('selected');
 					$('[data-mobcustomizer="s3"]', app.ext.mob_customizer.vars.$context).hideLoading();
 					$drawerList.anycontent({"datapointer":tagObj.datapointer, "templateID":$drawerList.attr('data-templateID')});
 					}
@@ -202,17 +210,14 @@ var mob_customizer = function() {
 				$('[data-mobcustomizer="previewContainer"]', app.ext.mob_customizer.vars.$context).hideLoading();
 				var $previewItem = $('[data-mobcustomizer="previewList"] [data-index="'+tagObj.index+'"]', app.ext.mob_customizer.vars.$context);
 				var $prodItem = $('[data-mobcustomizer="prodList"] [data-index="'+tagObj.index+'"]', app.ext.mob_customizer.vars.$context);
-				//app.u.dump($previewItem);
-				app.u.dump(tagObj);
-				if(tagObj.empty){
-					//Blanking out the drawer
-					$previewItem.intervaledEmpty().anycontent({"data":{},"templateID":$previewItem.attr('data-templateID')});
-					$prodItem.intervaledEmpty().anycontent({"data":{}, "templateID":$prodItem.attr('data-templateID')});
+				
+				var data = {"mobcustomizerIndex":tagObj.index};				
+				if(!tagObj.empty){
+					$.extend(data,app.data[tagObj.datapointer]);
 					}
-				else {
-					$previewItem.intervaledEmpty().anycontent({"datapointer":tagObj.datapointer,"templateID":$previewItem.attr('data-templateID')});
-					$prodItem.intervaledEmpty().anycontent({"datapointer":tagObj.datapointer,"templateID":$previewItem.attr('data-templateID')});
-					}
+				$previewItem.intervaledEmpty().anycontent({"data":data,"templateID":$previewItem.attr('data-templateID')});
+				$prodItem.intervaledEmpty().anycontent({"data":data, "templateID":$prodItem.attr('data-templateID')});
+				
 				},
 			onError : function(responseData,uuid){
 				app.u.dump("-> mob_customizer.callbacks.chooseDrawer.onError");
@@ -247,7 +252,7 @@ var mob_customizer = function() {
 				//the callback will handle: 
 				//	-setting the size of the customizer view
 				//	-re-initializing the drawer array (clip extras)
-				if(	app.ext.store_product.calls.appProductGet.init(pid,{"callback":"setS2","extension":"mob_customizer"}, 'immutable') &&
+				if(	app.ext.store_product.calls.appProductGet.init(pid,{"callback":"setS2","extension":"mob_customizer", "pid":pid}, 'immutable') &&
 					!noDispatch){
 					app.model.dispatchThis('immutable');
 					}
@@ -322,36 +327,24 @@ var mob_customizer = function() {
 ////////////////////////////////////   RENDERFORMATS    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 		renderFormats : {
-			s1Select : function($tag, data){
-				for(var index in data.value){
-					var $option = $('<option value="'+data.value[index].id+'">'+data.value[index].pretty+'</option>');
-					$option.on('click.selectS1', function(){
-						app.ext.mob_customizer.a.setS1($(this).val());
-						});
-					$tag.append($option);
-					}
-				},
-			s2Link : function($tag, data){
-				$tag.data('pid', data.value);
-				$tag.off('click.mobcustomizer_setS2').on('click.mobcustomizer_setS2',function(){
-					app.ext.mob_customizer.a.setS2($(this).data('pid'));
-					});
-				},
-			s3Link : function($tag, data){
-				$tag.data('navcat', data.value);
-				$tag.off('click.mobcustomizer_setS3').on('click.mobcustomizer_setS3',function(){
-					app.ext.mob_customizer.a.setS3($(this).data('navcat'));
-					});
-				},
 			draggableDrawer : function($tag, data){
 				$tag.data('pid', data.value);
 				$tag.addClass("MOBdraggable").draggable({
+					containment:"body",
+					appendTo:"body",
 					helper:"clone",
-					revert:"invalid"
+					revert:"invalid",
+					zIndex:999,
+					start: function(event, ui) {
+						dropped = false;
+						ui.helper.find('.dragThumb').show();
+						ui.helper.find('.dragIcon').hide();
+						},
+					stop: function(event, ui) {
+						if (dropped === true) {$(this).remove();}
+						else {$(this).removeClass("hide");}
+						}
 					});
-				},
-			droppableSlot : function($tag, data){
-				
 				},
 			view360inModal : function($tag,data)  {
 				$tag.removeClass('displayNone').addClass('pointer');
@@ -377,7 +370,7 @@ var mob_customizer = function() {
 				app.u.dump("LOCAL PARAMS:");
 				app.u.dump(localParams);
 				//Chooses infoObj (which includes any URL information passed from myRIA) first,
-				if(infoObj.uriParams.s1 && infoObj.uriParams.s2 && infoObj.uriParams.s3){
+				if(infoObj.uriParams && infoObj.uriParams.s1 && infoObj.uriParams.s2 && infoObj.uriParams.s3){
 					var drawers = [];
 					for(var index in infoObj.uriParams){
 						//looks for "d1" through "d9"
