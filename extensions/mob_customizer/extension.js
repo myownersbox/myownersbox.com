@@ -270,20 +270,27 @@ var mob_customizer = function() {
 				app.ext.mob_customizer.u.updateLocalStorage();
 				},
 			chooseDrawer : function(index, pid, noDispatch){
-				if(pid && pid != ""){
-					app.ext.mob_customizer.vars.params.drawers[index] = pid;
-					$('[data-mobcustomizer="previewContainer"]', app.ext.mob_customizer.vars.$context).showLoading();
-					if(	app.ext.store_product.calls.appProductGet.init(pid,{"callback":"chooseDrawer","extension":"mob_customizer","index":index}, 'immutable') &&
-						!noDispatch){
-						app.model.dispatchThis('immutable');
+				delete app.ext.mob_customizer.vars.drawerHeld
+				app.ext.mob_customizer.vars.$context.removeClass("drawerHeld");
+				if(index){
+					if(pid && pid != ""){
+						app.ext.mob_customizer.vars.params.drawers[index] = pid;
+						$('[data-mobcustomizer="previewContainer"]', app.ext.mob_customizer.vars.$context).showLoading();
+						if(	app.ext.store_product.calls.appProductGet.init(pid,{"callback":"chooseDrawer","extension":"mob_customizer","index":index}, 'immutable') &&
+							!noDispatch){
+							app.model.dispatchThis('immutable');
+							}
+					} else {
+						delete app.ext.mob_customizer.vars.params.drawers[index];
+						app.ext.mob_customizer.callbacks.chooseDrawer.onSuccess({"index":index,"empty":true});
 						}
-				} else {
-					delete app.ext.mob_customizer.vars.params.drawers[index];
-					app.ext.mob_customizer.callbacks.chooseDrawer.onSuccess({"index":index,"empty":true});
+					app.ext.mob_customizer.u.updateLocalStorage();
 					}
-				app.ext.mob_customizer.u.updateLocalStorage();
 				},
-				
+			pickUpDrawer : function(pid){
+				app.ext.mob_customizer.vars.drawerHeld = pid;
+				app.ext.mob_customizer.vars.$context.addClass("drawerHeld");
+				},
 			addToCart : function(){
 				var drawerToQtyMap = {};
 				var numDrawers = 0;
@@ -336,11 +343,13 @@ var mob_customizer = function() {
 					revert:"invalid",
 					zIndex:999,
 					start: function(event, ui) {
+						app.ext.mob_customizer.vars.$context.addClass("drawerHeld");
 						dropped = false;
 						ui.helper.find('.dragThumb').show();
 						ui.helper.find('.dragIcon').hide();
 						},
 					stop: function(event, ui) {
+						app.ext.mob_customizer.vars.$context.removeClass("drawerHeld");
 						if (dropped === true) {$(this).remove();}
 						else {$(this).removeClass("hide");}
 						}

@@ -68,6 +68,7 @@
 			<img width="131" height="131" data-bind="var:product(zoovy:prod_image7);format:imageURL; bgcolor:ffffff;"/>
 		</div>
 	</div>
+	<div class="displayNone pointer dropIndicator" data-bind="var:product(mobcustomizerIndex); format:assignAttribute; attribute:data-index;" onClick="app.ext.mob_customizer.a.chooseDrawer($(this).attr('data-index'), app.ext.mob_customizer.vars.drawerHeld); return false;"></div>
 </li>
 
 <li id="productTemplateDrawerSelectedList">
@@ -76,7 +77,7 @@
 
 <li id="productTemplateDrawerList">
 	<div class="magnify pointer" data-bind="var:product(pid); format:assignAttribute; attribute:data-pid;" onClick="app.ext.store_product.u.showPicsInModal({'pid':$(this).attr('data-pid')}); return false;"></div>
-	<div class="prodAttContainer">
+	<div class="prodAttContainer pointer" data-bind="var:product(pid); format:assignAttribute; attribute:data-pid;" onClick="app.ext.mob_customizer.a.pickUpDrawer($(this).attr('data-pid')); return false;">
 		<img class="prodThumb" width="57" height="45" data-bind="var:product(zoovy:prod_image1); format:imageURL; bgcolor:tttttt;"/>
 		<div class="prodName" data-bind="var:product(user:prod_organization);format:text; defaultVar:product(zoovy:prod_name);"></div>
 	</div>
