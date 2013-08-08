@@ -283,6 +283,15 @@ PREVIEW CONTAINER STYLES
 	width:429px; 
 	height:429px;
 }
+
+.middleCol .mobBYOMsg{
+	bottom: 55px;
+    height: 46px;
+    position: absolute;
+    right: 50px;
+    width: 174px;
+}
+
 .mobPreviewContainer[data-mobcustomizer-dimensions="3x3"]{background:url(images/mbo_conf_bg-429x429-3x3.png) no-repeat;}
 .mobPreviewContainer[data-mobcustomizer-dimensions="2x3"]{background:url(images/mbo_conf_bg-429x429-2x3.png) no-repeat;}
 .mobPreviewContainer[data-mobcustomizer-dimensions="3x1"]{background:url(images/mbo_conf_bg-429x429-3x1.png) no-repeat;}
