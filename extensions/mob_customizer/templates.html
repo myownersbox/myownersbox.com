@@ -21,12 +21,19 @@
 	</div>
 	
 	<div class="rightCol noListStyle noPadOrMargin">
-		<div>
+		<div class="mobProdList">
+			<h3>
+				Selected Drawers
+			</h3>
+			<h4>
+				Click X to remove drawer
+			</h4>
 			<ul data-mobcustomizer="prodList" data-loadsTemplate="productTemplateDrawerSelectedList"></ul>
-			<div data-mobcustomizer="storageChoice" data-templateID="productTemplateStorageChoice"></div>
+			<div data-mobcustomizer="subtotals" data-templateID="mobTemplateSubtotals"></div>
 		</div>
-
-		<button onClick="app.ext.mob_customizer.a.addToCart(); return false;" >Add Everything To The Cart</button>
+		<div class="alignCenter">
+			<button class="mobATCBtn spriteBG" onClick="app.ext.mob_customizer.a.addToCart(); return false;" >Add To Cart</button>
+		</div>
 	</div>
 </div>
 
@@ -71,8 +78,17 @@
 	<div class="displayNone pointer dropIndicator" data-bind="var:product(mobcustomizerIndex); format:assignAttribute; attribute:data-index;" onClick="app.ext.mob_customizer.a.chooseDrawer($(this).attr('data-index'), app.ext.mob_customizer.vars.drawerHeld); return false;"></div>
 </li>
 
-<li id="productTemplateDrawerSelectedList">
-	<div class="prodName" data-bind="var:product(user:prod_organization);format:text; defaultVar:product(zoovy:prod_name);"></div>
+<li class="mobProdListItem" id="productTemplateDrawerSelectedList">
+	<div data-bind="var:product(pid); format:addClass; className:hasProduct;">
+		<div class="floatRight" data-bind="var:product(mobcustomizerIndex; format:assignAttribute; attribute:data-index;">
+			<span data-bind="var:product(mobcustomizerIndex; format:text;"></span>
+			<button class="removeProduct" onclick="app.ext.mob_customizer.a.chooseDrawer($(this).parent().attr('data-index'), ''); return false">X</button>
+		</div>
+		<img width="35" height="35" class="floatLeft" data-bind="var:product(zoovy:prod_image1); format:imageURL; bgcolor:tttttt;"/>
+		<div class="prodName" data-bind="var:product(user:prod_organization);format:text; defaultVar:product(zoovy:prod_name);">Empty</div>
+		<div data-bind="var:product(zoovy:base_price); format:money; currencySign: $;  hideZero:true; className:price;"></div>
+		<div class="clear"></div>
+	</div>
 </li>
 
 <li id="productTemplateDrawerList">
@@ -108,6 +124,21 @@
 </li>
 </ul>
 
-<div id="productTemplateStorageChoice">
-	<div data-bind="var:product(zoovy:prod_name);format:text;"></div>
+<div id="mobTemplateSubtotals">
+	<div class="alignRight mobStorageChoice">
+		<div>
+			Storage Organizer: <span data-bind="var:mob(s2.%attribs.zoovy:base_price); format:money; currencySign: $;  hideZero:true; className:price;"></span>
+		</div>
+		<div>
+			Drawer Subtotal: <span data-bind="var:mob(summary.drawerSubtotal); format:money; currencySign: $;  hideZero:true; className:price;">$0.00</span>
+		</div>
+	</div>
+	<div class="alignRight mobStorageChoice">
+		<div>
+			<span data-bind="useParentData:true; format:mobSubtotal; extension:mob_customizer;"></span>
+		</div>
+		<div>
+			<span data-bind="useParentData:true; format:mobDrawerCountdown; extension:mob_customizer;"></span>
+		</div>
+	</div>
 </div>

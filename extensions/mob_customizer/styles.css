@@ -36,6 +36,7 @@ LAYOUT STYLES
 GENERAL STYLES
 
 *******************************************/
+.mobcustomizer .clear{ clear:both; }
 .mobcustomizer h3 {
 	color:#ffffff;
 	margin:0;
@@ -55,6 +56,26 @@ GENERAL STYLES
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b42618', endColorstr='#9a1f18',GradientType=0 ); /* IE6-8 */
 }
 .mobcustomizer h3 strong{font-size: 12px;}
+.mobcustomizer h4 {
+	background: -moz-linear-gradient(center top , #767676 0%, #020400 100%) repeat scroll 0 0 transparent;
+    clear: both;
+    color: #FFFFFF;
+    display: block;
+    font-size: 11px;
+    font-weight: normal;
+    margin: 0;
+    padding: 3px 10px;
+}
+
+.mobcustomizer .mobATCBtn {
+	background-position: -319px -131px;
+    border: 0 none;
+    font-size: 0;
+    height: 34px;
+    margin: 0;
+    padding: 0;
+    width: 162px;
+}
 /*******************************************
 
 STEP1 STYLES
@@ -339,3 +360,30 @@ PREVIEW CONTAINER STYLES
 	width:100%;
 	background: url("images/mob_available-130x130.png") repeat scroll 0 0 transparent;
 }
+
+/*******************************************
+
+PRODLIST CONTAINER STYLES
+
+*******************************************/
+.mobProdList h3 {margin-bottom:0px}
+.mobProdList .mobProdListItem img{ margin-right: 4px; } 
+.mobProdList .mobProdListItem ,
+.mobProdList .mobStorageChoice{ 
+	border-bottom: 1px solid #CDCDCD;
+    font-size: 11px;
+    margin: 5px 0;
+    padding: 5px;
+    vertical-align: middle;
+}
+.mobProdList button.removeProduct{
+	border: 1px solid #A9A9A9;
+    color: #6F6F6F;
+    font-size: 9px;
+    font-weight: normal;
+    padding: 0;
+}
+
+.mobProdList .mobProdListItem { color: #BDBDBB;}
+.mobProdList .mobProdListItem .hasProduct,
+.mobProdList .mobStorageChoice { color: #171717;}

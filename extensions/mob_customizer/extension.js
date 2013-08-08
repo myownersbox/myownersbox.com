@@ -49,8 +49,7 @@ var mob_customizer = function() {
 			's3Template',
 			'productTemplateDrawerPreview',
 			'productTemplateDrawerList',
-			'productTemplateStorageList',
-			'productTemplateStorageChoice'
+			'productTemplateStorageList'
 			],
 		willFetchMyOwnTemplates : true,
 		//A prefix to help keep our localstorage object clean and collision free
@@ -125,10 +124,13 @@ var mob_customizer = function() {
 				$('[data-mobcustomizer="s2Choice"][data-pid="'+tagObj.pid+'"]', app.ext.mob_customizer.vars.$context).addClass('selected');
 				$('[data-mobcustomizer="previewContainer"]', app.ext.mob_customizer.vars.$context).attr('data-mobcustomizer-dimensions',dimensions).hideLoading();
 				$('[data-mobcustomizer="prodList"]', app.ext.mob_customizer.vars.$context).hideLoading();
-				$('[data-mobcustomizer="storageChoice"]', app.ext.mob_customizer.vars.$context).hideLoading();
 				
-				var $storageChoice = $('[data-mobcustomizer="storageChoice"]', app.ext.mob_customizer.vars.$context)
-				$storageChoice.intervaledEmpty().anycontent({"datapointer":tagObj.datapointer,"templateID":$storageChoice.attr('data-templateID')});
+				//$('[data-mobcustomizer="storageChoice"]', app.ext.mob_customizer.vars.$context).hideLoading();
+				//var $storageChoice = $('[data-mobcustomizer="storageChoice"]', app.ext.mob_customizer.vars.$context)
+				//$storageChoice.intervaledEmpty().anycontent({"datapointer":tagObj.datapointer,"templateID":$storageChoice.attr('data-templateID')});
+				
+				app.ext.mob_customizer.u.updateSubtotals();
+				app.ext.mob_customizer.u.updateSubtotals();
 				
 				//Truncates drawers if our new storage container is smaller
 				var tmpDrawers = app.ext.mob_customizer.vars.params.drawers.slice(0);
@@ -208,6 +210,9 @@ var mob_customizer = function() {
 			onSuccess : function(tagObj){
 				app.u.dump("-> mob_customizer.callbacks.chooseDrawer.onSuccess");
 				$('[data-mobcustomizer="previewContainer"]', app.ext.mob_customizer.vars.$context).hideLoading();
+
+				app.ext.mob_customizer.u.updateSubtotals();
+
 				var $previewItem = $('[data-mobcustomizer="previewList"] [data-index="'+tagObj.index+'"]', app.ext.mob_customizer.vars.$context);
 				var $prodItem = $('[data-mobcustomizer="prodList"] [data-index="'+tagObj.index+'"]', app.ext.mob_customizer.vars.$context);
 				
@@ -355,6 +360,26 @@ var mob_customizer = function() {
 						}
 					});
 				},
+			mobSubtotal : function($tag, data){
+				app.u.dump(data.value.s2);
+				var numSlots = app.ext.mob_customizer.u.getSpotCountFromDimensions(data.value.s2["%attribs"]["zoovy:prod_dimensions"].toLowerCase());
+				if(data.value.summary.numDrawers == numSlots){
+					$tag.html("$"+Number(data.value.summary.subtotal).toFixed(2)+" - <strong>15%</strong>: $"+(Number(data.value.summary.subtotal * .85).toFixed(2)));
+					}
+				else {
+					$tag.text("Total: $"+Number(data.value.summary.subtotal).toFixed(2));
+					}
+				},
+			mobDrawerCountdown : function($tag, data){
+				var numSlots = app.ext.mob_customizer.u.getSpotCountFromDimensions(data.value.s2["%attribs"]["zoovy:prod_dimensions"].toLowerCase());
+				if(data.value.summary.numDrawers == numSlots){
+					$tag.text("Your order qualifies for 15% off!");
+					}
+				else {
+					var diff = numSlots - data.value.summary.numDrawers 
+					$tag.text("Add "+diff+" drawer"+(diff==1?"":"s")+" to save 15%");
+					}
+				},
 			view360inModal : function($tag,data)  {
 				$tag.removeClass('displayNone').addClass('pointer');
 				$tag.click(function(){
@@ -427,6 +452,44 @@ var mob_customizer = function() {
 					}
 				app.model.dispatchThis('immutable');
 				},
+			updateSubtotals : function(attempts){
+				attempts = attempts || 0;
+				var hasData = true;
+				if(app.data['appProductGet|'+app.ext.mob_customizer.vars.params.s2]){
+					for(var d in app.ext.mob_customizer.vars.params.drawers){
+						if(app.ext.mob_customizer.vars.params.drawers[d] != "" && !app.data['appProductGet|'+app.ext.mob_customizer.vars.params.drawers[d]]){
+							hasData = false;
+							break;
+							}							
+						}
+					}
+				else { hasData = false; }
+
+				if(hasData){
+					var dataObj = {
+						"s2" : app.data['appProductGet|'+app.ext.mob_customizer.vars.params.s2],
+						"summary" : {
+							"subtotal" : 0,
+							"drawerSubtotal" : 0,
+							"numDrawers" : 0
+							}
+						};
+					dataObj.summary.subtotal += Number(app.data['appProductGet|'+app.ext.mob_customizer.vars.params.s2]["%attribs"]["zoovy:base_price"]);
+					for(var d in app.ext.mob_customizer.vars.params.drawers){
+						if(app.ext.mob_customizer.vars.params.drawers[d] !=""){
+							dataObj[d] = app.data['appProductGet|'+app.ext.mob_customizer.vars.params.drawers[d]];
+							dataObj.summary.subtotal += Number(app.data['appProductGet|'+app.ext.mob_customizer.vars.params.drawers[d]]["%attribs"]["zoovy:base_price"]);
+							dataObj.summary.drawerSubtotal += Number(app.data['appProductGet|'+app.ext.mob_customizer.vars.params.drawers[d]]["%attribs"]["zoovy:base_price"]);
+							dataObj.summary.numDrawers += 1;
+							}
+						}
+					var $subtotalContianer = $('[data-mobcustomizer="subtotals"]',app.ext.mob_customizer.vars.$context);
+					$subtotalContianer.intervaledEmpty().anycontent({"data":dataObj, "templateID":$subtotalContianer.attr('data-templateID')});
+					}
+				else if(attempts < 20){
+					setTimeout(function(){app.ext.mob_customizer.u.updateSubtotals(attempts+1);},250);
+					}
+				},
 			updateLocalStorage : function(){
 				app.storageFunctions.writeLocal(app.ext.mob_customizer.vars.localStorageDatapointerPrefix+'params', app.ext.mob_customizer.vars.params);
 				},
@@ -437,6 +500,7 @@ var mob_customizer = function() {
 				localStorage.removeItem(app.ext.mob_customizer.vars.localStorageDatapointerPrefix+'params');
 				},
 			getSpotCountFromDimensions : function(dim)  {
+				//app.u.dump(dim);
 				var r;
 				var ints = dim.split('x');
 				r = Number(ints[0])*Number(ints[1]);
