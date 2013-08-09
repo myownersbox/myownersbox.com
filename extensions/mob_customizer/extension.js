@@ -497,15 +497,15 @@ var mob_customizer = function() {
 			updateSocial : function(){
 				app.ext.partner_addthis.u.destroySocialLinks(app.ext.mob_customizer.vars.$context);
 				
-				var url = app.vars.secureURL + app.ext.mob_customizer.vars.urlPath + app.ext.mob_customizer.u.getURLParams();
+				var url = app.vars.secureURL + app.ext.mob_customizer.vars.urlPath +"?"+ app.ext.mob_customizer.u.getURLParams();
 				var title = "MyOwnersBox.com - My Customized Storage Container"
 				var descrption = "MyOwnersBox.com - My Customized Storage Container"
-				
+				app.u.dump(url);
 				app.ext.partner_addthis.u.buildSocialLinks(
 					app.ext.mob_customizer.vars.$context,
 					url,
 					title,
-					image,
+					"",
 					description);
 				},
 			updateLocalStorage : function(){
