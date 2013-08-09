@@ -246,6 +246,7 @@ var mob_customizer = function() {
 					app.model.dispatchThis('immutable');
 					}
 				app.ext.mob_customizer.u.updateLocalStorage();
+				app.ext.mob_customizer.u.updateSocial();
 				},
 			setS2 : function(pid, noDispatch){
 				$('[data-mobcustomizer=s2]', app.ext.mob_customizer.vars.$context).showLoading();
@@ -262,6 +263,7 @@ var mob_customizer = function() {
 					app.model.dispatchThis('immutable');
 					}
 				app.ext.mob_customizer.u.updateLocalStorage();
+				app.ext.mob_customizer.u.updateSocial();
 				},
 			setS3 : function(navcat, noDispatch){
 				$('[data-mobcustomizer=s3]', app.ext.mob_customizer.vars.$context).showLoading();
@@ -273,6 +275,7 @@ var mob_customizer = function() {
 					app.model.dispatchThis('immutable');
 					}
 				app.ext.mob_customizer.u.updateLocalStorage();
+				app.ext.mob_customizer.u.updateSocial();
 				},
 			chooseDrawer : function(index, pid, noDispatch){
 				delete app.ext.mob_customizer.vars.drawerHeld
@@ -290,6 +293,7 @@ var mob_customizer = function() {
 						app.ext.mob_customizer.callbacks.chooseDrawer.onSuccess({"index":index,"empty":true});
 						}
 					app.ext.mob_customizer.u.updateLocalStorage();
+					app.ext.mob_customizer.u.updateSocial();
 					}
 				},
 			pickUpDrawer : function(pid){
@@ -395,7 +399,7 @@ var mob_customizer = function() {
 			initCustomizer : function(infoObj){
 				//Set a jquery context for us to perform selections inside while the customizer is loaded
 				app.ext.mob_customizer.vars.$context = $(app.u.jqSelector('#',infoObj.parentID));
-				
+				app.ext.mob_customizer.vars.urlPath = "category/"+infoObj.navcat+"/";
 				
 				//Set the initial choices in the app
 				var localParams = this.retrieveLocalStorage();
@@ -490,6 +494,20 @@ var mob_customizer = function() {
 					setTimeout(function(){app.ext.mob_customizer.u.updateSubtotals(attempts+1);},250);
 					}
 				},
+			updateSocial : function(){
+				app.ext.partner_addthis.u.destroySocialLinks(app.ext.mob_customizer.vars.$context);
+				
+				var url = app.vars.secureURL + app.ext.mob_customizer.vars.urlPath + app.ext.mob_customizer.u.getURLParams();
+				var title = "MyOwnersBox.com - My Customized Storage Container"
+				var descrption = "MyOwnersBox.com - My Customized Storage Container"
+				
+				app.ext.partner_addthis.u.buildSocialLinks(
+					app.ext.mob_customizer.vars.$context,
+					url,
+					title,
+					image,
+					description);
+				},
 			updateLocalStorage : function(){
 				app.storageFunctions.writeLocal(app.ext.mob_customizer.vars.localStorageDatapointerPrefix+'params', app.ext.mob_customizer.vars.params);
 				},
@@ -498,6 +516,17 @@ var mob_customizer = function() {
 				},
 			clearLocalStorage : function(){
 				localStorage.removeItem(app.ext.mob_customizer.vars.localStorageDatapointerPrefix+'params');
+				},
+			getURLParams : function(){
+				var str =	"s1="+app.ext.mob_customizer.vars.params.s1;
+				str += 		"&s2="+app.ext.mob_customizer.vars.params.s2;
+				str += 		"&s3="+app.ext.mob_customizer.vars.params.s3;
+				for(var d in app.ext.mob_customizer.vars.params.drawers){
+					if(app.ext.mob_customizer.vars.params.drawers[d] != ""){
+						str += "&d"+d+"="+app.ext.mob_customizer.vars.params.drawers[d];
+						}
+					}
+				return str;
 				},
 			getSpotCountFromDimensions : function(dim)  {
 				//app.u.dump(dim);

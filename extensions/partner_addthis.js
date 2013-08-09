@@ -57,7 +57,8 @@ var partner_addthis = function() {
 						app.ext.partner_addthis.u.buildSocialLinksProductPage(infoObj);
 						}]);
 					app.rq.push(['templateFunction','productTemplate','onDeparts',function(infoObj){
-						app.ext.partner_addthis.u.destroySocialLinks(infoObj);
+						var $context = $(app.u.jqSelector('#',infoObj.parentID));
+						app.ext.partner_addthis.u.destroySocialLinks($context);
 						}]);
 					return true;
 				},
@@ -68,6 +69,29 @@ var partner_addthis = function() {
 		},
 		
 	u : {
+		buildSocialLinks : function($context, url, title, image, description, selector){
+			selector = selector || app.ext.partner_addthis.vars.selector;
+			$(selector, $context).append(
+					'<div id="socialLinks" class="addthis_toolbox addthis_default_style">'
+				+		'<a class="addthis_button_preferred_1"></a>'
+				+		'<a class="addthis_button_preferred_2"></a>'
+				+		'<a class="addthis_button_preferred_3"></a>'
+				+		'<a class="addthis_button_preferred_4"></a>'
+				+		'<a class="addthis_button_compact"></a>'
+				+	'</div>');
+			
+			//Set URL+title for most sharing code
+			addthis_share.url = url;
+			addthis_share.title = title;
+			
+			//Set URL+title for Facebook
+			$('#ogURL').attr('content',url);
+			$('#ogTitle').attr('content',title);
+			$('#ogImage').attr('content',app.u.makeImage({"name":image,"w":150,"h":150,"b":"FFFFFF","tag":0}));
+			$('#ogDescription, #metaDescription').attr('content',description);
+			
+			addthis.toolbox('#socialLinks');
+			},
 		buildSocialLinksProductPage : function(infoObj, attempts){
 			attempts = attempts || 0;
 			//app.u.dump("-> Addthis attempt: "+attempts);
@@ -112,8 +136,7 @@ var partner_addthis = function() {
 					}
 				}
 			},
-		destroySocialLinks : function(infoObj){
-			var $context = $(app.u.jqSelector('#',infoObj.parentID));
+		destroySocialLinks : function($context){
 			$(app.ext.partner_addthis.vars.selector, $context).empty();
 			}
 		}
