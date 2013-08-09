@@ -819,9 +819,10 @@ remember to NOT put the button inside the 'onclick' container or two events will
 		<input type='submit' value='Add to Cart' onMouseDown="$(this).addClass('addToCartButtonActive');" onMouseOver="$(this).addClass('addToCartButtonHover');" onMouseOut="$(this).removeClass('addToCartButtonHover');" data-bind='var: product(pid); format:addToCartButton; extension:store_product;' id='addToCartBtn' class='displayNone pointer floatRight spriteBG addToCartButton' />
 		-->
 	</form>
-		
+	
+	<!--
 	<div onMouseOver="$(this).addClass('showInCustomizerHover');" onMouseOut="$(this).removeClass('showInCustomizerHover');" data-bind='var: product(pid); format:linkToConfigurator; extension:mob_customizer;' class='showInCustomizer'></div>
-
+	-->
 	</div>
 
 	<!-- <button class='floatRight pointer quickView displayNone' onClick="quickView('product',{'templateID':'productTemplateQuickView','pid':$(this).closest('[data-pid]').attr('data-pid')});">Quickview</button> -->
