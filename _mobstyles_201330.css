@@ -5,3 +5,72 @@
     color: #FFFFFF;
     font-weight: bold;
 }
+
+.homepageSection {
+	border: 1px solid #727981;
+	position: relative;
+	height:330px;
+	background: #ffffff; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ffffff 0%, #d6d6d6 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#d6d6d6)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ffffff 0%,#d6d6d6 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ffffff 0%,#d6d6d6 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ffffff 0%,#d6d6d6 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #ffffff 0%,#d6d6d6 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#d6d6d6',GradientType=0 ); /* IE6-9 */
+}
+
+.homepageSection h2{
+	color: white;
+	font-weight:normal;
+	padding: 5px 0px;
+	background: #c02d26; /* Old browsers */
+	background: -moz-linear-gradient(top,  #c02d26 0%, #97201a 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c02d26), color-stop(100%,#97201a)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #c02d26 0%,#97201a 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #c02d26 0%,#97201a 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #c02d26 0%,#97201a 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #c02d26 0%,#97201a 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c02d26', endColorstr='#97201a',GradientType=0 ); /* IE6-9 */
+
+}
+
+.homepageLeft { width: 586px; margin-left:18px; }
+.homepageRight{ width: 308px; margin-right:18px; }
+
+.homepageSection .line1, 
+.homepageSection .line2, 
+.homepageSection .line3 { font-weight: bold;}
+
+.homepageSection .storeits {
+	position: absolute;
+	vertical-align: bottom;
+	width: 275px;
+	height: 270px;
+	top:38px;
+}
+.homepageSection .storeits h4{ padding-left: 20px; margin-top: 10px; margin-bottom: -10px;}
+
+.homepageSection .cubeits {
+	position: absolute;
+	vertical-align: bottom;
+	width: 275px;
+	height: 270px;
+	top:38px;
+	right: 0px;
+}
+.homepageSection .cubeits h4{ padding-right: 20px; margin-bottom:-20px; margin-top:10px;}
+
+.homepageSection .stackits {
+	position: absolute;
+	vertical-align: bottom;
+	width: 100%;
+	height: 270px;
+	top:10px;
+}
+.homepageSection .stackits h4{
+	position: absolute;
+	top: 60px;
+	left:48px;
+}
+.homepageSection .stackits img{ margin-left: -12px; margin-bottom: -10px; }
