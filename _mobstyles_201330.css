@@ -50,7 +50,10 @@
 	top:38px;
 }
 .homepageSection .storeits h4{ padding-left: 20px; margin-top: 10px; margin-bottom: -20px;}
-.homepageSection .storeits img{ margin-bottom: 10px;}
+.homepageSection .storeits img{position: absolute;}
+.homepageSection .storeits img.img2{top: 18px; left:130px;}
+
+.homepageSection .storeits .line1{margin-top: 235px;}
 
 .homepageSection .cubeits {
 	position: absolute;
