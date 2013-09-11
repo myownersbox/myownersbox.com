@@ -387,7 +387,7 @@ var mob_customizer = function() {
 			view360inModal : function($tag,data)  {
 				$tag.removeClass('displayNone').addClass('pointer');
 				$tag.click(function(){
-					app.ext.mob_customizer.actions.show360Viewer(data.value);
+					app.ext.mob_customizer.a.show360Viewer(data.value);
 					});
 				} //view360inModal
 
